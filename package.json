@@ -1,0 +1,61 @@
+{
+  "name": "arroyo-erp-api",
+  "version": "1.0.0",
+  "description": "API for Arroyo Erp",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "test": "NODE_ENV=test jest --detectOpenHandles",
+    "lint": "eslint '**/*.js'"
+  },
+  "pre-push": [
+    "test",
+    "eslint"
+  ],
+  "keywords": [
+    "api",
+    "nodeJS"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/boom": "^9.1.0",
+    "axios": "^0.19.2",
+    "bcrypt": "^4.0.1",
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "helmet": "^3.22.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.9",
+    "nodemon": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jest": "^23.8.1",
+    "jest": "^25.3.0",
+    "jest-circus": "^25.3.0",
+    "mongodb-memory-server": "^6.5.2",
+    "nock": "^12.0.3",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "bail": true,
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/bootstrap-jest.js"
+    ],
+    "coverageReporters": [
+      "json",
+      "text-summary",
+      "lcov",
+      "clover"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [],
+    "coveragePathIgnorePatterns": [],
+    "testRunner": "jest-circus/runner"
+  }
+}
