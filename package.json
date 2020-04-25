@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
+    "arroyo-erp-models": "npm:@soker90/arroyo-erp-models@^0.1.1",
     "axios": "^0.19.2",
     "bcrypt": "^4.0.1",
     "bluebird": "^3.7.2",
@@ -27,7 +28,6 @@
     "express": "^4.17.1",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.9",
     "nodemon": "^2.0.3"
   },
   "devDependencies": {
@@ -35,8 +35,8 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.8.1",
-    "jest": "^25.3.0",
-    "jest-circus": "^25.3.0",
+    "jest": "^25.4.0",
+    "jest-circus": "^25.4.0",
     "mongodb-memory-server": "^6.5.2",
     "nock": "^12.0.3",
     "supertest": "^4.0.2"

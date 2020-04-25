@@ -1,9 +1,7 @@
-const { mongoose, SystemUser } = require('arroyo-erp-models');
+const { mongoose, AccountModel } = require('arroyo-erp-models');
 const systemUserConstants = require('../../../constants/system-user');
 const AccountService = require('./account.service');
-
 const errors = require('../../../errors');
-
 const testDB = require('../../test')(mongoose);
 
 describe('SystemUserService', () => {
