@@ -1,47 +1,30 @@
 const { mongoose, AccountModel } = require('arroyo-erp-models');
-const systemUserConstants = require('../../../constants/system-user');
-const AccountService = require('./account.service');
-const errors = require('../../../errors');
-const testDB = require('../../test')(mongoose);
+const accountService = require('./account.service');
+const testDB = require('../../test/test-db')(mongoose);
+const mocks = require('./mocks');
 
-describe('SystemUserService', () => {
-  const systemUserService = new SystemUserService(SystemUser, errors, mappersSystemUser);
-
+describe('accountService', () => {
   beforeAll(() => testDB.connect());
 
   afterAll(() => testDB.disconnect());
 
-  describe('SystemUser Authenticate', () => {
-    const testPassword = 'aabbccdd1234';
-    const systemUserId = new mongoose.Types.ObjectId();
-    const baseSystemUser = {
-      _id: systemUserId,
-      username: 'test',
-      email: 'test@email.com',
-    };
-    const baseSystemUser2 = {
-      _id: new mongoose.Types.ObjectId(),
-      username: 'testusername3',
-      email: 'test3@email.com',
-    };
-
+  describe('Account Authenticate', () => {
     beforeAll(async () => {
-      baseSystemUser.password = await createHash(testPassword);
-      baseSystemUser2.password = await createHash('abcde1234578.3');
-      await SystemUser.create(baseSystemUser);
-      await SystemUser.create(baseSystemUser2);
+      await AccountModel.create(mocks.accounts[0]);
+      await AccountModel.create(mocks.accounts[1]);
     });
 
-    afterAll(() => SystemUser.deleteMany({}));
+    afterAll(() => AccountModel.deleteMany({}));
 
-    test('should return systemUser doc if password is correct', async (done) => {
-      const systemUser = await systemUserService
-        .authenticate(baseSystemUser.username, testPassword);
-      expect(systemUser.id).toEqual(systemUserId.toString());
+    test('should return account doc if password is correct', async (done) => {
+      const {username, password, _id} = mocks.accounts[0];
+      const account = await accountService
+        .login({username, password});
+      expect(account._id).toEqual(_id.toString());
       done();
     });
 
-    test('should throw an error if user does not exist', async (done) => {
+    /*test('should throw an error if user does not exist', async (done) => {
       try {
         await systemUserService.authenticate('notexistUsername', testPassword);
       } catch (error) {
@@ -69,10 +52,10 @@ describe('SystemUserService', () => {
         expect(error.message).toEqual('User is blocked');
         done();
       }
-    });
+    });*/
   });
 
-  describe('Unblocked system user', () => {
+  /*describe('Unblocked system user', () => {
     let blockedSystemUser = {
       username: 'test',
       email: 'test@email.com',
@@ -106,9 +89,9 @@ describe('SystemUserService', () => {
       expect(user.loginRetryLeft).toBe(systemUserConstants.DEFAULT_LOGIN_RETRY_TRY);
       done();
     });
-  });
+  });*/
 
-  describe('Create system  user', () => {
+  /*describe('Create system  user', () => {
     const passwordInvalidLenght = '1234';
     const newSystemUserPasswordInvalid = {
       username: 'test',
@@ -389,5 +372,5 @@ describe('SystemUserService', () => {
       expect(systemUser).toHaveProperty('passwordExpiryDate');
       done();
     });
-  });
+  });*/
 });

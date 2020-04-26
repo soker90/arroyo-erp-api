@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test": "NODE_ENV=test jest --detectOpenHandles",
+    "test": "NODE_ENV=test jest --detectOpenHandles --coverage",
     "lint": "eslint '**/*.js'"
   },
   "pre-push": [
