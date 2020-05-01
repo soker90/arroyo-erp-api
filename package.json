@@ -4,7 +4,7 @@
   "description": "API for Arroyo Erp",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "NODE_ENV=dev nodemon ./bin/www",
     "test": "NODE_ENV=test jest --detectOpenHandles --coverage",
     "lint": "eslint '**/*.js'"
   },

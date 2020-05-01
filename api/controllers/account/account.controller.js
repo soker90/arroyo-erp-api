@@ -8,36 +8,54 @@ const logService = new LogService(TYPE);
 
 class AccountController {
   constructor({
-                accountService,
-                errorHandler,
-              }) {
+    accountService,
+    errorHandler,
+  }) {
     this.accountService = accountService;
     this.errorHandler = errorHandler;
   }
 
   _handleError(res, error) {
     switch (error.code) {
-      case 401:
-        this.errorHandler.sendUnauthorizedError(res)(error);
-        break;
-      case 406:
-        this.errorHandler.sendNotAcceptable(res)(error);
-        break;
-      default:
-        this.errorHandler.sendError(res)(error);
-        break;
+    case 401:
+      this.errorHandler.sendUnauthorizedError(res)(error);
+      break;
+    case 406:
+      this.errorHandler.sendNotAcceptable(res)(error);
+      break;
+    default:
+      this.errorHandler.sendError(res)(error);
+      break;
     }
   }
 
+  /**
+   * Login in app
+   * @return {{token: string}}
+   */
   auth(req, res) {
     logService.logInfo(`[login] - Login user ${req.body.username}`);
     Promise.resolve(req.body)
       .bind(this)
       .then(this.accountService.login)
-      .then(data => res.status(200).send({data}))
+      .then(data => res.status(200).send(data))
       .catch(this._handleError.bind(this, res));
   }
 
+  /**
+   * Check token
+   */
+  me(req, res) {
+    logService.logInfo('[login] - Login user with token');
+    Promise.resolve(req.body)
+      .bind(this)
+      .then(() => res.status(204).send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Create account
+   */
   createAccount(req, res) {
     logService.logInfo(`[createAccount] - Create new account ${req.body.username}`);
     Promise.resolve(req.body)
@@ -46,8 +64,6 @@ class AccountController {
       .then(() => res.status(201).send())
       .catch(this._handleError.bind(this, res));
   }
-
 }
 
 module.exports = AccountController;
-

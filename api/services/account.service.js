@@ -1,7 +1,7 @@
-const {AccountModel} = require('arroyo-erp-models');
-const {compare} = require('bcrypt');
-const {InvalidLogin, UserNotFound, UserExist} = require('../../errors/user.errors')
-const {signToken} = require('../../components/auth/auth.service');
+const { AccountModel } = require('arroyo-erp-models');
+const { compare } = require('bcrypt');
+const { InvalidLogin, UserNotFound, UserExist } = require('../../errors/user.errors');
+const { signToken, verifyToken } = require('../../components/auth/auth.service');
 
 /**
  * Check user and password and return token
@@ -9,21 +9,31 @@ const {signToken} = require('../../components/auth/auth.service');
  * @param {String} password
  * @returns {Promise<{token: (string)}>}
  */
-const login = async ({username, password}) => {
-  const user = await AccountModel.findOne({username});
+const login = async ({ username, password }) => {
+  const user = await AccountModel.findOne({ username });
 
   if (!user) {
-    throw new UserNotFound()
+    throw new UserNotFound();
   }
 
   const isCorrect = await compare(password, user.password);
 
   if (!isCorrect) {
-    throw new InvalidLogin()
+    throw new InvalidLogin();
   }
 
-  return {token: signToken(user.username)};
-}
+  return { token: signToken(user.username) };
+};
+
+/**
+ * Check token and return a new token
+ * @param token
+ * @return {Promise<{token: (undefined|*)}>}
+ */
+const refreshToken = async ({ token }) => {
+  const dataToken = await verifyToken(token);
+  return { token: signToken(dataToken.user) };
+};
 
 /**
  * Create account
@@ -31,8 +41,8 @@ const login = async ({username, password}) => {
  * @param {String} password
  * @returns {String}
  */
-const createAccount = async ({username, password}) => {
-  const userExist = await AccountModel.findOne({username});
+const createAccount = async ({ username, password }) => {
+  const userExist = await AccountModel.findOne({ username });
 
   if (userExist) {
     throw new UserExist();
@@ -47,4 +57,5 @@ const createAccount = async ({username, password}) => {
 module.exports = {
   login,
   createAccount,
+  refreshToken,
 };
