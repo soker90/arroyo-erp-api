@@ -6,12 +6,15 @@ class MongoDbEnvironment extends NodeEnvironment {
   constructor(config) {
     super(config);
     // eslint-disable-next-line new-cap
-    this.mongod = new MongodbMemoryServer.default();
+    this.mongod = new MongodbMemoryServer.default({
+      binary: {
+        version: 'latest',
+      },
+    });
   }
 
   async setup() {
     await super.setup();
-console.log(this.mongod)
     this.global.__MONGO_URI__ = await this.mongod.getConnectionString();
     this.global.__MONGO_DB_NAME__ = await this.mongod.getDbName();
     // this is used to have different names for documents created while testing

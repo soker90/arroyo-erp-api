@@ -16,7 +16,6 @@ module.exports = (mongoose) => {
   }
 
   async function disconnect() {
-    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
   }
 

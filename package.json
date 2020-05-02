@@ -43,7 +43,7 @@
   },
   "jest": {
     "bail": true,
-    "testEnvironment": "node",
+    "testEnvironment": "<rootDir>/test/mongo-test-environment",
     "setupFilesAfterEnv": [
       "<rootDir>/test/bootstrap-jest.js"
     ],
