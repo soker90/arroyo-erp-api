@@ -2,6 +2,34 @@ const { ProductModel } = require('arroyo-erp-models');
 const { ProductMissingParams } = require('../../../errors/product.errors');
 
 /**
+ * Validate params
+ * @param {number} code
+ * @param {string} name
+ * @param {string} provider
+ * @param {number} amount
+ * @param {number} iva
+ * @param {number} re
+ * @return {Object}
+ * @private
+ */
+const _validateParams = ({
+  code,
+  name,
+  amount,
+  iva,
+  re,
+}) => {
+  if (!code || !name || !amount || !iva || !re) throw new ProductMissingParams();
+  return {
+    code,
+    name,
+    amount,
+    iva,
+    re,
+  };
+};
+
+/**
  * Return all product witch the filter
  * @param {String} provider
  * @return {Promise<{data: any}>}
@@ -19,7 +47,6 @@ const products = async ({ provider }) => {
  * Create product
  * @param {number} code
  * @param {string} name
- * @param {string} provider
  * @param {number} amount
  * @param {number} iva
  * @param {number} re
@@ -28,26 +55,34 @@ const products = async ({ provider }) => {
 const create = async ({
   code,
   name,
-  provider,
   amount,
   iva,
   re,
 }) => {
-  if (!code || !name || !provider || !amount || !iva || !re) throw new ProductMissingParams();
-
-  await new ProductModel({
+  const data = _validateParams({
     code,
     name,
-    provider,
     amount,
     iva,
     re,
-  }).save();
+  });
 
-  return 'El producto se ha creado correctamente.';
+  await new ProductModel(data).save();
+};
+
+/**
+ * Edit product
+ * @param {Object} id
+ * @param {Object} body
+ */
+const update = async ({ params, body }) => {
+  const data = _validateParams(body);
+
+  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data });
 };
 
 module.exports = {
   products,
   create,
+  update,
 };

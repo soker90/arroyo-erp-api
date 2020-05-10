@@ -38,7 +38,7 @@ class ProductController {
   }
 
   /**
-   * Return all products with the filters
+   * Create the new product
    */
   create(req, res) {
     logService.logInfo('[products] - Create product');
@@ -49,8 +49,16 @@ class ProductController {
       .catch(this._handleError.bind(this, res));
   }
 
+  /**
+   * Edit the product
+   */
   edit(req, res) {
-
+    logService.logInfo('[products] - Edit product');
+    Promise.resolve(req)
+      .then(this.productService.update)
+      .then(() => res.status(204)
+        .send())
+      .catch(this._handleError.bind(this, res));
   }
 }
 

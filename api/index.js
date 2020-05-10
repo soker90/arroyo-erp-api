@@ -16,10 +16,16 @@ const productController = new ProductController({
 
 module.exports = async (app) => {
   app.get('/monit/health', (req, res) => res.send('OK'));
+  /**
+   * Account endpoints
+   */
   app.post('/account/login', accountController.auth.bind(accountController));
   app.get('/account/me', authMiddleware, accountController.me.bind(accountController));
   app.post('/account/createAccount', authMiddleware, accountController.createAccount.bind(accountController));
+  /**
+   * Products endpoints
+   */
   app.get('/products', authMiddleware, productController.products.bind(productController));
   app.post('/products', authMiddleware, productController.create.bind(productController));
-  app.patch('/products', authMiddleware, productController.edit.bind(productController));
+  app.patch('/products/:id', authMiddleware, productController.edit.bind(productController));
 };
