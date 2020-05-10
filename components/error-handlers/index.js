@@ -8,23 +8,23 @@ const logService = new LogService('Error');
  */
 function sendValidationError(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.badData(err.message).output;
+    const { statusCode, payload } = Boom.badData(err.message).output;
     res.status(statusCode).send(payload);
-    logService.logInfo(`[Error] - ${e.message}`);
+    logService.logInfo(`[Error] - ${payload.message}`);
   };
 }
 
 function sendResourceFailedError(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.failedDependency(err.message).output;
+    const { statusCode, payload } = Boom.failedDependency(err.message).output;
     res.status(statusCode).send(payload);
-    logService.logInfo(`[Error] - ${e.message}`);
+    logService.logInfo(`[Error] - ${payload.message}`);
   };
 }
 
 function sendError(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.badImplementation(err.message, err.code).output;
+    const { statusCode, payload } = Boom.badRequest(err.message, err.code).output;
     res.status(statusCode).send(payload);
 
     const logMessage = `${err.message || 'Unknow error'} :`;
@@ -34,10 +34,10 @@ function sendError(res) {
 
 function sendUnauthorizedError(res) {
   return err => {
-    const {statusCode, payload} = Boom.unauthorized(err.message).output;
+    const { statusCode, payload } = Boom.unauthorized(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
-  }
+  };
 }
 
 /**
@@ -45,7 +45,7 @@ function sendUnauthorizedError(res) {
  */
 function sendNotFound(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.notFound(err.message).output;
+    const { statusCode, payload } = Boom.notFound(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
   };
@@ -56,7 +56,7 @@ function sendNotFound(res) {
  */
 function sendForbidden(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.forbidden(err.message).output;
+    const { statusCode, payload } = Boom.forbidden(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
   };
@@ -67,7 +67,7 @@ function sendForbidden(res) {
  */
 function sendBadRequest(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.badRequest(err.message).output;
+    const { statusCode, payload } = Boom.badRequest(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
   };
@@ -78,7 +78,7 @@ function sendBadRequest(res) {
  */
 function sendConflict(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.conflict(err.message).output;
+    const { statusCode, payload } = Boom.conflict(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
   };
@@ -86,7 +86,7 @@ function sendConflict(res) {
 
 function sendNotAcceptable(res) {
   return (err) => {
-    const {statusCode, payload} = Boom.notAcceptable(err.message).output;
+    const { statusCode, payload } = Boom.notAcceptable(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
   };

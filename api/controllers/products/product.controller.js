@@ -17,16 +17,40 @@ class ProductController {
 
   _handleError(res, error) {
     switch (error.code) {
-    case 401:
-      this.errorHandler.sendUnauthorizedError(res)(error);
-      break;
-    case 406:
-      this.errorHandler.sendNotAcceptable(res)(error);
+    case 400:
+      this.errorHandler.sendBadRequest(res)(error);
       break;
     default:
       this.errorHandler.sendError(res)(error);
       break;
     }
+  }
+
+  /**
+   * Return all products with the filters
+   */
+  products(req, res) {
+    logService.logInfo('[products] - List products');
+    Promise.resolve(req.query)
+      .then(this.productService.products)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Return all products with the filters
+   */
+  create(req, res) {
+    logService.logInfo('[products] - Create product');
+    Promise.resolve(req.body)
+      .then(this.productService.create)
+      .then(() => res.status(201)
+        .send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  edit(req, res) {
+
   }
 }
 
