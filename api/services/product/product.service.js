@@ -72,13 +72,14 @@ const create = async ({
 
 /**
  * Edit product
- * @param {Object} id
+ * @param {Object} params
  * @param {Object} body
  */
 const update = async ({ params, body }) => {
-  const data = _validateParams(body);
+  if (!params.id) throw new ProductMissingParams();
 
-  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data });
+  const data = _validateParams(body);
+  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data }).leans();
 };
 
 module.exports = {
