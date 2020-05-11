@@ -41,7 +41,7 @@ class ProvidersController {
    * Create the new provider
    */
   create(req, res) {
-    logService.logInfo('[products] - Create provider');
+    logService.logInfo('[providers] - Create provider');
     Promise.resolve(req.body)
       .then(this.providerService.create)
       .then(() => res.status(201)
@@ -53,7 +53,7 @@ class ProvidersController {
    * Edit the provider
    */
   edit(req, res) {
-    logService.logInfo('[products] - Edit provider');
+    logService.logInfo('[providers] - Edit provider');
     Promise.resolve(req)
       .then(this.providerService.update)
       .then(() => res.status(204)
