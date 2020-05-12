@@ -1,5 +1,5 @@
 const { DeliveryOrderModel } = require('arroyo-erp-models');
-const { ProviderMissingName, ProviderMissingId } = require('../../../errors/provider.errors');
+const { DeliveryOrderMissingId} = require('../../../errors/delivery-order.errors');
 
 /**
  * Validate params
@@ -14,7 +14,7 @@ const _validateParams = ({
   provider,
   products,
 }) => {
-  if (!date || provider || !products) throw new ProviderMissingName();
+  if (!date || provider || !products) throw new DeliveryOrderMissingId();
   return {
     date,
     provider,
@@ -76,7 +76,7 @@ const create = async ({
  * @param {Object} body
  */
 const update = async ({ params, body, ...rest }) => {
-  if (!params.id) throw new ProviderMissingId();
+  if (!params.id) throw new DeliveryOrderMissingId();
   console.log(rest);
 
   const data = _validateParams(body);
@@ -89,7 +89,7 @@ const update = async ({ params, body, ...rest }) => {
  * @return {Promise<{data: *}>}
  */
 const deliveryOrder = async ({ id }) => {
-  if (!id) throw new ProviderMissingId();
+  if (!id) throw new DeliveryOrderMissingId();
 
   const data = await DeliveryOrderModel.findOne({ _id: id })
     .lean();
