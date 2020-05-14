@@ -36,7 +36,7 @@ const providers = async ({ name }) => {
 
   const data = await ProviderModel.find(filter, 'name _id')
     .lean();
-  return { data };
+  return data;
 };
 
 /**
@@ -67,7 +67,7 @@ const create = async ({
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({ params, body , ...rest}) => {
+const update = async ({ params, body, ...rest }) => {
   if (!params.id) throw new ProviderMissingId();
   console.log(rest);
 
