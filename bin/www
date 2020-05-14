@@ -3,12 +3,13 @@ const http = require('http');
 
 const app = require('..');
 const config = require('../config');
+const port = process.env.PORT || config.port;
 
 process.on('uncaughtException', (err) => {
   console.errorTrack('uncaughtException exception: ', err);
 });
 
-app.set('port', config.port);
+app.set('port', port);
 
 const server = http.createServer(app);
 
@@ -26,6 +27,6 @@ function onListening() {
   console.log(`[onListening] - Server listening on ${bind}`);
 }
 
-server.listen(config.port);
+server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
