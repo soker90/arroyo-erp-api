@@ -15,7 +15,7 @@ const hostProperty = [].concat(host);
 const portProperty = [].concat(port);
 const hosts = hostProperty.reduce((s, h, i) => `${s}${i > 0 ? ',' : ''}${h}:${portProperty[i] || portProperty[0]}`, '');
 
-const uri = `mongodb://${userPass}${hosts}/${dataBaseName}`;
+const uri = process.env.MONGODB ||`mongodb://${userPass}${hosts}/${dataBaseName}`;
 
 const options = mongoOptions || {};
 options.useNewUrlParser = true;
