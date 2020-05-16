@@ -77,7 +77,7 @@ const provider = async ({ id }) => {
 
   const data = await ProviderModel.findOne({ _id: id })
     .lean();
-  return { data };
+  return data;
 };
 
 module.exports = {
