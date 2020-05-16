@@ -7,6 +7,8 @@ const { ProviderMissingName, ProviderMissingId } = require('../../../errors/prov
  * @param {string} address
  * @param {string} phone
  * @param {string} email
+ * @param {string} businessName
+ * @param {string} cif
  * @return {Object}
  * @private
  */
@@ -15,6 +17,8 @@ const _validateParams = ({
   address,
   phone,
   email,
+  businessName,
+  cif,
 }) => {
   if (!name) throw new ProviderMissingName();
   return {
@@ -22,6 +26,8 @@ const _validateParams = ({
     address,
     phone,
     email,
+    businessName,
+    cif,
   };
 };
 
@@ -41,23 +47,10 @@ const providers = async ({ name }) => {
 
 /**
  * Create product
- * @param {string} name
- * @param {string} address
- * @param {string} phone
- * @param {string} email
+ * @param {Object} receivedData
  */
-const create = async ({
-  name,
-  address,
-  phone,
-  email,
-}) => {
-  const data = _validateParams({
-    name,
-    address,
-    phone,
-    email,
-  });
+const create = async receivedData => {
+  const data = _validateParams(receivedData);
 
   await new ProviderModel(data).save();
 };
@@ -67,9 +60,8 @@ const create = async ({
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({ params, body, ...rest }) => {
+const update = async ({ params, body }) => {
   if (!params.id) throw new ProviderMissingId();
-  console.log(rest);
 
   const data = _validateParams(body);
   await ProviderModel.findOneAndUpdate({ _id: params.id }, { $set: data });
