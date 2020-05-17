@@ -40,7 +40,7 @@ const products = async ({ provider }) => {
   };
   const data = await ProductModel.find(filter, 'name _id code')
     .lean();
-  return { data };
+  return data ;
 };
 
 /**

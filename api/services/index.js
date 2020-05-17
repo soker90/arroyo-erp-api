@@ -5,6 +5,7 @@ const RequestService = require('./request.service');
 const AccountService = require('./account.service');
 const ProductService = require('./product');
 const ProviderService = require('./provider');
+const DeliveryOrderService = require('./deliveryorder');
 
 const axiosSpiderInstance = axios.create({
   baseURL: config.services.spider.baseURL,
@@ -17,4 +18,5 @@ module.exports = {
   accountService: AccountService,
   productService: ProductService,
   providerService: ProviderService,
+  deliveryOrderService: DeliveryOrderService,
 };

@@ -1,5 +1,9 @@
-const { AccountController, ProductController, ProviderController } = require('./controllers');
-const { accountService, productService, providerService } = require('./services');
+const {
+  AccountController, ProductController, ProviderController, DeliveryOrderController,
+} = require('./controllers');
+const {
+  accountService, productService, providerService, deliveryOrderService,
+} = require('./services');
 const { authMiddleware } = require('../components/auth');
 
 const errorHandler = require('../components/error-handlers');
@@ -17,6 +21,11 @@ const productController = new ProductController({
 const providerController = new ProviderController({
   errorHandler,
   providerService,
+});
+
+const deliveryOrderController = new DeliveryOrderController({
+  errorHandler,
+  deliveryOrderService,
 });
 
 module.exports = async (app) => {
@@ -38,6 +47,13 @@ module.exports = async (app) => {
    */
   app.get('/providers', authMiddleware, providerController.providers.bind(providerController));
   app.post('/providers', authMiddleware, providerController.create.bind(providerController));
-  app.patch('/providers/:id', authMiddleware, providerController.edit.bind(providerController));
+  app.put('/providers/:id', authMiddleware, providerController.edit.bind(providerController));
   app.get('/providers/:id', authMiddleware, providerController.provider.bind(providerController));
+  /**
+   * Delivery orders endpoints
+   */
+  app.get('/deliveryorders', authMiddleware, deliveryOrderController.orders.bind(deliveryOrderController));
+  app.post('/deliveryorders', authMiddleware, deliveryOrderController.create.bind(deliveryOrderController));
+  app.put('/deliveryorders/:id', authMiddleware, deliveryOrderController.edit.bind(deliveryOrderController));
+  app.get('/deliveryorders/:id', authMiddleware, deliveryOrderController.deliveryOrder.bind(deliveryOrderController));
 };
