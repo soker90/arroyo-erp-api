@@ -18,14 +18,16 @@ const _validateParams = ({
   amount,
   iva,
   re,
+  provider,
 }) => {
-  if (!code || !name || !amount || !iva || !re) throw new ProductMissingParams();
+  if (!code || !name || !provider || !amount || !iva || !re) throw new ProductMissingParams();
   return {
     code,
     name,
     amount,
     iva,
     re,
+    provider,
   };
 };
 
@@ -40,32 +42,15 @@ const products = async ({ provider }) => {
   };
   const data = await ProductModel.find(filter, 'name _id code')
     .lean();
-  return data ;
+  return data;
 };
 
 /**
  * Create product
- * @param {number} code
- * @param {string} name
- * @param {number} amount
- * @param {number} iva
- * @param {number} re
  * @return {Promise<string>}
  */
-const create = async ({
-  code,
-  name,
-  amount,
-  iva,
-  re,
-}) => {
-  const data = _validateParams({
-    code,
-    name,
-    amount,
-    iva,
-    re,
-  });
+const create = async product => {
+  const data = _validateParams(product);
 
   await new ProductModel(data).save();
 };
@@ -79,7 +64,8 @@ const update = async ({ params, body }) => {
   if (!params.id) throw new ProductMissingParams();
 
   const data = _validateParams(body);
-  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data }).leans();
+  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data })
+    .leans();
 };
 
 module.exports = {
