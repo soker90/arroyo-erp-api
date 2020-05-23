@@ -44,8 +44,7 @@ class DeliveryOrdersController {
     logService.logInfo('[delivery orders] - Create delivery order');
     Promise.resolve(req.body)
       .then(this.deliveryOrderService.create)
-      .then(() => res.status(201)
-        .send())
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
