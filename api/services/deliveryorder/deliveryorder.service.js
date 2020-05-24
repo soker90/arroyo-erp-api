@@ -59,7 +59,7 @@ const create = async ({provider}) => {
     date: null,
   };
   const deliveryOrder = await new DeliveryOrderModel(data).save();
-  return new DeliveryOrderAdapter(deliveryOrder).createResponse();
+  return new DeliveryOrderAdapter(deliveryOrder).standardResponse();
 };
 
 /**
@@ -67,22 +67,27 @@ const create = async ({provider}) => {
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({params, body}) => {
+const update = async ({params, body: {date, ...rest}}) => {
   if (!params.id) throw new DeliveryOrderMissingId();
 
-  const {
-    date,
-    provider,
-    products,
-  } = _validateParams(body);
+  const set = {
+    ...(date && {date}),
+  };
+  return await DeliveryOrderModel.findOneAndUpdate(
+    {_id: params.id},
+    {$set: set,},
+    {new: true,
+      fields: {
+        ...(date && {date: 1}),
+      },});
 
-  await DeliveryOrderModel.find({_id: params.id})
+  /*await DeliveryOrderModel.find({_id: params.id})
     .then(response => {
       response.set('date', date);
       response.set('provider', provider);
       response.set('products', products);
       response.save();
-    });
+    });*/
 };
 
 /**
@@ -94,7 +99,7 @@ const deliveryOrder = async ({id}) => {
   if (!id) throw new DeliveryOrderMissingId();
 
   const deliveryOrder = await DeliveryOrderModel.findOne({_id: id}).lean();
-  return new DeliveryOrderAdapter(deliveryOrder).createResponse();
+  return new DeliveryOrderAdapter(deliveryOrder).standardResponse();
 };
 
 module.exports = {

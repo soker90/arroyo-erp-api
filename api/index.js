@@ -54,7 +54,7 @@ module.exports = async (app) => {
    */
   app.get('/deliveryorders', authMiddleware, deliveryOrderController.orders.bind(deliveryOrderController));
   app.post('/deliveryorders', authMiddleware, deliveryOrderController.create.bind(deliveryOrderController));
-  app.put('/deliveryorders/:id', authMiddleware, deliveryOrderController.edit.bind(deliveryOrderController));
+  app.patch('/deliveryorders/:id', authMiddleware, deliveryOrderController.edit.bind(deliveryOrderController));
   app.get('/deliveryorders/:id', authMiddleware, deliveryOrderController.deliveryOrder.bind(deliveryOrderController));
   // app.post('/deliveryorders/product/:id', authMiddleware())
   // app.put('/deliveryorders/product/:id', authMiddleware()

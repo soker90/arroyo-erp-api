@@ -32,7 +32,7 @@ class DeliveryOrderAdapter {
    * Create JSON for response of create
    * @return {{date: *, provider: *, selectedProducts: *, _id: *, totals: {total: *, re: *, iva: *}, nameProvider: *, products: *}}
    */
-  createResponse() {
+  standardResponse() {
     const {
       _id, provider, nameProvider, products, selectedProducts, date,
     } = this;

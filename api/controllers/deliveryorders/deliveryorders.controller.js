@@ -55,8 +55,7 @@ class DeliveryOrdersController {
     logService.logInfo('[delivery orders]  - Edit delivery order');
     Promise.resolve(req)
       .then(this.deliveryOrderService.update)
-      .then(() => res.status(204)
-        .send())
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
