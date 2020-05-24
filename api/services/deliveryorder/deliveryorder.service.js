@@ -1,6 +1,6 @@
-const { DeliveryOrderModel } = require('arroyo-erp-models');
-const { DeliveryOrderMissingId } = require('../../../errors/delivery-order.errors');
-const { yesterdayDate } = require('./utils');
+const {DeliveryOrderModel} = require('arroyo-erp-models');
+const {DeliveryOrderMissingId} = require('../../../errors/delivery-order.errors');
+const {yesterdayDate} = require('./utils');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
 
 /**
@@ -30,16 +30,16 @@ const _validateParams = (
  * Return all delivery orders
  * @return {Promise<{data: any}>}
  */
-const orders = async ({ provider }) => {
+const orders = async ({provider}) => {
   const data = await DeliveryOrderModel.aggregate([
-    { $match: { ...(provider && { provider }) } },
+    {$match: {...(provider && {provider})}},
     {
       $project: {
         _id: 1,
         date: 1,
         // provider: 1,
-        size: { $size: '$products' },
-        total: { $sum: '$products.total' },
+        size: {$size: '$products'},
+        total: {$sum: '$products.total'},
       },
     },
   ]);
@@ -52,11 +52,11 @@ const orders = async ({ provider }) => {
  * @param {number} date
  * @param {string} provider
  */
-const create = async ({ provider }) => {
+const create = async ({provider}) => {
   if (!provider) throw new DeliveryOrderMissingId();
   const data = {
     provider,
-    date: yesterdayDate(),
+    date: null,
   };
   const deliveryOrder = await new DeliveryOrderModel(data).save();
   return new DeliveryOrderAdapter(deliveryOrder).createResponse();
@@ -67,7 +67,7 @@ const create = async ({ provider }) => {
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({ params, body, ...rest }) => {
+const update = async ({params, body}) => {
   if (!params.id) throw new DeliveryOrderMissingId();
 
   const {
@@ -76,7 +76,7 @@ const update = async ({ params, body, ...rest }) => {
     products,
   } = _validateParams(body);
 
-  await DeliveryOrderModel.find({ _id: params.id })
+  await DeliveryOrderModel.find({_id: params.id})
     .then(response => {
       response.set('date', date);
       response.set('provider', provider);
@@ -90,12 +90,11 @@ const update = async ({ params, body, ...rest }) => {
  * @param {string} id
  * @return {Promise<{data: *}>}
  */
-const deliveryOrder = async ({ id }) => {
+const deliveryOrder = async ({id}) => {
   if (!id) throw new DeliveryOrderMissingId();
 
-  const data = await DeliveryOrderModel.findOne({ _id: id })
-    .lean();
-  return { data };
+  const deliveryOrder = await DeliveryOrderModel.findOne({_id: id}).lean();
+  return new DeliveryOrderAdapter(deliveryOrder).createResponse();
 };
 
 module.exports = {

@@ -14,6 +14,11 @@ class DeliveryOrderAdapter {
     this.date = date;
   }
 
+  /**
+   * Create object with totals
+   * @return {{total: Number, re: Number, iva: Number}}
+   * @private
+   */
   _generateTotals() {
     const { iva, re, total } = this;
     return {
@@ -23,6 +28,10 @@ class DeliveryOrderAdapter {
     };
   }
 
+  /**
+   * Create JSON for response of create
+   * @return {{date: *, provider: *, selectedProducts: *, _id: *, totals: {total: *, re: *, iva: *}, nameProvider: *, products: *}}
+   */
   createResponse() {
     const {
       _id, provider, nameProvider, products, selectedProducts, date,
