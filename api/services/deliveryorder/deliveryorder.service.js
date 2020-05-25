@@ -1,6 +1,6 @@
-const {DeliveryOrderModel} = require('arroyo-erp-models');
-const {DeliveryOrderMissingId} = require('../../../errors/delivery-order.errors');
-const {yesterdayDate} = require('./utils');
+const { DeliveryOrderModel } = require('arroyo-erp-models');
+const { DeliveryOrderMissingId } = require('../../../errors/delivery-order.errors');
+const { yesterdayDate } = require('./utils');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
 
 /**
@@ -30,16 +30,16 @@ const _validateParams = (
  * Return all delivery orders
  * @return {Promise<{data: any}>}
  */
-const orders = async ({provider}) => {
+const orders = async ({ provider }) => {
   const data = await DeliveryOrderModel.aggregate([
-    {$match: {...(provider && {provider})}},
+    { $match: { ...(provider && { provider }) } },
     {
       $project: {
         _id: 1,
         date: 1,
         // provider: 1,
-        size: {$size: '$products'},
-        total: {$sum: '$products.total'},
+        size: { $size: '$products' },
+        total: { $sum: '$products.total' },
       },
     },
   ]);
@@ -52,7 +52,7 @@ const orders = async ({provider}) => {
  * @param {number} date
  * @param {string} provider
  */
-const create = async ({provider}) => {
+const create = async ({ provider }) => {
   if (!provider) throw new DeliveryOrderMissingId();
   const data = {
     provider,
@@ -67,27 +67,30 @@ const create = async ({provider}) => {
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({params, body: {date, ...rest}}) => {
+const update = async ({ params, body: { date, ...rest } }) => {
   if (!params.id) throw new DeliveryOrderMissingId();
 
   const set = {
-    ...(date && {date}),
+    ...(date && { date }),
   };
   return await DeliveryOrderModel.findOneAndUpdate(
-    {_id: params.id},
-    {$set: set,},
-    {new: true,
+    { _id: params.id },
+    { $set: set },
+    {
+      new: true,
       fields: {
-        ...(date && {date: 1}),
-      },});
+        ...(date && { date: 1 }),
+      },
+    },
+  );
 
-  /*await DeliveryOrderModel.find({_id: params.id})
+  /* await DeliveryOrderModel.find({_id: params.id})
     .then(response => {
       response.set('date', date);
       response.set('provider', provider);
       response.set('products', products);
       response.save();
-    });*/
+    }); */
 };
 
 /**
@@ -95,11 +98,20 @@ const update = async ({params, body: {date, ...rest}}) => {
  * @param {string} id
  * @return {Promise<{data: *}>}
  */
-const deliveryOrder = async ({id}) => {
+const deliveryOrder = async ({ id }) => {
   if (!id) throw new DeliveryOrderMissingId();
 
-  const deliveryOrder = await DeliveryOrderModel.findOne({_id: id}).lean();
+  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id }).lean();
   return new DeliveryOrderAdapter(deliveryOrder).standardResponse();
+};
+
+const addProduct = async ({
+  idDeliveryOrder, code, product, price, quantity,
+}) => {
+  await DeliveryOrderModel.find({ _id: idDeliveryOrder })
+    .then(response => {
+      console.log(idDeliveryOrder);
+    });
 };
 
 module.exports = {
@@ -107,4 +119,5 @@ module.exports = {
   create,
   update,
   deliveryOrder,
+  addProduct,
 };
