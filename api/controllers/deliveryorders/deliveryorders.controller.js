@@ -69,6 +69,17 @@ class DeliveryOrdersController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  /**
+   *
+   */
+  addProduct(req, res) {
+    logService.logInfo('[delivery orders] - Add product');
+    Promise.resolve(req)
+      .then(this.deliveryOrderService.addProduct)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = DeliveryOrdersController;
