@@ -1,6 +1,6 @@
-const {DeliveryOrderModel} = require('arroyo-erp-models');
-const {DeliveryOrderMissingId} = require('../../../errors/delivery-order.errors');
-const {yesterdayDate} = require('./utils');
+const { DeliveryOrderModel, ProductModel } = require('arroyo-erp-models');
+const { DeliveryOrderMissingId } = require('../../../errors/delivery-order.errors');
+const { yesterdayDate } = require('./utils');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
 
 /**
@@ -30,16 +30,16 @@ const _validateParams = (
  * Return all delivery orders
  * @return {Promise<{data: any}>}
  */
-const orders = async ({provider}) => {
+const orders = async ({ provider }) => {
   const data = await DeliveryOrderModel.aggregate([
-    {$match: {...(provider && {provider})}},
+    { $match: { ...(provider && { provider }) } },
     {
       $project: {
         _id: 1,
         date: 1,
         // provider: 1,
-        size: {$size: '$products'},
-        total: {$sum: '$products.total'},
+        size: { $size: '$products' },
+        total: { $sum: '$products.total' },
       },
     },
   ]);
@@ -52,7 +52,7 @@ const orders = async ({provider}) => {
  * @param {number} date
  * @param {string} provider
  */
-const create = async ({provider}) => {
+const create = async ({ provider }) => {
   if (!provider) throw new DeliveryOrderMissingId();
   const data = {
     provider,
@@ -67,19 +67,19 @@ const create = async ({provider}) => {
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({params, body: {date, ...rest}}) => {
+const update = async ({ params, body: { date, ...rest } }) => {
   if (!params.id) throw new DeliveryOrderMissingId();
 
   const set = {
-    ...(date && {date}),
+    ...(date && { date }),
   };
   return await DeliveryOrderModel.findOneAndUpdate(
-    {_id: params.id},
-    {$set: set},
+    { _id: params.id },
+    { $set: set },
     {
       new: true,
       fields: {
-        ...(date && {date: 1}),
+        ...(date && { date: 1 }),
       },
     },
   );
@@ -98,23 +98,37 @@ const update = async ({params, body: {date, ...rest}}) => {
  * @param {string} id
  * @return {Promise<{data: *}>}
  */
-const deliveryOrder = async ({id}) => {
+const deliveryOrder = async ({ id }) => {
   if (!id) throw new DeliveryOrderMissingId();
 
-  const deliveryOrder = await DeliveryOrderModel.findOne({_id: id}).lean();
+  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id })
+    .lean();
   return new DeliveryOrderAdapter(deliveryOrder).standardResponse();
 };
 
+
 const addProduct = async ({
-                            params: {id}, body: {
+  params: { id }, body: {
     code, product, price, quantity,
   },
-                          }) => {
-  await DeliveryOrderModel.findOne({_id: id})
+}) => {
+  const {
+    name, amount, iva, re,
+  } = await ProductModel.finOne({ _id: product });
+  await DeliveryOrderModel.findOne({ _id: id })
     .then(response => {
       response.set('products', [
         ...response.products,
-        {code, product, price, quantity},
+        {
+          code,
+          product,
+          price,
+          quantity,
+          name,
+          diff: amount - price,
+          iva: price * quantity * iva,
+          re: price * quantity * re,
+        },
       ]);
       response.save();
     });
