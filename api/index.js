@@ -28,7 +28,7 @@ const deliveryOrderController = new DeliveryOrderController({
   deliveryOrderService,
 });
 
-module.exports = async (app) => {
+module.exports = async app => {
   app.get('/monit/health', (req, res) => res.send('OK'));
   /**
    * Account endpoints

@@ -1,8 +1,8 @@
-const { DeliveryOrderModel, ProductModel } = require('arroyo-erp-models');
-const { DeliveryOrderMissingId } = require('../../../errors/delivery-order.errors');
-const { yesterdayDate } = require('./utils');
+const { DeliveryOrderModel, ProductModel, ProviderModel } = require('arroyo-erp-models');
+const { INITIAL_SCHEMA } = require('./constants');
+const { DeliveryOrderMissingId, DeliveryOrderProviderNotFound, DeliveryOrderNotFound } = require('../../../errors/delivery-order.errors');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
-
+const { calcData } = require('./utils');
 /**
  * Validate params
  * @param {number} date
@@ -30,36 +30,40 @@ const _validateParams = (
  * Return all delivery orders
  * @return {Promise<{data: any}>}
  */
-const orders = async ({ provider }) => {
-  const data = await DeliveryOrderModel.aggregate([
+const orders = async ({ provider }) => (
+  // eslint-disable-next-line no-return-await
+  await DeliveryOrderModel.aggregate([
     { $match: { ...(provider && { provider }) } },
     {
       $project: {
         _id: 1,
         date: 1,
-        // provider: 1,
         size: { $size: '$products' },
         total: { $sum: '$products.total' },
       },
     },
-  ]);
+  ])
+);
 
-  return data;
-};
 
 /**
  * Create product
- * @param {number} date
  * @param {string} provider
  */
 const create = async ({ provider }) => {
   if (!provider) throw new DeliveryOrderMissingId();
+
+  const { name } = await ProviderModel.findOne({ _id: provider });
+  if (!name) throw new DeliveryOrderProviderNotFound();
+
   const data = {
     provider,
-    date: null,
+    nameProvider: name,
+    ...INITIAL_SCHEMA,
   };
-  const deliveryOrder = await new DeliveryOrderModel(data).save();
-  return new DeliveryOrderAdapter(deliveryOrder).standardResponse();
+
+  const newDeliveryOrder = await new DeliveryOrderModel(data).save();
+  return new DeliveryOrderAdapter(newDeliveryOrder).standardResponse();
 };
 
 /**
@@ -67,12 +71,13 @@ const create = async ({ provider }) => {
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({ params, body: { date, ...rest } }) => {
-  if (!params.id) throw new DeliveryOrderMissingId();
+const update = async ({ params, body: { date } }) => {
+  if (!params.id || typeof date !== 'number') throw new DeliveryOrderMissingId();
 
   const set = {
     ...(date && { date }),
   };
+  // eslint-disable-next-line no-return-await
   return await DeliveryOrderModel.findOneAndUpdate(
     { _id: params.id },
     { $set: set },
@@ -101,20 +106,25 @@ const update = async ({ params, body: { date, ...rest } }) => {
 const deliveryOrder = async ({ id }) => {
   if (!id) throw new DeliveryOrderMissingId();
 
-  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id })
+  const deliveryOrderData = await DeliveryOrderModel.findOne({ _id: id })
     .lean();
-  return new DeliveryOrderAdapter(deliveryOrder).standardResponse();
+
+  if (!deliveryOrderData) throw new DeliveryOrderNotFound();
+  return new DeliveryOrderAdapter(deliveryOrderData).standardResponse();
 };
 
 
 const addProduct = async ({
   params: { id }, body: {
-    code, product, price, quantity,
+    product, price, quantity,
   },
 }) => {
   const {
-    name, amount, iva, re,
-  } = await ProductModel.finOne({ _id: product });
+    name, amount, iva, re, code, rate,
+  } = await ProductModel.findOne({ _id: product });
+
+  const taxBase = quantity * (rate || 1) * price;
+
   await DeliveryOrderModel.findOne({ _id: id })
     .then(response => {
       response.set('products', [
@@ -125,13 +135,16 @@ const addProduct = async ({
           price,
           quantity,
           name,
+          taxBase,
+          ...(rate && { rate }),
           diff: amount - price,
-          iva: price * quantity * iva,
-          re: price * quantity * re,
+          iva: taxBase * iva,
+          re: taxBase * re,
+          total: taxBase * re * iva * (rate || 1),
         },
       ]);
-      response.save();
-    });
+      return response;
+    }).then(calcData);
 };
 
 module.exports = {

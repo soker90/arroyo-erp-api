@@ -1,3 +1,4 @@
+/* eslint-disable nonblock-statement-body-position */
 const { ProductModel } = require('arroyo-erp-models');
 const { ProductMissingParams } = require('../../../errors/product.errors');
 
@@ -15,19 +16,22 @@ const { ProductMissingParams } = require('../../../errors/product.errors');
 const _validateParams = ({
   code,
   name,
-  fee,
+  rate,
   iva,
   re,
   provider,
+  amount,
 }) => {
-  if (!code || !name || !provider || !iva ) throw new ProductMissingParams();
+  if (!code || !name || !provider || !iva || !rate || !amount || !re)
+    throw new ProductMissingParams();
   return {
     code,
     name,
-    ...(fee && { fee }),
+    ...(rate && { rate }),
     iva,
-    ...(re && { re }),
+    re,
     provider,
+    amount,
   };
 };
 
