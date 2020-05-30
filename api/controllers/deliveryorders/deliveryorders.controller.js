@@ -71,12 +71,34 @@ class DeliveryOrdersController {
   }
 
   /**
-   *
+   * Add product to delivery order
    */
   addProduct(req, res) {
-    logService.logInfo('[delivery orders] - Add product');
+    logService.logInfo('[delivery orders] - Add product to a delivery order');
     Promise.resolve(req)
       .then(this.deliveryOrderService.addProduct)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Add product to delivery order
+   */
+  updateProduct(req, res) {
+    logService.logInfo('[delivery orders] - Update product of a delivery order');
+    Promise.resolve(req)
+      .then(this.deliveryOrderService.updateProduct)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Add product to delivery order
+   */
+  deleteProduct(req, res) {
+    logService.logInfo('[delivery orders] - Delete product of the delivery order');
+    Promise.resolve(req.params)
+      .then(this.deliveryOrderService.deleteProduct)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

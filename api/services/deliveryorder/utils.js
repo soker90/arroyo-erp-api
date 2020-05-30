@@ -1,3 +1,5 @@
+const { ProductModel } = require('arroyo-erp-models');
+
 /**
  * Calcula los totales del albarán
  * @param deliveryOrder
@@ -20,6 +22,7 @@ const calcData = deliveryOrder => {
     if (rate) rateDO += rate;
   });
 
+
   deliveryOrder.set('size', size);
   deliveryOrder.set('iva', ivaDO);
   deliveryOrder.set('re', reDO);
@@ -27,8 +30,39 @@ const calcData = deliveryOrder => {
   deliveryOrder.set('taxBase', taxBaseDO);
   deliveryOrder.set('rate', rateDO);
   deliveryOrder.save();
+  return deliveryOrder;
+};
+
+/**
+ * Calcula los datos de un producto del albarán
+ * @param {string} product
+ * @param {string | number} price
+ * @param {string | number} quantity
+ * @return {Promise<{product: *, total: number, code: *, quantity: number, re: number, iva: number, price: number, name: *, diff: number, taxBase: number}>}
+ */
+const calcProduct = async (product, price, quantity) => {
+  const {
+    name, historicPrice, iva, re, code, rate,
+  } = await ProductModel.findOne({ _id: product });
+
+  const taxBase = quantity * (rate || 1) * price;
+
+  return {
+    code,
+    product,
+    price: Number(price),
+    quantity: Number(quantity),
+    name,
+    taxBase,
+    ...(rate && { rate }),
+    diff: historicPrice - price,
+    iva: taxBase * iva,
+    re: taxBase * re,
+    total: taxBase * re * iva * (rate || 1),
+  };
 };
 
 module.exports = {
   calcData,
+  calcProduct,
 };

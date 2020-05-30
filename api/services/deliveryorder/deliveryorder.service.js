@@ -1,30 +1,11 @@
-const { DeliveryOrderModel, ProductModel, ProviderModel } = require('arroyo-erp-models');
+const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
 const { INITIAL_SCHEMA } = require('./constants');
-const { DeliveryOrderMissingId, DeliveryOrderProviderNotFound, DeliveryOrderNotFound } = require('../../../errors/delivery-order.errors');
+const {
+  DeliveryOrderMissingId, DeliveryOrderProviderNotFound, DeliveryOrderNotFound,
+  DeliveryOrderMissing,
+} = require('../../../errors/delivery-order.errors');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
-const { calcData } = require('./utils');
-/**
- * Validate params
- * @param {number} date
- * @param {string} provider
- * @param {string} products
- * @return {Object}
- * @private
- */
-const _validateParams = (
-  {
-    date,
-    provider,
-    products,
-  },
-) => {
-  if (!date || !provider || !products) throw new DeliveryOrderMissingId();
-  return {
-    date,
-    provider,
-    products,
-  };
-};
+const { calcData, calcProduct } = require('./utils');
 
 /**
  * Return all delivery orders
@@ -77,7 +58,7 @@ const update = async ({ params, body: { date } }) => {
   const set = {
     ...(date && { date }),
   };
-  // eslint-disable-next-line no-return-await
+
   return await DeliveryOrderModel.findOneAndUpdate(
     { _id: params.id },
     { $set: set },
@@ -88,14 +69,6 @@ const update = async ({ params, body: { date } }) => {
       },
     },
   );
-
-  /* await DeliveryOrderModel.find({_id: params.id})
-    .then(response => {
-      response.set('date', date);
-      response.set('provider', provider);
-      response.set('products', products);
-      response.save();
-    }); */
 };
 
 /**
@@ -113,36 +86,79 @@ const deliveryOrder = async ({ id }) => {
   return new DeliveryOrderAdapter(deliveryOrderData).standardResponse();
 };
 
-
+/**
+ * Add product to delivery order
+ * @param {String} id
+ * @param {String} product
+ * @param {Number} price
+ * @param {Number} quantity
+ * @return {Promise<void>}
+ */
 const addProduct = async ({
   params: { id }, body: {
     product, price, quantity,
   },
 }) => {
-  const {
-    name, amount, iva, re, code, rate,
-  } = await ProductModel.findOne({ _id: product });
+  if (!id) throw new DeliveryOrderMissingId();
+  if (!quantity || !product || !price) throw new DeliveryOrderMissing();
 
-  const taxBase = quantity * (rate || 1) * price;
-
-  await DeliveryOrderModel.findOne({ _id: id })
+  const newProduct = await calcProduct(product, price, quantity);
+  return await DeliveryOrderModel.findOne({ _id: id })
     .then(response => {
       response.set('products', [
         ...response.products,
-        {
-          code,
-          product,
-          price,
-          quantity,
-          name,
-          taxBase,
-          ...(rate && { rate }),
-          diff: amount - price,
-          iva: taxBase * iva,
-          re: taxBase * re,
-          total: taxBase * re * iva * (rate || 1),
-        },
+        newProduct,
       ]);
+      return response;
+    }).then(calcData);
+};
+
+/**
+ * Actualiza un producto del albarán
+ * @param {String} id
+ * @param {number} index
+ * @param {String} product
+ * @param {Number} price
+ * @param {Number} quantity
+ * @return {Promise<void>}
+ */
+const updateProduct = async ({
+  params: { id, index }, body: {
+    product, price, quantity,
+  },
+}) => {
+  if (!id) throw new DeliveryOrderMissingId();
+  if (!quantity || !product || !price) throw new DeliveryOrderMissing();
+
+  const productModified = await calcProduct(product, price, quantity);
+
+  return await DeliveryOrderModel.findOne({ _id: id })
+    .then(response => {
+      const { products } = response;
+      products[index] = productModified;
+      response.set('products', products);
+      return response;
+    }).then(calcData)
+    .catch(e => e);
+};
+
+/**
+ * Elimina un producto del albarán
+ * @param {String} id
+ * @param {number} index
+ * @return {Promise<void>}
+ */
+const deleteProduct = async ({
+  id, index,
+}) => {
+  if (!id) throw new DeliveryOrderMissingId();
+  if (!index) throw new DeliveryOrderMissing();
+
+  return await DeliveryOrderModel.findOne({ _id: id })
+    .then(response => {
+      const { products } = response;
+      products.splice(index, 1);
+      response.set('products', products);
       return response;
     }).then(calcData);
 };
@@ -153,4 +169,6 @@ module.exports = {
   update,
   deliveryOrder,
   addProduct,
+  updateProduct,
+  deleteProduct,
 };
