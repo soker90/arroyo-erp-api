@@ -59,7 +59,7 @@ const update = async ({ params, body: { date } }) => {
     ...(date && { date }),
   };
 
-  return await DeliveryOrderModel.findOneAndUpdate(
+  const data = await DeliveryOrderModel.findOneAndUpdate(
     { _id: params.id },
     { $set: set },
     {
@@ -69,6 +69,7 @@ const update = async ({ params, body: { date } }) => {
       },
     },
   );
+  return new DeliveryOrderAdapter(data).basicResponse();
 };
 
 /**
@@ -110,7 +111,8 @@ const addProduct = async ({
         newProduct,
       ]);
       return response;
-    }).then(calcData);
+    }).then(calcData)
+    .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
 /**
@@ -139,6 +141,7 @@ const updateProduct = async ({
       response.set('products', products);
       return response;
     }).then(calcData)
+    .then(data => new DeliveryOrderAdapter(data).productsResponse())
     .catch(e => e);
 };
 
@@ -160,7 +163,8 @@ const deleteProduct = async ({
       products.splice(index, 1);
       response.set('products', products);
       return response;
-    }).then(calcData);
+    }).then(calcData)
+    .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
 module.exports = {

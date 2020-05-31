@@ -1,12 +1,11 @@
 class DeliveryOrderAdapter {
   constructor({
-    _id, provider, nameProvider, products, selectedProducts, size, iva, re, total, date,
+    _id, provider, nameProvider, products, size, iva, re, total, date,
   }) {
     this._id = _id;
     this.provider = provider;
     this.nameProvider = nameProvider;
     this.products = products;
-    this.selectedProducts = selectedProducts;
     this.size = size;
     this.iva = iva;
     this.re = re;
@@ -30,18 +29,48 @@ class DeliveryOrderAdapter {
 
   /**
    * Create JSON for response of create
-   * @return {{date: *, provider: *, selectedProducts: *, _id: *, totals: {total: *, re: *, iva: *}, nameProvider: *, products: *}}
+   * @return {{date: *, provider: *, selectedProducts: *, _id: *,
+   * totals: {total: *, re: *, iva: *}, nameProvider: *, products: *}}
    */
   standardResponse() {
     const {
-      _id, provider, nameProvider, products, selectedProducts, date,
+      _id, provider, nameProvider, products, date,
     } = this;
     return {
       _id,
       provider,
       nameProvider,
       date,
-      selectedProducts,
+      products,
+      totals: this._generateTotals(),
+    };
+  }
+
+  /**
+   * Create JSON for response for basic data
+   * @return {{date: *, provider: *, _id: *, nameProvider: *}}
+   */
+  basicResponse() {
+    const {
+      _id, provider, nameProvider, date,
+    } = this;
+    return {
+      _id,
+      provider,
+      nameProvider,
+      date,
+    };
+  }
+
+  /**
+   * Create JSON response with products and totals
+   * @return {{totals: {total: Number, re: Number, iva: Number}, products: *}}
+   */
+  productsResponse() {
+    const {
+      products,
+    } = this;
+    return {
       products,
       totals: this._generateTotals(),
     };
