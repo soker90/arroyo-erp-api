@@ -134,15 +134,15 @@ const updateProduct = async ({
 
   const productModified = await calcProduct(product, price, quantity);
 
-  return await DeliveryOrderModel.findOne({ _id: id })
+  await DeliveryOrderModel.findOne({ _id: id })
     .then(response => {
       const { products } = response;
       products[index] = productModified;
       response.set('products', products);
       return response;
-    }).then(calcData)
-    .then(data => new DeliveryOrderAdapter(data).productsResponse())
-    .catch(e => e);
+    }).then(calcData);
+  return await DeliveryOrderModel.findOne({ _id: id })
+    .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
 /**

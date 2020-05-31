@@ -38,7 +38,8 @@ const calcData = deliveryOrder => {
  * @param {string} product
  * @param {string | number} price
  * @param {string | number} quantity
- * @return {Promise<{product: *, total: number, code: *, quantity: number, re: number, iva: number, price: number, name: *, diff: number, taxBase: number}>}
+ * @return {Promise<{product: *, total: number, code: *, quantity: number, re: number,
+ * iva: number, price: number, name: *, diff: number, taxBase: number}>}
  */
 const calcProduct = async (product, price, quantity) => {
   const {
@@ -46,6 +47,8 @@ const calcProduct = async (product, price, quantity) => {
   } = await ProductModel.findOne({ _id: product });
 
   const taxBase = quantity * (rate || 1) * price;
+  const ivaTotal = taxBase * iva;
+  const reTotal = taxBase * re;
 
   return {
     code,
@@ -56,9 +59,9 @@ const calcProduct = async (product, price, quantity) => {
     taxBase,
     ...(rate && { rate }),
     diff: historicPrice - price,
-    iva: taxBase * iva,
-    re: taxBase * re,
-    total: taxBase * re * iva * (rate || 1),
+    iva: ivaTotal,
+    re: reTotal,
+    total: taxBase + reTotal + ivaTotal + (rate || 0),
   };
 };
 
