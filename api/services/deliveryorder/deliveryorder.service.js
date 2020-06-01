@@ -137,6 +137,8 @@ const updateProduct = async ({
   return await DeliveryOrderModel.findOne({ _id: id })
     .then(response => {
       const products = response.products.slice();
+      if (index >= products.length || index < 0) throw new DeliveryOrderMissing('Index incorrecto');
+
       products[index] = productModified;
       response.set('products', products);
       return response;
@@ -159,6 +161,8 @@ const deleteProduct = async ({
   return await DeliveryOrderModel.findOne({ _id: id })
     .then(response => {
       const { products } = response;
+      if (index >= products.length || index < 0) throw new DeliveryOrderMissing('Index incorrecto');
+
       products.splice(index, 1);
       response.set('products', products);
       return response;
