@@ -1,6 +1,6 @@
 class DeliveryOrderAdapter {
   constructor({
-    _id, provider, nameProvider, products, size, iva, re, total, date,
+    _id, provider, nameProvider, products, size, iva, re, total, date, taxBase,
   }) {
     this._id = _id;
     this.provider = provider;
@@ -11,6 +11,7 @@ class DeliveryOrderAdapter {
     this.re = re;
     this.total = total;
     this.date = date;
+    this.taxBase = taxBase;
   }
 
   /**
@@ -19,11 +20,14 @@ class DeliveryOrderAdapter {
    * @private
    */
   _generateTotals() {
-    const { iva, re, total } = this;
+    const {
+      iva, re, total, taxBase,
+    } = this;
     return {
       iva,
       re,
       total,
+      taxBase,
     };
   }
 
