@@ -22,7 +22,6 @@ const calcData = deliveryOrder => {
     if (rate) rateDO += rate;
   });
 
-
   deliveryOrder.set('size', size);
   deliveryOrder.set('iva', ivaDO);
   deliveryOrder.set('re', reDO);

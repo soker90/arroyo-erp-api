@@ -134,14 +134,13 @@ const updateProduct = async ({
 
   const productModified = await calcProduct(product, price, quantity);
 
-  await DeliveryOrderModel.findOne({ _id: id })
+  return await DeliveryOrderModel.findOne({ _id: id })
     .then(response => {
-      const { products } = response;
+      const products = response.products.slice();
       products[index] = productModified;
       response.set('products', products);
       return response;
-    }).then(calcData);
-  return await DeliveryOrderModel.findOne({ _id: id })
+    }).then(calcData)
     .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
