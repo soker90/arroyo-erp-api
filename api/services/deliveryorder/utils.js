@@ -45,7 +45,8 @@ const calcProduct = async (product, price, quantity) => {
     name, historicPrice, iva, re, code, rate,
   } = await ProductModel.findOne({ _id: product });
 
-  const taxBase = quantity * (rate || 1) * price;
+  const rateCalc = rate ? rate * quantity : 0;
+  const taxBase = quantity * price + rateCalc;
   const ivaTotal = taxBase * iva;
   const reTotal = taxBase * re;
 
@@ -60,7 +61,7 @@ const calcProduct = async (product, price, quantity) => {
     diff: historicPrice - price,
     iva: ivaTotal,
     re: reTotal,
-    total: taxBase + reTotal + ivaTotal + (rate || 0),
+    total: taxBase + ivaTotal + reTotal,
   };
 };
 
