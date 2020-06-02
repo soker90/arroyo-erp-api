@@ -19,6 +19,7 @@ const _validateParams = ({
   email,
   businessName,
   cif,
+  hasRate,
 }) => {
   if (!name) throw new ProviderMissingName();
   return {
@@ -28,6 +29,7 @@ const _validateParams = ({
     email,
     businessName,
     cif,
+    hasRate,
   };
 };
 

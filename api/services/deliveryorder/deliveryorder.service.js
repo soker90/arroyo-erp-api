@@ -34,12 +34,13 @@ const orders = async ({ provider }) => (
 const create = async ({ provider }) => {
   if (!provider) throw new DeliveryOrderMissingId();
 
-  const { name } = await ProviderModel.findOne({ _id: provider });
+  const { name, hasRate } = await ProviderModel.findOne({ _id: provider });
   if (!name) throw new DeliveryOrderProviderNotFound();
 
   const data = {
     provider,
     nameProvider: name,
+    ...(hasRate && { hasRate }),
     ...INITIAL_SCHEMA,
   };
 
@@ -48,7 +49,7 @@ const create = async ({ provider }) => {
 };
 
 /**
- * Edit product
+ * Edit delivery order
  * @param {Object} params
  * @param {Object} body
  */

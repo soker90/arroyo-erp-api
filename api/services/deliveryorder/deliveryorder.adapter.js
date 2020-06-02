@@ -33,12 +33,12 @@ class DeliveryOrderAdapter {
 
   /**
    * Create JSON for response of create
-   * @return {{date: *, provider: *, selectedProducts: *, _id: *,
+   * @return {{date: *, provider: *, selectedProducts: *, _id: *, hasRate: boolean,
    * totals: {total: *, re: *, iva: *}, nameProvider: *, products: *}}
    */
   standardResponse() {
     const {
-      _id, provider, nameProvider, products, date,
+      _id, provider, nameProvider, products, date, hasRate,
     } = this;
     return {
       _id,
@@ -46,22 +46,21 @@ class DeliveryOrderAdapter {
       nameProvider,
       date,
       products,
+      hasRate,
       totals: this._generateTotals(),
     };
   }
 
   /**
    * Create JSON for response for basic data
-   * @return {{date: *, provider: *, _id: *, nameProvider: *}}
+   * @return {{date: *, nameProvider: *}}
    */
   basicResponse() {
     const {
-      _id, provider, nameProvider, date,
+      _id, date,
     } = this;
     return {
       _id,
-      provider,
-      nameProvider,
       date,
     };
   }
