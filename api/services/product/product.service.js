@@ -22,7 +22,7 @@ const _validateParams = ({
   provider,
   historicPrice,
 }) => {
-  if (!code || !name || !provider || !iva || !rate || !re)
+  if (!code || !name || !provider || !iva || !re)
     throw new ProductMissingParams();
   return {
     code,

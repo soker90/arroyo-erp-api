@@ -5,12 +5,12 @@ const mongooseOpts = {
   useUnifiedTopology: true,
 };
 
-module.exports = (mongoose) => {
+module.exports = mongoose => {
   async function connect() {
     await mongoose.connect(__MONGO_URI__, mongooseOpts);
 
-    mongoose.connection.on('error', (error) => {
-      console.log('TEST-DB ERROR', error);
+    mongoose.connection.on('error', error => {
+      console.error('TEST-DB ERROR', error);
       mongoose.connect(__MONGO_URI__, mongooseOpts);
     });
   }
@@ -22,7 +22,7 @@ module.exports = (mongoose) => {
   async function clean() {
     const { collections } = mongoose.connection;
 
-    await Object.keys(collections).map(async (key) => {
+    await Object.keys(collections).map(async key => {
       const collection = collections[key];
       await collection.deleteMany();
     });
