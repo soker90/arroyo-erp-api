@@ -6,7 +6,6 @@ const { verifyToken } = require('../../../components/auth/auth.service');
 const app = require('../../..');
 
 const user1 = {
-  _id: mongoose.Types.ObjectId(),
   username: 'test',
   password: 'aabbccdd1234',
 };
