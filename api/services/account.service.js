@@ -12,15 +12,14 @@ const { signToken, verifyToken } = require('../../components/auth/auth.service')
 const login = async ({ username, password }) => {
   const user = await AccountModel.findOne({ username });
 
-  if (!user) {
-    throw new UserNotFound();
-  }
+  if (!user) throw new UserNotFound();
+
+  if (!password) throw new InvalidLogin();
 
   const isCorrect = await compare(password, user.password);
 
-  if (!isCorrect) {
-    throw new InvalidLogin();
-  }
+  if (!isCorrect) throw new InvalidLogin();
+
 
   return { token: signToken(user.username) };
 };
@@ -44,9 +43,8 @@ const refreshToken = async ({ token }) => {
 const createAccount = async ({ username, password }) => {
   const userExist = await AccountModel.findOne({ username });
 
-  if (userExist) {
-    throw new UserExist();
-  }
+  if (userExist) throw new UserExist();
+
 
   await new AccountModel({
     username,

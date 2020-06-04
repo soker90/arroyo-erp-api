@@ -7,7 +7,7 @@ const logService = new LogService('Error');
  * Send a Boom.badData error
  */
 function sendValidationError(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.badData(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
@@ -15,7 +15,7 @@ function sendValidationError(res) {
 }
 
 function sendResourceFailedError(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.failedDependency(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
@@ -23,9 +23,9 @@ function sendResourceFailedError(res) {
 }
 
 function sendError(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.badRequest(err.message, err.code).output;
-    res.status(statusCode).send(payload);
+    res.status(err.code || statusCode).send(payload);
 
     const logMessage = `${err.message || 'Unknow error'} :`;
     logService.logInfo(`[Error] - ${logMessage}`);
@@ -44,7 +44,7 @@ function sendUnauthorizedError(res) {
  * Send a 404 not found
  */
 function sendNotFound(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.notFound(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
@@ -55,7 +55,7 @@ function sendNotFound(res) {
  * Send a Boom.forbidden error
  */
 function sendForbidden(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.forbidden(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
@@ -66,7 +66,7 @@ function sendForbidden(res) {
  * Send a Boom.badRequest error
  */
 function sendBadRequest(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.badRequest(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
@@ -77,7 +77,7 @@ function sendBadRequest(res) {
  * Send a Boom.conflict error
  */
 function sendConflict(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.conflict(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);
@@ -85,7 +85,7 @@ function sendConflict(res) {
 }
 
 function sendNotAcceptable(res) {
-  return (err) => {
+  return err => {
     const { statusCode, payload } = Boom.notAcceptable(err.message).output;
     res.status(statusCode).send(payload);
     logService.logInfo(`[Error] - ${payload.message}`);

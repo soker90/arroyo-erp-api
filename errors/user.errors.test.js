@@ -53,4 +53,20 @@ describe('UserErrors', () => {
       expect(err.message).toEqual('CustomMessage');
     });
   });
+
+  describe('ExpiredToken', () => {
+    test('should exist and extend from Error', () => {
+      expect(new UserErrors.ExpiredToken()).toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new UserErrors.ExpiredToken();
+      expect(err.message).toEqual('El token ha expirado');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new UserErrors.ExpiredToken('CustomMessage');
+      expect(err.message).toEqual('CustomMessage');
+    });
+  });
 });

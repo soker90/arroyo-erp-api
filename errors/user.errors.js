@@ -36,8 +36,21 @@ class UserExist extends Error {
   }
 }
 
+class ExpiredToken extends Error {
+  /**
+   * Create instance
+   * @param {String} msg
+   */
+  constructor(msg = 'El token ha expirado') {
+    super(msg);
+    this.code = 401;
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvalidLogin,
   UserNotFound,
   UserExist,
+  ExpiredToken,
 };

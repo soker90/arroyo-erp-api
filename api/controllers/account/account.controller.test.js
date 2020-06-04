@@ -1,14 +1,14 @@
 const supertest = require('supertest');
 const { mongoose, AccountModel } = require('arroyo-erp-models');
 const testDB = require('../../../test/test-db')(mongoose);
+const { verifyToken } = require('../../../components/auth/auth.service');
 
 const app = require('../../..');
 
-const password = 'aabbccdd1234';
 const user1 = {
   _id: mongoose.Types.ObjectId(),
   username: 'test',
-  password: '$2b$10$oxS7r2ilizQV/uS4q5CPmOmCoTDan4Ed3odWuBnl7fWmTmNOZMzOq',
+  password: 'aabbccdd1234',
 };
 
 describe('AccountController', () => {
@@ -77,9 +77,10 @@ describe('AccountController', () => {
       let response;
 
       beforeAll(done => {
+        const { username, password } = user1;
         supertest(app)
           .post('/account/login')
-          .send({ username: user1.username, password })
+          .send({ username, password })
           .end((err, res) => {
             response = res;
             done();
@@ -89,6 +90,34 @@ describe('AccountController', () => {
       test('Devería devolver un 200', () => {
         expect(response.status).toEqual(200);
       });
+
+      test('Genera un token válido', async () => {
+        const dataToken = await verifyToken(JSON.parse(response.text).token);
+        expect(dataToken.user).toEqual(user1.username);
+      });
     });
   });
+
+  describe('POST /account/me', () => {
+    beforeAll(async () => {
+      await AccountModel.create(user1);
+    });
+
+    describe('No se envía token', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get('/account/me')
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode).toBe(401);
+      });
+    });
+  })
 });

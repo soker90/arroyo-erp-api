@@ -1,5 +1,6 @@
 const errorHandlers = require('../error-handlers');
 const { verifyToken, signToken } = require('./auth.service');
+const { ExpiredToken } = require('../../errors/user.errors');
 
 /**
  * Returns the token in the response
@@ -16,7 +17,8 @@ const refreshToken = (res, { user }) => {
 const handleVerifyTokenError = res => (error) => {
   switch (error.name) {
   case 'TokenExpiredError':
-    // throw token expirado
+    errorHandlers.sendUnauthorizedError(res)(new ExpiredToken());
+    break;
   default:
     errorHandlers.sendUnauthorizedError(res)(error);
   }
