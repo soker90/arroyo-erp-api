@@ -237,6 +237,10 @@ describe('AccountController', () => {
         token = await requestLogin();
       });
 
+      test('Se ha autenticado el usuario', () => {
+        expect(token).toBeTruthy();
+      });
+
       describe('Crea un usuario correctamente', () => {
         let response;
 
@@ -255,6 +259,7 @@ describe('AccountController', () => {
         });
 
         test('Debería dar un 201', async () => {
+          expect(token).toBeTruthy();
           expect(response.statusCode).toBe(201);
         });
       });
@@ -274,8 +279,7 @@ describe('AccountController', () => {
         });
 
         test('Debería dar un 400', () => {
-          expect(response.statusCode)
-            .toBe(400);
+          expect(response.statusCode).toBe(400);
         });
       });
 

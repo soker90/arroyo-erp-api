@@ -31,7 +31,7 @@ class UserExist extends Error {
    */
   constructor(msg = 'El usuario ya existe') {
     super(msg);
-    this.code = 406;
+    this.code = 400;
     this.name = this.constructor.name;
   }
 }
