@@ -1,6 +1,6 @@
 const errorHandlers = require('../error-handlers');
 const { verifyToken, signToken } = require('./auth.service');
-const { ExpiredToken } = require('../../errors/user.errors');
+const { ExpiredToken, InvalidToken } = require('../../errors/user.errors');
 
 /**
  * Returns the token in the response
@@ -35,8 +35,10 @@ const handleVerifyTokenError = res => (error) => {
  */
 const checkAuthorization = async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split('Bearer ')[1];
+    const token = req.headers.authorization?.split('Bearer ')?.[1];
+    if(!token) throw new InvalidToken();
     const dataToken = await verifyToken(token);
+    // Todo buscar usuario
     if (dataToken?.user) refreshToken(res, dataToken);
 
     next();

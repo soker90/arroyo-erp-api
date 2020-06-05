@@ -2,7 +2,7 @@ const supertest = require('supertest');
 const { mongoose, AccountModel } = require('arroyo-erp-models');
 const testDB = require('../../../test/test-db')(mongoose);
 const { verifyToken } = require('../../../components/auth/auth.service');
-
+const requestLogin = require('../../../test/request-login');
 const app = require('../../..');
 
 const user1 = {
@@ -32,7 +32,8 @@ describe('AccountController', () => {
       });
 
       test('Debería dar un 401', () => {
-        expect(response.statusCode).toBe(401);
+        expect(response.statusCode)
+          .toBe(401);
       });
     });
 
@@ -50,7 +51,8 @@ describe('AccountController', () => {
       });
 
       test('Devería devolver un 401', () => {
-        expect(response.status).toEqual(401);
+        expect(response.status)
+          .toEqual(401);
       });
     });
 
@@ -60,7 +62,10 @@ describe('AccountController', () => {
       beforeAll(done => {
         supertest(app)
           .post('/account/login')
-          .send({ username: user1.username, password: 'wrongpassword' })
+          .send({
+            username: user1.username,
+            password: 'wrongpassword',
+          })
           .end((err, res) => {
             response = res;
             done();
@@ -68,7 +73,8 @@ describe('AccountController', () => {
       });
 
       test('Devería devolver un 401', () => {
-        expect(response.status).toEqual(401);
+        expect(response.status)
+          .toEqual(401);
       });
     });
 
@@ -79,7 +85,10 @@ describe('AccountController', () => {
         const { username, password } = user1;
         supertest(app)
           .post('/account/login')
-          .send({ username, password })
+          .send({
+            username,
+            password,
+          })
           .end((err, res) => {
             response = res;
             done();
@@ -87,12 +96,14 @@ describe('AccountController', () => {
       });
 
       test('Devería devolver un 200', () => {
-        expect(response.status).toEqual(200);
+        expect(response.status)
+          .toEqual(200);
       });
 
       test('Genera un token válido', async () => {
         const dataToken = await verifyToken(JSON.parse(response.text).token);
-        expect(dataToken.user).toEqual(user1.username);
+        expect(dataToken.user)
+          .toEqual(user1.username);
       });
     });
   });
@@ -115,8 +126,177 @@ describe('AccountController', () => {
       });
 
       test('Debería dar un 401', () => {
-        expect(response.statusCode).toBe(401);
+        expect(response.statusCode)
+          .toBe(401);
       });
     });
-  })
+
+    describe('Se envía un token inválido', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get('/account/me')
+          .set('Authorization', 'dd')
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Se envía un token expirado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get('/account/me')
+          .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZWR1IiwiaWF0IjoxNTkwNjA2ODYxLCJleHAiOjE1OTA2MTQwNjF9.Ws0KNfj_OwsoBHopXbuDN5LELzPDJeiYL7Aq4exUCFI')
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Dvuelve el mensaje "El token ha expirado"', () => {
+        expect(JSON.parse(response.text).message)
+          .toBe('El token ha expirado');
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Se envía un token correcto', () => {
+      let response;
+
+      beforeAll(done => {
+        const { username, password } = user1;
+        let token;
+        supertest(app)
+          .post('/account/login')
+          .send({
+            username,
+            password,
+          })
+          .end((err, res) => {
+            token = JSON.parse(res.text).token;
+            supertest(app)
+              .get('/account/me')
+              .set('Authorization', `Bearer ${token}`)
+              .end((err2, res2) => {
+                response = res2;
+                done();
+              });
+          });
+      });
+
+      test('Devuelve un token', () => {
+        expect(response.headers.token).toBeTruthy();
+      });
+
+      test('Debería dar un 204', () => {
+        expect(response.statusCode)
+          .toBe(204);
+      });
+    });
+  });
+  describe('POST /account/createAccount', () => {
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post('/account/createAccount')
+          .send({
+            username: 'tessst',
+            password: 'passss',
+          })
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(async () => {
+        token = await requestLogin();
+      });
+
+      describe('Crea un usuario correctamente', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post('/account/createAccount')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              username: 'tessst',
+              password: 'passss',
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 201', async () => {
+          expect(response.statusCode).toBe(201);
+        });
+      });
+
+      describe('Intenta crea un usuario sin password', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post('/account/createAccount')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ username: 'tessst' })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+      });
+
+      describe('No se manda usuario ni contraseña', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post('/account/createAccount')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+      });
+    });
+  });
 });

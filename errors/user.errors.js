@@ -48,9 +48,22 @@ class ExpiredToken extends Error {
   }
 }
 
+class InvalidToken extends Error {
+  /**
+   * Create instance
+   * @param {String} msg
+   */
+  constructor(msg = 'El token no es válido') {
+    super(msg);
+    this.code = 401;
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvalidLogin,
   UserNotFound,
   UserExist,
   ExpiredToken,
+  InvalidToken,
 };

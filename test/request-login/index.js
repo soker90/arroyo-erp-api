@@ -19,7 +19,10 @@ const requestLogin = (app = defaultApp, credentials = defaultCredentials) => (
         username: credentials.username,
         password: credentials.password,
       }))
-    .then(res => res.body.token)
+    .then(res => {
+      console.log(res.body);
+      return res.body.token;
+    })
 );
 
 requestLogin.defaultCredentials = defaultCredentials;
