@@ -1,6 +1,6 @@
 const { AccountModel } = require('arroyo-erp-models');
 const { compare } = require('bcrypt');
-const { InvalidLogin, UserNotFound, UserExist } = require('../../errors/user.errors');
+const { InvalidLogin, UserNotFound, UserExist, InvalidPassword } = require('../../errors/user.errors');
 const { signToken, verifyToken } = require('../../components/auth/auth.service');
 
 /**
@@ -44,6 +44,7 @@ const createAccount = async ({ username, password }) => {
   const userExist = await AccountModel.findOne({ username });
 
   if (userExist) throw new UserExist();
+  if (!password) throw new InvalidPassword();
 
 
   await new AccountModel({

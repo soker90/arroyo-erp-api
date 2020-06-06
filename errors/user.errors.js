@@ -36,6 +36,17 @@ class UserExist extends Error {
   }
 }
 
+class InvalidPassword extends Error {
+  /**
+   * Create instance
+   * @param {String} msg
+   */
+  constructor(msg = 'La contraseña no es válida') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 class ExpiredToken extends Error {
   /**
    * Create instance
@@ -66,4 +77,5 @@ module.exports = {
   UserExist,
   ExpiredToken,
   InvalidToken,
+  InvalidPassword,
 };

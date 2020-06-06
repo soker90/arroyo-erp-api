@@ -281,8 +281,8 @@ describe('AccountController', () => {
             });
         });
 
-        test('Debería dar un 400', () => {
-          expect(response.statusCode).toBe(400);
+        test('Debería dar un 422', () => {
+          expect(response.statusCode).toBe(422);
         });
       });
 
@@ -301,7 +301,7 @@ describe('AccountController', () => {
 
         test('Debería dar un 400', () => {
           expect(response.statusCode)
-            .toBe(400);
+            .toBe(422);
         });
       });
     });

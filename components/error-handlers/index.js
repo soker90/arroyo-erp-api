@@ -10,7 +10,7 @@ function sendValidationError(res) {
   return err => {
     const { statusCode, payload } = Boom.badData(err.message).output;
     res.status(statusCode).send(payload);
-    logService.logInfo(`[Error] - ${payload.message}`);
+    logService.logInfo(`[Error] - ${payload.message}- ${payload.message}`);
   };
 }
 

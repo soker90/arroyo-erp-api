@@ -16,13 +16,16 @@ class AccountController {
   }
 
   _handleError(res, error) {
-    switch (error.code) {
-    case 401:
+    switch (error.constructor.name) {
+    case 'InvalidLogin':
+    case 'UserNotFound':
       this.errorHandler.sendUnauthorizedError(res)(error);
       break;
-    case 406:
-      this.errorHandler.sendNotAcceptable(res)(error);
+    case 'UserExist':
+    case 'InvalidPassword':
+      this.errorHandler.sendValidationError(res)(error);
       break;
+    /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;
