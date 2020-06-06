@@ -233,8 +233,11 @@ describe('AccountController', () => {
 
     describe('Usuario autenticado', () => {
       let token;
-      before(async () => {
-        token = await requestLogin();
+      before(done => {
+        requestLogin().then(res => {
+          token = res;
+          done();
+        });
       });
 
       test('Se ha autenticado el usuario', () => {
