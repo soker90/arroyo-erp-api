@@ -86,7 +86,7 @@ const updatePrice = async ({ params, body }) => {
     date: Date.now(),
     product: params.id,
     price: body.price,
-  });
+  }).save();
 };
 
 module.exports = {
