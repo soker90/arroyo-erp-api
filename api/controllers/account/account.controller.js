@@ -16,7 +16,7 @@ class AccountController {
   }
 
   _handleError(res, error) {
-    switch (error.constructor.name) {
+    switch (error.name) {
     case 'InvalidLogin':
     case 'UserNotFound':
       this.errorHandler.sendUnauthorizedError(res)(error);

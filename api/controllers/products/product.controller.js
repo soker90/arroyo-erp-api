@@ -60,6 +60,18 @@ class ProductController {
         .send())
       .catch(this._handleError.bind(this, res));
   }
+
+  /**
+   * Add new price to the product
+   */
+  updateProduct(req, res) {
+    logService.logInfo('[products] - Add new price');
+    Promise.resolve(req)
+      .then(this.productService.updatePrice)
+      .then(() => res.status(201)
+        .send())
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = ProductController;

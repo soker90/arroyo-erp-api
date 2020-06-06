@@ -1,6 +1,6 @@
 /* eslint-disable nonblock-statement-body-position */
-const { ProductModel } = require('arroyo-erp-models');
-const { ProductMissingParams } = require('../../../errors/product.errors');
+const { ProductModel, PriceModel } = require('arroyo-erp-models');
+const { ProductMissingParams, ProductMissingUpdate } = require('../../../errors/product.errors');
 
 /**
  * Validate params
@@ -72,8 +72,26 @@ const update = async ({ params, body }) => {
     .leans();
 };
 
+/**
+ * Update price of the product
+ * @param {Object} params
+ * @param {Object} body
+ * @return {Promise<void>}
+ */
+const updatePrice = async ({ params, body }) => {
+  if (!params.id) throw new ProductMissingParams();
+  if (!body.price) throw new ProductMissingUpdate();
+
+  await new PriceModel({
+    date: Date.now(),
+    product: params.id,
+    price: body.price,
+  });
+};
+
 module.exports = {
   products,
   create,
   update,
+  updatePrice,
 };
