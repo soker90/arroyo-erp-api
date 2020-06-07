@@ -3,9 +3,11 @@ const http = require('http');
 
 const app = require('..');
 const config = require('../config');
+
 const port = process.env.PORT || config.port;
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
+  // eslint-disable-next-line no-console
   console.errorTrack('uncaughtException exception: ', err);
 });
 
@@ -14,6 +16,7 @@ app.set('port', port);
 const server = http.createServer(app);
 
 function onError(error) {
+  // eslint-disable-next-line no-console
   console.errorTrack('[onError] - There was an error starting the server', error);
   process.exit(1);
 }
@@ -24,6 +27,7 @@ function onListening() {
     ? `pipe ${addr}`
     : `port ${addr.port}`;
 
+  // eslint-disable-next-line no-console
   console.log(`[onListening] - Server listening on ${bind}`);
 }
 

@@ -16,9 +16,11 @@ class ProductController {
   }
 
   _handleError(res, error) {
-    switch (error.code) {
-    case 400:
-      this.errorHandler.sendBadRequest(res)(error);
+    switch (error.name) {
+    case 'ProductMissingParams':
+    case 'ProductMissingUpdate':
+    case 'ProductNotFound':
+      this.errorHandler.sendValidationError(res)(error);
       break;
     default:
       this.errorHandler.sendError(res)(error);
