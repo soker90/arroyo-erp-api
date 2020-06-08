@@ -35,9 +35,9 @@
     "node": "14.x"
   },
   "devDependencies": {
-    "eslint": "^7.1.0",
+    "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-import": "^2.21.1",
     "eslint-plugin-jest": "^23.13.2",
     "jest": "^26.0.1",
     "jest-circus": "^26.0.1",
