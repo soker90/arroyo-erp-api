@@ -49,4 +49,4 @@ Para desarrollar necesitas Node.js y un gestor de paquetes para node como npm.
     $ npm start
     
 ### En desarrollo
-    $ npm start:dev
+    $ npm run start:dev
