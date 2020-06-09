@@ -1,4 +1,4 @@
-const { ProductModel } = require('arroyo-erp-models');
+const { ProductModel, PriceModel } = require('arroyo-erp-models');
 
 /**
  * Calcula los totales del albarán
@@ -42,8 +42,12 @@ const calcData = deliveryOrder => {
  */
 const calcProduct = async (product, price, quantity) => {
   const {
-    name, historicPrice, iva, re, code, rate,
+    name, iva, re, code, rate,
   } = await ProductModel.findOne({ _id: product });
+
+  let lastPrice = await PriceModel.findOne({ product }).sort({ date: -1 });
+
+  if (!lastPrice) lastPrice = 0;
 
   const rateCalc = rate ? rate * quantity : 0;
   const taxBase = quantity * price + rateCalc;
@@ -58,7 +62,7 @@ const calcProduct = async (product, price, quantity) => {
     name,
     taxBase,
     ...(rate && { rate }),
-    diff: historicPrice - price,
+    diff: lastPrice - price,
     iva: ivaTotal,
     re: reTotal,
     total: taxBase + ivaTotal + reTotal,
