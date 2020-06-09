@@ -64,7 +64,7 @@ class ProductController {
   /**
    * Add new price to the product
    */
-  updateProduct(req, res) {
+  updatePrice(req, res) {
     logService.logInfo('[products] - Add new price');
     Promise.resolve(req)
       .then(this.productService.updatePrice)
