@@ -1,6 +1,6 @@
 /* eslint-disable nonblock-statement-body-position */
 const { ProductModel, PriceModel } = require('arroyo-erp-models');
-const { ProductMissingParams, ProductMissingUpdate } = require('../../../errors/product.errors');
+const { ProductMissingParams, ProductMissingUpdate, ProductNotFound } = require('../../../errors/product.errors');
 
 /**
  * Validate params
@@ -73,14 +73,32 @@ const update = async ({ params, body }) => {
 };
 
 /**
+ * Validate if existe id
+ * @param {string} id
+ * @return {Promise<void>}
+ * @private
+ */
+const _validateProductId = async id => {
+  let product;
+  try {
+    product = await ProductModel.findOne({ _id: id });
+  } catch (e) {
+    throw new ProductNotFound();
+  }
+  if (!product)
+    throw new ProductNotFound();
+};
+
+/**
  * Update price of the product
  * @param {Object} params
  * @param {Object} body
  * @return {Promise<void>}
  */
 const updatePrice = async ({ params, body }) => {
-  if (!params.id) throw new ProductMissingParams();
-  if (!body.price) throw new ProductMissingUpdate();
+  if (!body.price || typeof body.price !== 'number') throw new ProductMissingUpdate();
+
+  await _validateProductId(params.id);
 
   await new PriceModel({
     date: Date.now(),
