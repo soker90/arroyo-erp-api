@@ -92,7 +92,7 @@ describe('ProductController', () => {
     });
   });
 
-  describe('POST /products/:id/price', () => {
+  describe('POST /products/:id/prices', () => {
     let product;
     before(async () => {
       product = await ProductModel.create(productData);
@@ -102,7 +102,7 @@ describe('ProductController', () => {
 
       beforeAll(done => {
         supertest(app)
-          .post(`/products/${product._id}/price`)
+          .post(`/products/${product._id}/prices`)
           .end((err, res) => {
             response = res;
             done();
@@ -133,7 +133,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post(`/products/${product._id}/price`)
+            .post(`/products/${product._id}/prices`)
             .set('Authorization', `Bearer ${token}`)
             .send({ price: 11.2 })
             .end((err, res) => {
@@ -152,7 +152,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/ss/price')
+            .post('/products/ss/prices')
             .set('Authorization', `Bearer ${token}`)
             .send({ price: 11.2 })
             .end((err, res) => {
@@ -171,7 +171,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/ss/price')
+            .post('/products/ss/prices')
             .set('Authorization', `Bearer ${token}`)
             .send({ price: '88' })
             .end((err, res) => {
@@ -190,7 +190,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/ss/price')
+            .post('/products/ss/prices')
             .set('Authorization', `Bearer ${token}`)
             .send()
             .end((err, res) => {

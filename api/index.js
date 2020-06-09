@@ -42,7 +42,7 @@ module.exports = async app => {
   app.get('/products', authMiddleware, productController.products.bind(productController));
   app.post('/products', authMiddleware, productController.create.bind(productController));
   app.patch('/products/:id', authMiddleware, productController.edit.bind(productController));
-  app.post('/products/:id/price', authMiddleware, productController.updatePrice.bind(productController));
+  app.post('/products/:id/prices', authMiddleware, productController.updatePrice.bind(productController));
   /**
    * Providers endpoints
    */
