@@ -96,12 +96,13 @@ const _validateProductId = async id => {
  * @return {Promise<void>}
  */
 const updatePrice = async ({ params, body }) => {
-  if (!body.price || typeof body.price !== 'number') throw new ProductMissingUpdate();
+  if (!body.price || typeof body.price !== 'number' || !body.date || typeof body.date !== 'number')
+    throw new ProductMissingUpdate();
 
   await _validateProductId(params.id);
 
   await new PriceModel({
-    date: Date.now(),
+    date: body.date,
     product: params.id,
     price: body.price,
   }).save();

@@ -37,17 +37,18 @@ const calcData = deliveryOrder => {
  * @param {string} product
  * @param {string | number} price
  * @param {string | number} quantity
+ * @param {Number} date
  * @return {Promise<{product: *, total: number, code: *, quantity: number, re: number,
  * iva: number, price: number, name: *, diff: number, taxBase: number}>}
  */
-const calcProduct = async (product, price, quantity) => {
+const calcProduct = async (product, price, quantity, date = 0) => {
   const {
     name, iva, re, code, rate,
   } = await ProductModel.findOne({ _id: product });
 
-  let lastPrice = await PriceModel.findOne({ product }).sort({ date: -1 });
-
-  if (!lastPrice) lastPrice = 0;
+  const prices = await PriceModel.find({ product, date: { $gt: 0, $lt: date } }).sort({ date: -1 });
+  console.log(prices);
+  const lastPrice = prices.length ? prices[0].price : 0;
 
   const rateCalc = rate ? rate * quantity : 0;
   const taxBase = quantity * price + rateCalc;
@@ -62,7 +63,7 @@ const calcProduct = async (product, price, quantity) => {
     name,
     taxBase,
     ...(rate && { rate }),
-    diff: lastPrice - price,
+    diff: price - lastPrice,
     iva: ivaTotal,
     re: reTotal,
     total: taxBase + ivaTotal + reTotal,

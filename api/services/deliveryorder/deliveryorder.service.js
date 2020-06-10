@@ -104,9 +104,9 @@ const addProduct = async ({
   if (!id) throw new DeliveryOrderMissingId();
   if (!quantity || !product || !price) throw new DeliveryOrderMissing();
 
-  const newProduct = await calcProduct(product, price, quantity);
   return await DeliveryOrderModel.findOne({ _id: id })
-    .then(response => {
+    .then(async response => {
+      const newProduct = await calcProduct(product, price, quantity, response.date);
       response.set('products', [
         ...response.products,
         newProduct,
