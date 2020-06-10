@@ -133,10 +133,9 @@ const updateProduct = async ({
   if (!id) throw new DeliveryOrderMissingId();
   if (!quantity || !product || !price) throw new DeliveryOrderMissing();
 
-  const productModified = await calcProduct(product, price, quantity);
-
   return await DeliveryOrderModel.findOne({ _id: id })
-    .then(response => {
+    .then(async response => {
+      const productModified = await calcProduct(product, price, quantity, response.date);
       const products = response.products.slice();
       if (index >= products.length || index < 0) throw new DeliveryOrderMissing('Index incorrecto');
 

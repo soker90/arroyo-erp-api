@@ -128,14 +128,14 @@ describe('ProductController', () => {
         expect(token).toBeTruthy();
       });
 
-      describe('Añade un  correctamente', () => {
+      describe('Añade un precio correctamente', () => {
         let response;
 
         beforeAll(done => {
           supertest(app)
             .post(`/products/${product._id}/prices`)
             .set('Authorization', `Bearer ${token}`)
-            .send({ price: 11.2 })
+            .send({ price: 11.2, date: 1589752920000 })
             .end((err, res) => {
               response = res;
               done();
