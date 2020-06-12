@@ -42,7 +42,7 @@ module.exports = async app => {
   app.get('/products', authMiddleware, productController.products.bind(productController));
   app.post('/products', authMiddleware, productController.create.bind(productController));
   app.patch('/products/:id', authMiddleware, productController.edit.bind(productController));
-  app.post('/products/:id/price', authMiddleware, productController.updatePrice.bind(productController));
+  app.post('/products/:id/prices', authMiddleware, productController.updatePrice.bind(productController));
   /**
    * Providers endpoints
    */
@@ -57,7 +57,9 @@ module.exports = async app => {
   app.post('/deliveryorders', authMiddleware, deliveryOrderController.create.bind(deliveryOrderController));
   app.patch('/deliveryorders/:id', authMiddleware, deliveryOrderController.edit.bind(deliveryOrderController));
   app.get('/deliveryorders/:id', authMiddleware, deliveryOrderController.deliveryOrder.bind(deliveryOrderController));
-  /* Products of deliver order */
+  /**
+   *  Products of deliver order
+   */
   app.post('/deliveryorders/:id/product', authMiddleware, deliveryOrderController.addProduct.bind(deliveryOrderController));
   app.put('/deliveryorders/:id/product/:index', authMiddleware, deliveryOrderController.updateProduct.bind(deliveryOrderController));
   app.delete('/deliveryorders/:id/product/:index', authMiddleware, deliveryOrderController.deleteProduct.bind(deliveryOrderController));
