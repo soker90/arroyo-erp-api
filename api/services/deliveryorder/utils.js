@@ -1,4 +1,4 @@
-const { ProductModel, PriceModel } = require('arroyo-erp-models');
+const { ProductModel, PriceModel, DeliveryOrderModel } = require('arroyo-erp-models');
 
 /**
  * Calcula los totales del albarán
@@ -46,7 +46,14 @@ const calcProduct = async (product, price, quantity, date = 0) => {
     name, iva, re, code, rate,
   } = await ProductModel.findOne({ _id: product });
 
-  const prices = await PriceModel.find({ product, date: { $gt: 0, $lt: date } }).sort({ date: -1 });
+  const prices = await PriceModel.find({
+    product,
+    date: {
+      $gt: 0,
+      $lt: date,
+    },
+  })
+    .sort({ date: -1 });
   console.log(prices);
   const lastPrice = prices.length ? prices[0].price : 0;
 
@@ -70,7 +77,78 @@ const calcProduct = async (product, price, quantity, date = 0) => {
   };
 };
 
+/**
+ * Get all free delivery orders for one provider
+ * @param {String} provider
+ * @return {Object}
+ */
+const getFreeDeliveryOrders = async provider => {
+  const freeOrders = await DeliveryOrderModel.find({
+    provider,
+    nOrder: { $exists: false },
+  })
+    .lean();
+
+  const free = freeOrders.map(({
+    _id, date, total, products,
+  }) => ({
+    _id,
+    date,
+    total,
+    products: products.map(({
+      name, price, quantity, total: totalProduct,
+    }) => ({
+      name,
+      price,
+      quantity,
+      total: totalProduct,
+    })),
+  }));
+
+  return free;
+};
+
+/**
+ * Get all free delivery orders for one provider
+ * @param {String} provider
+ * @param {Number} offset
+ * @param {Number} limit
+ * @return {Promise<{data: *, count: *}>}
+ */
+const getInInvoicesDeliveryOrders = async (provider, offset, limit) => {
+  const inInvoicesOrders = await DeliveryOrderModel.find({
+    provider,
+    nOrder: { $exists: true },
+  })
+    .skip(0)
+    .limit(10)
+    .lean();
+
+  const data = inInvoicesOrders.map(({
+    _id, date, total, nOrder, nInvoice,
+  }) => ({
+    _id,
+    date,
+    total,
+    nOrder,
+    nInvoice,
+  }));
+
+  const count = await DeliveryOrderModel.find({
+    provider,
+    nOrder: { $exists: true },
+  })
+    .countDocuments();
+
+  return {
+    count,
+    data,
+  };
+};
+
 module.exports = {
   calcData,
   calcProduct,
+  getFreeDeliveryOrders,
+  getInInvoicesDeliveryOrders,
 };

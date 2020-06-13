@@ -5,27 +5,23 @@ const {
   DeliveryOrderMissing,
 } = require('../../../errors/delivery-order.errors');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
-const { calcData, calcProduct } = require('./utils');
+const {
+  calcData, calcProduct, getFreeDeliveryOrders, getInInvoicesDeliveryOrders,
+} = require('./utils');
 
 /**
  * Return all delivery orders
  * @return {Promise<{data: any}>}
  */
-const orders = async ({ provider }) => (
-  // eslint-disable-next-line no-return-await
-  await DeliveryOrderModel.aggregate([
-    { $match: { ...(provider && { provider }) } },
-    {
-      $project: {
-        _id: 1,
-        date: 1,
-        size: { $size: '$products' },
-        total: { $sum: '$products.total' },
-      },
-    },
-  ])
-);
+const orders = async ({ provider }) => {
+  const free = await getFreeDeliveryOrders(provider);
+  const inInvoices = await getInInvoicesDeliveryOrders(provider);
 
+  return {
+    free,
+    inInvoices,
+  };
+};
 
 /**
  * Create product
@@ -112,7 +108,8 @@ const addProduct = async ({
         newProduct,
       ]);
       return response;
-    }).then(calcData)
+    })
+    .then(calcData)
     .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
@@ -142,7 +139,8 @@ const updateProduct = async ({
       products[index] = productModified;
       response.set('products', products);
       return response;
-    }).then(calcData)
+    })
+    .then(calcData)
     .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
@@ -166,7 +164,8 @@ const deleteProduct = async ({
       products.splice(index, 1);
       response.set('products', products);
       return response;
-    }).then(calcData)
+    })
+    .then(calcData)
     .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
