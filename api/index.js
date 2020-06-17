@@ -1,8 +1,9 @@
 const {
-  AccountController, ProductController, ProviderController, DeliveryOrderController,
+  AccountController, ProductController, ProviderController,
+  DeliveryOrderController, InvoiceController,
 } = require('./controllers');
 const {
-  accountService, productService, providerService, deliveryOrderService,
+  accountService, productService, providerService, deliveryOrderService, invoiceService,
 } = require('./services');
 const { authMiddleware } = require('../components/auth');
 
@@ -26,6 +27,11 @@ const providerController = new ProviderController({
 const deliveryOrderController = new DeliveryOrderController({
   errorHandler,
   deliveryOrderService,
+});
+
+const invoicesController = new InvoiceController({
+  errorHandler,
+  invoiceService,
 });
 
 module.exports = async app => {
@@ -63,4 +69,8 @@ module.exports = async app => {
   app.post('/deliveryorders/:id/product', authMiddleware, deliveryOrderController.addProduct.bind(deliveryOrderController));
   app.put('/deliveryorders/:id/product/:index', authMiddleware, deliveryOrderController.updateProduct.bind(deliveryOrderController));
   app.delete('/deliveryorders/:id/product/:index', authMiddleware, deliveryOrderController.deleteProduct.bind(deliveryOrderController));
+  /**
+   * Invoices endpoints
+   */
+  app.post('/invoices', authMiddleware, invoicesController.create.bind(invoicesController));
 };
