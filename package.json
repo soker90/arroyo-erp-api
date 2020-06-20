@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "arroyo-erp-models": "^0.5.0",
+    "arroyo-erp-models": "^0.5.1",
     "axios": "^0.19.2",
     "bcrypt": "^5.0.0",
     "bluebird": "^3.7.2",
@@ -35,7 +35,7 @@
     "node": "14.x"
   },
   "devDependencies": {
-    "eslint": "^7.2.0",
+    "eslint": "^7.3.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-jest": "^23.13.2",

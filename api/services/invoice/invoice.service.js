@@ -1,15 +1,20 @@
 const { InvoiceModel } = require('arroyo-erp-models');
 const { InvoiceMissingDeliveryOrders } = require('../../../errors/invoice.errors');
+const { calcData } = require('./utils');
 
 /**
  * Create invoice
- * @param {string} provider
+ * @param {string} data
  */
-const create = async ({ deliveryOrders }) => {
-  if(!deliveryOrders?.length)
-    throw new InvoiceMissingDeliveryOrders();
+const create = async data => {
+  let invoice = {};
+  if (data.deliveryOrders) {
+    if (!data.deliveryOrders.length)
+      throw new InvoiceMissingDeliveryOrders();
+    invoice = calcData(data);
+  }
 
-  await new InvoiceModel({ deliveryOrders }).save();
+  await new InvoiceModel(invoice).save();
 };
 
 module.exports = {
