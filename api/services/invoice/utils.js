@@ -1,11 +1,15 @@
-const { DeliveryOrderModel } = require('arroyo-erp-models');
-const { InvoiceNotFoundDeliveryOrder } = require('../../../errors/invoice.errors');
+const { DeliveryOrderModel } = require("arroyo-erp-models");
+const {
+  InvoiceNotFoundDeliveryOrder,
+} = require("../../../errors/invoice.errors");
 
 /**
- * Calcula los totales del albarán
- * @param {Object} invoice
+ * Obtiene los datos de los albaranes de la factura
+ * @param {Array} deliveryOrdersData
+ * @returns {Promise<{deliveryOrders: [], total: number, re: number, iva: number, taxBase: number}>}
+ * @private
  */
-const calcData = invoice => {
+const _calcDeliveryOrdersData = async (deliveryOrdersData) => {
   let ivaI = 0;
   let reI = 0;
   let totalI = 0;
@@ -13,34 +17,50 @@ const calcData = invoice => {
   let rateI = 0;
   let deliveryOrders = [];
 
-  invoice.deliveryOrders.forEach(async deliveryOrderId => {
-    await DeliveryOrderModel.findOne({ _id: deliveryOrderId })
-      .then(deliveryOrder => {
-        if (!deliveryOrder) throw new InvoiceNotFoundDeliveryOrder();
-        ivaI += deliveryOrder.iva;
-        reI += deliveryOrder.re;
-        totalI += deliveryOrder.total;
-        taxBaseI += deliveryOrder.taxBase;
-        if (deliveryOrder.rate) rateI += deliveryOrder.rate;
-        deliveryOrders.push(deliveryOrder);
-      });
-    console.log(deliveryOrders)
-  });
+  for (const deliveryOrderId of deliveryOrdersData) {
+    const deliveryOrder = await DeliveryOrderModel.findOne({
+      _id: deliveryOrderId,
+    });
+
+    if (!deliveryOrder) throw new InvoiceNotFoundDeliveryOrder();
+
+    ivaI += deliveryOrder.iva;
+    reI += deliveryOrder.re;
+    totalI += deliveryOrder.total;
+    taxBaseI += deliveryOrder.taxBase;
+    if (deliveryOrder.rate) rateI += deliveryOrder.rate;
+
+    deliveryOrders.push(deliveryOrder);
+  }
 
   return {
     deliveryOrders,
-    dateInvoice: invoice.date,
-    dateRegister: Date.now(),
     total: totalI,
     iva: ivaI,
     ...(rateI && { rate: rateI }),
     re: reI,
-    nInvoice: invoice.nInvoice,
-    concept: invoice.concept,
     taxBase: taxBaseI,
   };
 };
 
+/**
+ * Calcula los totales del albarán para compras
+ * @param {Object} invoice
+ */
+const calcNewShopping = async (invoice) => ({
+  ...(await _calcDeliveryOrdersData(invoice.deliveryOrders)),
+  dateRegister: Date.now(),
+  concept: invoice.concept,
+});
+
+const addInvoiceToDeliveryOrder = async (invoiceData, deliveryOrders) => {
+  for (const deliveryOrder of deliveryOrders) {
+    deliveryOrder.invoice = invoiceData._id;
+    await deliveryOrder.save();
+  }
+};
+
 module.exports = {
-  calcData,
+  calcNewShopping,
+  addInvoiceToDeliveryOrder,
 };
