@@ -6,7 +6,7 @@ const { calcNewShopping, addInvoiceToDeliveryOrder } = require("./utils");
 
 /**
  * Create invoice
- * @param {string} data
+ * @param {Object} data
  */
 const create = async (data) => {
   let invoice = {};
@@ -23,6 +23,24 @@ const create = async (data) => {
   return newInvoice;
 };
 
+/**
+ *
+ * @param {Object} params
+ * @returns {Promise<*>}
+ */
+const invoices = async ({ concept, offset, limit }) => {
+  const filter = {
+    ...(concept && { concept }),
+  };
+
+  return await InvoiceModel.find(filter, "_id nOrder dateInvoice total")
+    .sort({ nOrder: -1 })
+    .skip(offset || 0)
+    .limit(limit)
+    .lean();
+};
+
 module.exports = {
   create,
+  invoices,
 };

@@ -1,50 +1,47 @@
-const Promise = require('bluebird');
+const Promise = require("bluebird");
 
-const LogService = require('../../services/log.service');
+const LogService = require("../../services/log.service");
 
-const TYPE = 'InvoiceController';
+const TYPE = "InvoiceController";
 
 const logService = new LogService(TYPE);
 
 class InvoicesController {
-  constructor({
-    invoiceService,
-    errorHandler,
-  }) {
+  constructor({ invoiceService, errorHandler }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
   }
 
   _handleError(res, error) {
     switch (error.code) {
-    case 400:
-      this.errorHandler.sendBadRequest(res)(error);
-      break;
-    default:
-      this.errorHandler.sendError(res)(error);
-      break;
+      case 400:
+        this.errorHandler.sendBadRequest(res)(error);
+        break;
+      default:
+        this.errorHandler.sendError(res)(error);
+        break;
     }
   }
 
   /**
-   * Return all invoices with the filters
+   * Return all invoices
    */
-  /* invoices(req, res) {
-    logService.logInfo('[invoices] - List of invoices');
+  invoices(req, res) {
+    logService.logInfo("[invoices] - List of invoices");
     Promise.resolve(req.query)
-      .then(this.invoiceService.orders)
-      .then(data => res.send(data))
+      .then(this.invoiceService.invoices)
+      .then((data) => res.send(data))
       .catch(this._handleError.bind(this, res));
-  } */
+  }
 
   /**
    * Create the new delivery order
    */
   create(req, res) {
-    logService.logInfo('[invoices] - Create invoice');
+    logService.logInfo("[invoices] - Create invoice");
     Promise.resolve(req.body)
       .then(this.invoiceService.create)
-      .then(data => res.send(data))
+      .then((data) => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
