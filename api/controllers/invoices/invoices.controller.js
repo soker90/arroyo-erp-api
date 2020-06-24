@@ -13,9 +13,10 @@ class InvoicesController {
   }
 
   _handleError(res, error) {
-    switch (error.code) {
-      case 400:
-        this.errorHandler.sendBadRequest(res)(error);
+    switch (error.name) {
+      case "InvoiceMissingDeliveryOrders":
+      case "InvoiceNotFoundDeliveryOrder":
+        this.errorHandler.sendValidationError(res)(error);
         break;
       default:
         this.errorHandler.sendError(res)(error);
@@ -30,6 +31,16 @@ class InvoicesController {
     logService.logInfo("[invoices] - List of invoices");
     Promise.resolve(req.query)
       .then(this.invoiceService.invoices)
+      .then((data) => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  invoicesByProvider(req, res) {
+    logService.logInfo(
+      "[invoicesByProvider] - List of invoices of the provider"
+    );
+    Promise.resolve(req)
+      .then(this.invoiceService.invoicesByProvider)
       .then((data) => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
