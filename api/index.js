@@ -4,17 +4,17 @@ const {
   ProviderController,
   DeliveryOrderController,
   InvoiceController,
-} = require("./controllers");
+} = require('./controllers');
 const {
   accountService,
   productService,
   providerService,
   deliveryOrderService,
   invoiceService,
-} = require("./services");
-const { authMiddleware } = require("../components/auth");
+} = require('./services');
+const { authMiddleware } = require('../components/auth');
 
-const errorHandler = require("../components/error-handlers");
+const errorHandler = require('../components/error-handlers');
 
 const accountController = new AccountController({
   errorHandler,
@@ -41,42 +41,30 @@ const invoicesController = new InvoiceController({
   invoiceService,
 });
 
-module.exports = async (app) => {
-  app.get("/monit/health", (req, res) => res.send("OK"));
+module.exports = async app => {
+  app.get('/monit/health', (req, res) => res.send('OK'));
   /**
    * Account endpoints
    */
-  app.post("/account/login", accountController.auth.bind(accountController));
-  app.get(
-    "/account/me",
-    authMiddleware,
-    accountController.me.bind(accountController)
-  );
-  app.post(
-    "/account/createAccount",
-    authMiddleware,
-    accountController.createAccount.bind(accountController)
-  );
+  app.post('/account/login', accountController.auth.bind(accountController));
+  app.get('/account/me', authMiddleware, accountController.me.bind(accountController));
+  app.post('/account/createAccount', authMiddleware, accountController.createAccount.bind(accountController));
   /**
    * Products endpoints
    */
-  app.get(
-    "/products",
-    authMiddleware,
-    productController.products.bind(productController)
-  );
+  app.get('/products', authMiddleware, productController.products.bind(productController));
   app.post(
-    "/products",
+    '/products',
     authMiddleware,
     productController.create.bind(productController)
   );
   app.patch(
-    "/products/:id",
+    '/products/:id',
     authMiddleware,
     productController.edit.bind(productController)
   );
   app.post(
-    "/products/:id/prices",
+    '/products/:id/prices',
     authMiddleware,
     productController.updatePrice.bind(productController)
   );
@@ -84,22 +72,22 @@ module.exports = async (app) => {
    * Providers endpoints
    */
   app.get(
-    "/providers",
+    '/providers',
     authMiddleware,
     providerController.providers.bind(providerController)
   );
   app.post(
-    "/providers",
+    '/providers',
     authMiddleware,
     providerController.create.bind(providerController)
   );
   app.put(
-    "/providers/:id",
+    '/providers/:id',
     authMiddleware,
     providerController.edit.bind(providerController)
   );
   app.get(
-    "/providers/:id",
+    '/providers/:id',
     authMiddleware,
     providerController.provider.bind(providerController)
   );
@@ -107,22 +95,22 @@ module.exports = async (app) => {
    * Delivery orders endpoints
    */
   app.get(
-    "/deliveryorders",
+    '/deliveryorders',
     authMiddleware,
     deliveryOrderController.orders.bind(deliveryOrderController)
   );
   app.post(
-    "/deliveryorders",
+    '/deliveryorders',
     authMiddleware,
     deliveryOrderController.create.bind(deliveryOrderController)
   );
   app.patch(
-    "/deliveryorders/:id",
+    '/deliveryorders/:id',
     authMiddleware,
     deliveryOrderController.edit.bind(deliveryOrderController)
   );
   app.get(
-    "/deliveryorders/:id",
+    '/deliveryorders/:id',
     authMiddleware,
     deliveryOrderController.deliveryOrder.bind(deliveryOrderController)
   );
@@ -130,17 +118,17 @@ module.exports = async (app) => {
    *  Products of deliver order
    */
   app.post(
-    "/deliveryorders/:id/product",
+    '/deliveryorders/:id/product',
     authMiddleware,
     deliveryOrderController.addProduct.bind(deliveryOrderController)
   );
   app.put(
-    "/deliveryorders/:id/product/:index",
+    '/deliveryorders/:id/product/:index',
     authMiddleware,
     deliveryOrderController.updateProduct.bind(deliveryOrderController)
   );
   app.delete(
-    "/deliveryorders/:id/product/:index",
+    '/deliveryorders/:id/product/:index',
     authMiddleware,
     deliveryOrderController.deleteProduct.bind(deliveryOrderController)
   );
@@ -148,18 +136,19 @@ module.exports = async (app) => {
    * Invoices endpoints
    */
   app.post(
-    "/invoices",
+    '/invoices',
     authMiddleware,
     invoicesController.create.bind(invoicesController)
   );
   app.get(
-    "/invoices",
+    '/invoices',
     authMiddleware,
     invoicesController.invoices.bind(invoicesController)
   );
   app.get(
-    "/invoices/provider/:idProvider",
+    '/invoices/provider/:idProvider',
     authMiddleware,
     invoicesController.invoicesByProvider.bind(invoicesController)
   );
+  app.get('/invoices/:id', authMiddleware, invoicesController.invoice.bind(invoicesController));
 };

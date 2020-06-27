@@ -1,8 +1,8 @@
-const Promise = require("bluebird");
+const Promise = require('bluebird');
 
-const LogService = require("../../services/log.service");
+const LogService = require('../../services/log.service');
 
-const TYPE = "InvoiceController";
+const TYPE = 'InvoiceController';
 
 const logService = new LogService(TYPE);
 
@@ -14,34 +14,51 @@ class InvoicesController {
 
   _handleError(res, error) {
     switch (error.name) {
-      case "InvoiceMissingDeliveryOrders":
-      case "InvoiceNotFoundDeliveryOrder":
-        this.errorHandler.sendValidationError(res)(error);
-        break;
-      default:
-        this.errorHandler.sendError(res)(error);
-        break;
+    case 'InvoiceMissingDeliveryOrders':
+    case 'InvoiceNotFoundDeliveryOrder':
+      this.errorHandler.sendValidationError(res)(error);
+      break;
+    case 'InvoiceIdNotFound':
+      this.errorHandler.sendNotFound(res)(error);
+      break;
+    case 'InvoiceMissingId':
+      this.errorHandler.sendBadRequest(res)(error);
+      break;
+    default:
+      this.errorHandler.sendError(res)(error);
+      break;
     }
+  }
+
+  /**
+   * Return invoice
+   */
+  invoice(req, res) {
+    logService.logInfo('[inovice]  - Get invoice');
+    Promise.resolve(req.params)
+      .then(this.invoiceService.invoice)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
   }
 
   /**
    * Return all invoices
    */
   invoices(req, res) {
-    logService.logInfo("[invoices] - List of invoices");
+    logService.logInfo('[invoices] - List of invoices');
     Promise.resolve(req.query)
       .then(this.invoiceService.invoices)
-      .then((data) => res.send(data))
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
   invoicesByProvider(req, res) {
     logService.logInfo(
-      "[invoicesByProvider] - List of invoices of the provider"
+      '[invoicesByProvider] - List of invoices of the provider'
     );
     Promise.resolve(req)
       .then(this.invoiceService.invoicesByProvider)
-      .then((data) => res.send(data))
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
@@ -49,10 +66,10 @@ class InvoicesController {
    * Create the new delivery order
    */
   create(req, res) {
-    logService.logInfo("[invoices] - Create invoice");
+    logService.logInfo('[invoices] - Create invoice');
     Promise.resolve(req.body)
       .then(this.invoiceService.create)
-      .then((data) => res.send(data))
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
@@ -63,17 +80,6 @@ class InvoicesController {
     logService.logInfo('[delivery orders]  - Edit delivery order');
     Promise.resolve(req)
       .then(this.deliveryOrderService.update)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  } */
-
-  /**
-   * Return all products with the filters
-   */
-  /* deliveryOrder(req, res) {
-    logService.logInfo('[delivery orders]  - Get delivery order');
-    Promise.resolve(req.params)
-      .then(this.deliveryOrderService.deliveryOrder)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   } */

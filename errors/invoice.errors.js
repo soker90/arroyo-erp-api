@@ -23,7 +23,33 @@ class InvoiceNotFoundDeliveryOrder extends Error {
   }
 }
 
+class InvoiceMissingId extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'Falta el id de la factura') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
+class InvoiceIdNotFound extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'No existe la factura') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvoiceMissingDeliveryOrders,
   InvoiceNotFoundDeliveryOrder,
+  InvoiceMissingId,
+  InvoiceIdNotFound,
 };

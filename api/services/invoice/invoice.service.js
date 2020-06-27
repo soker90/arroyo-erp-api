@@ -1,6 +1,8 @@
 const { InvoiceModel } = require('arroyo-erp-models');
 const {
   InvoiceMissingDeliveryOrders,
+  InvoiceMissingId,
+  InvoiceIdNotFound,
 } = require('../../../errors/invoice.errors');
 const { calcNewShopping, addInvoiceToDeliveryOrder } = require('./utils');
 
@@ -22,6 +24,20 @@ const create = async data => {
   return newInvoice;
 };
 
+/**
+ * Get invoice data
+ * @param {String} id
+ * @returns {Promise<*>}
+ */
+const invoice = async ({ id }) => {
+  if (!id) throw new InvoiceMissingId();
+
+  const invoiceData = await InvoiceModel.findOne({ _id: id })
+    .lean();
+
+  if (!invoiceData) throw new InvoiceIdNotFound();
+  return invoiceData;
+};
 /**
  *
  * @param {Object} params
@@ -55,6 +71,7 @@ const invoicesByProvider = async ({
 
 module.exports = {
   create,
+  invoice,
   invoices,
   invoicesByProvider,
 };
