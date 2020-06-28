@@ -1,7 +1,7 @@
-const { DeliveryOrderModel } = require("arroyo-erp-models");
+const { DeliveryOrderModel } = require('arroyo-erp-models');
 const {
   InvoiceNotFoundDeliveryOrder,
-} = require("../../../errors/invoice.errors");
+} = require('../../../errors/invoice.errors');
 
 /**
  * Obtiene los datos de los albaranes de la factura
@@ -9,13 +9,13 @@ const {
  * @returns {Promise<{deliveryOrders: [], total: number, re: number, iva: number, taxBase: number}>}
  * @private
  */
-const _calcDeliveryOrdersData = async (deliveryOrdersData) => {
+const _calcDeliveryOrdersData = async deliveryOrdersData => {
   let ivaI = 0;
   let reI = 0;
   let totalI = 0;
   let taxBaseI = 0;
   let rateI = 0;
-  let deliveryOrders = [];
+  const deliveryOrders = [];
 
   for (const deliveryOrderId of deliveryOrdersData) {
     const deliveryOrder = await DeliveryOrderModel.findOne({
@@ -40,6 +40,10 @@ const _calcDeliveryOrdersData = async (deliveryOrdersData) => {
     ...(rateI && { rate: rateI }),
     re: reI,
     taxBase: taxBaseI,
+    ...(deliveryOrders.length && {
+      nameProvider: deliveryOrders[0].nameProvider,
+      provider: deliveryOrders[0].provider,
+    }),
   };
 };
 
@@ -47,7 +51,7 @@ const _calcDeliveryOrdersData = async (deliveryOrdersData) => {
  * Calcula los totales del albarán para compras
  * @param {Object} invoice
  */
-const calcNewShopping = async (invoice) => ({
+const calcNewShopping = async invoice => ({
   ...(await _calcDeliveryOrdersData(invoice.deliveryOrders)),
   dateRegister: Date.now(),
   concept: invoice.concept,

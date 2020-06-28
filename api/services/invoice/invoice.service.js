@@ -5,6 +5,7 @@ const {
   InvoiceIdNotFound,
 } = require('../../../errors/invoice.errors');
 const { calcNewShopping, addInvoiceToDeliveryOrder } = require('./utils');
+const { invoiceAdapter } = require('./invoice.adapter');
 
 /**
  * Create invoice
@@ -36,18 +37,20 @@ const invoice = async ({ id }) => {
     .lean();
 
   if (!invoiceData) throw new InvoiceIdNotFound();
-  return invoiceData;
+  return invoiceAdapter(invoiceData);
 };
 /**
  *
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoices = async ({ offset, limit }) => await InvoiceModel.find({}, '_id nameProvider nOrder dateInvoice total')
-  .sort({ nOrder: -1 })
-  .skip(offset || 0)
-  .limit(limit)
-  .lean();
+const invoices = async ({ offset, limit }) => (
+  await InvoiceModel.find({}, '_id nameProvider nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
+    .sort({ nOrder: -1 })
+    .skip(offset || 0)
+    .limit(limit)
+    .lean()
+);
 
 /**
  * Devuelve las facturas del proveedor
