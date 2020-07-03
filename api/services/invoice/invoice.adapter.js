@@ -10,6 +10,7 @@
  * nameProvider: (null|Requireable<string>)}}
  */
 const invoiceAdapter = invoice => ({
+  id: invoice._id,
   provider: invoice.provider,
   nameProvider: invoice.nameProvider,
   data: {
