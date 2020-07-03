@@ -1,5 +1,5 @@
 # arroyo-erp-api
-Backend de Arroyo ERP, hecho con node.js, express y graphql. Un backoffice para gestión de pymes.
+Backend de Arroyo ERP, hecho con node.js y express. Un backoffice para gestión de pymes.
 
 ---
 ## Requirements
