@@ -47,9 +47,22 @@ class InvoiceIdNotFound extends Error {
   }
 }
 
+class InvoiceInvalidDateInvoice extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'Fecha de factura incorrecta') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvoiceMissingDeliveryOrders,
   InvoiceNotFoundDeliveryOrder,
   InvoiceMissingId,
   InvoiceIdNotFound,
+  InvoiceInvalidDateInvoice,
 };

@@ -1,8 +1,9 @@
-const { InvoiceModel } = require('arroyo-erp-models');
+const { InvoiceModel, AutoIncrement } = require('arroyo-erp-models');
 const {
   InvoiceMissingDeliveryOrders,
   InvoiceMissingId,
   InvoiceIdNotFound,
+  InvoiceInvalidDateInvoice,
 } = require('../../../errors/invoice.errors');
 const { calcNewShopping, addInvoiceToDeliveryOrder } = require('./utils');
 const { invoiceAdapter } = require('./invoice.adapter');
@@ -72,9 +73,30 @@ const invoicesByProvider = async ({
     .lean();
 };
 
+/**
+ * Genera el número de orden correspondiente a la factura
+ * @param id
+ * @returns {Promise<React.NamedExoticComponent<{readonly nInvoice?: *, readonly dateInvoice?: *,
+ * readonly nOrder?: *, readonly dateRegister?: *, readonly setDate?: *}>>}
+ */
+const invoiceConfirm = async ({ id }) => {
+  const invoiceData = await InvoiceModel.findOne({ _id: id });
+  console.log(id);
+
+  if (!invoiceData) throw new InvoiceIdNotFound();
+  if (!invoiceData.dateInvoice || typeof invoiceData.dateInvoice !== 'number') throw new InvoiceInvalidDateInvoice();
+
+  const dateInvoice = new Date(invoiceData.dateInvoice);
+
+  invoiceData.nOrder = await AutoIncrement.increment(`invoice${dateInvoice.getFullYear()}`);
+
+  return invoiceData;
+};
+
 module.exports = {
   create,
   invoice,
   invoices,
   invoicesByProvider,
+  invoiceConfirm,
 };

@@ -14,6 +14,7 @@ class InvoicesController {
 
   _handleError(res, error) {
     switch (error.name) {
+    case 'InvoiceInvalidDateInvoice':
     case 'InvoiceMissingDeliveryOrders':
     case 'InvoiceNotFoundDeliveryOrder':
       this.errorHandler.sendValidationError(res)(error);
@@ -109,6 +110,7 @@ class InvoicesController {
   /**
    * Add product to delivery order
    */
+
   /* deleteProduct(req, res) {
     logService.logInfo('[delivery orders] - Delete product of the delivery order');
     Promise.resolve(req.params)
@@ -116,6 +118,17 @@ class InvoicesController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   } */
+
+  /**
+   * Return invoice
+   */
+  invoiceConfirm(req, res) {
+    logService.logInfo('[inovice]  - Confirm invoice');
+    Promise.resolve(req.params)
+      .then(this.invoiceService.invoiceConfirm)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = InvoicesController;
