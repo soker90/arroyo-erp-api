@@ -13,7 +13,7 @@ Para desarrollar necesitas Node.js y un gestor de paquetes para node como npm.
 
       $ sudo pacman -Sy nodejs npm
       
-- #### Instalación de Debia, Ubuntu y derivados
+- #### Instalación de Debian, Ubuntu y derivados
 
   Puedes instalar nodejs y npm fácilmente con apt, con los siguientes comandos
 
