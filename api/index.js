@@ -145,6 +145,7 @@ module.exports = async app => {
     authMiddleware,
     invoicesController.invoices.bind(invoicesController)
   );
+  app.patch('/invoices/:id', authMiddleware, invoicesController.edit.bind(invoicesController));
   app.get(
     '/invoices/provider/:idProvider',
     authMiddleware,

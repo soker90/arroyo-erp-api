@@ -4,6 +4,7 @@ const {
   InvoiceMissingId,
   InvoiceIdNotFound,
   InvoiceInvalidDateInvoice,
+  InvoiceParamsMissing,
 } = require('../../../errors/invoice.errors');
 const { calcNewShopping, addInvoiceToDeliveryOrder } = require('./utils');
 const { invoiceAdapter } = require('./invoice.adapter');
@@ -81,7 +82,6 @@ const invoicesByProvider = async ({
  */
 const invoiceConfirm = async ({ id }) => {
   const invoiceData = await InvoiceModel.findOne({ _id: id });
-  console.log(id);
 
   if (!invoiceData) throw new InvoiceIdNotFound();
   if (!invoiceData.dateInvoice || typeof invoiceData.dateInvoice !== 'number') throw new InvoiceInvalidDateInvoice();
@@ -93,10 +93,50 @@ const invoiceConfirm = async ({ id }) => {
   return invoiceData;
 };
 
+/**
+ * Modifica la factura
+ * @param {String} id
+ * @param {{dateRegister: number, dateInvoice: number, nInvoice: string}} data
+ * @param {{total: number, iva: number, re: number, rate: number, taxBase: number}} totals
+ * @returns {*}
+ */
+const invoiceEdit = ({ params: { id }, body: { data, totals } }) => {
+  if (!id) throw new InvoiceMissingId();
+  let newData = {};
+
+  if (!data && !totals) throw new InvoiceParamsMissing();
+
+  if (data) {
+    const { dateRegister, dateInvoice, nInvoice } = data;
+    newData = {
+      dateRegister,
+      dateInvoice,
+      nInvoice,
+    };
+  }
+
+  if (totals) {
+    const {
+      total, iva, re, rate, taxBase,
+    } = totals;
+    newData = {
+      ...newData,
+      total,
+      iva,
+      re,
+      rate,
+      taxBase,
+    };
+  }
+
+  return InvoiceModel.findOneAndUpdate({ _id: id }, newData, { new: true }).then(invoiceAdapter);
+};
+
 module.exports = {
   create,
   invoice,
   invoices,
   invoicesByProvider,
   invoiceConfirm,
+  invoiceEdit,
 };

@@ -59,10 +59,23 @@ class InvoiceInvalidDateInvoice extends Error {
   }
 }
 
+class InvoiceParamsMissing extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'Faltan campos') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvoiceMissingDeliveryOrders,
   InvoiceNotFoundDeliveryOrder,
   InvoiceMissingId,
   InvoiceIdNotFound,
   InvoiceInvalidDateInvoice,
+  InvoiceParamsMissing,
 };

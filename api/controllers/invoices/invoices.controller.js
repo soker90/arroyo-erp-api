@@ -23,6 +23,7 @@ class InvoicesController {
       this.errorHandler.sendNotFound(res)(error);
       break;
     case 'InvoiceMissingId':
+    case 'InvoiceParamsMissing':
       this.errorHandler.sendBadRequest(res)(error);
       break;
     default:
@@ -64,7 +65,7 @@ class InvoicesController {
   }
 
   /**
-   * Create the new delivery order
+   * Create the invoice
    */
   create(req, res) {
     logService.logInfo('[invoices] - Create invoice');
@@ -75,15 +76,15 @@ class InvoicesController {
   }
 
   /**
-   * Edit the delivery order
+   * Edit the invoice
    */
-  /* edit(req, res) {
-    logService.logInfo('[delivery orders]  - Edit delivery order');
+  edit(req, res) {
+    logService.logInfo('[invoices]  - Edit invoices');
     Promise.resolve(req)
-      .then(this.deliveryOrderService.update)
+      .then(this.invoiceService.invoiceEdit)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
-  } */
+  }
 
   /**
    * Add product to delivery order

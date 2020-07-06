@@ -82,3 +82,22 @@ describe('InvoiceIdNotFound', () => {
       .toEqual('CustomMessage');
   });
 });
+
+describe('InvoiceParamsMissing', () => {
+  test('should exist and extend from Error', () => {
+    expect(new InvoiceErrors.InvoiceParamsMissing())
+      .toBeInstanceOf(Error);
+  });
+
+  test('should define a default message', () => {
+    const err = new InvoiceErrors.InvoiceParamsMissing();
+    expect(err.message)
+      .toEqual('Faltan campos');
+  });
+
+  test('should allow passing a custom message', () => {
+    const err = new InvoiceErrors.InvoiceParamsMissing('CustomMessage');
+    expect(err.message)
+      .toEqual('CustomMessage');
+  });
+});
