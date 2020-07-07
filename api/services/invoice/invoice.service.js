@@ -129,7 +129,15 @@ const invoiceEdit = ({ params: { id }, body: { data, totals } }) => {
     };
   }
 
-  return InvoiceModel.findOneAndUpdate({ _id: id }, newData, { new: true }).then(invoiceAdapter);
+  return InvoiceModel
+    .findOneAndUpdate({ _id: id }, newData, { new: true })
+    .then(invoiceUpdated => {
+      const adapter = invoiceAdapter(invoiceUpdated);
+      return {
+        ...(data && { data: adapter.data }),
+        ...(totals && { totals: adapter.totals }),
+      };
+    });
 };
 
 module.exports = {
