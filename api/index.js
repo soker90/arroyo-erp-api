@@ -147,9 +147,9 @@ module.exports = async app => {
   );
   app.patch('/invoices/:id', authMiddleware, invoicesController.edit.bind(invoicesController));
   app.get(
-    '/invoices/provider/:idProvider',
+    '/invoices/short',
     authMiddleware,
-    invoicesController.invoicesByProvider.bind(invoicesController)
+    invoicesController.invoicesShort.bind(invoicesController)
   );
   app.get('/invoices/:id', authMiddleware, invoicesController.invoice.bind(invoicesController));
   app.patch('/invoices/:id/confirm', authMiddleware, invoicesController.invoiceConfirm.bind(invoicesController));

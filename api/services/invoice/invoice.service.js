@@ -59,7 +59,7 @@ const invoices = async ({ offset, limit }) => (
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoicesByProvider = async ({
+const invoicesShort = async ({
   concept, provider, offset, limit,
 }) => {
   const filter = {
@@ -67,7 +67,7 @@ const invoicesByProvider = async ({
     ...(provider && { provider }),
   };
 
-  return await InvoiceModel.find(filter, '_id nOrder dateInvoice total')
+  return await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total')
     .sort({ nOrder: -1 })
     .skip(offset || 0)
     .limit(limit)
@@ -144,7 +144,7 @@ module.exports = {
   create,
   invoice,
   invoices,
-  invoicesByProvider,
+  invoicesShort,
   invoiceConfirm,
   invoiceEdit,
 };

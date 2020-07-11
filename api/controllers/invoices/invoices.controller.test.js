@@ -8,6 +8,109 @@ describe('InvoicesController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());
 
+  describe('GET /invoices/short', () => {
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get('/invoices/short')
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('Sin facturas', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get('/invoices/short')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Devuelve un array', () => {
+          expect(JSON.parse(response.text))
+            .toEqual([]);
+        });
+      });
+
+      describe('Dispone de facturas', () => {
+        let invoice;
+
+        before(() => InvoiceModel.create({
+          total: 295.74,
+          dateInvoice: 1594474393373.0,
+          nInoice: '22/2020',
+          nOrder: 2,
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        describe('No se pasan parámetros', () => {
+          let response;
+
+          before(done => {
+            supertest(app)
+              .get('/invoices/short')
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('Los datos son correctos', () => {
+            const json = JSON.parse(response.text);
+            //expect(json._id)
+            //  .toBe(invoice._id);
+            expect(json.nOrder)
+              .toBe(invoice.nOrder);
+            expect(json.total).toBe(invoice.total);
+            expect(json.dateInvoice).toBe(invoice.dateInvoice);
+          });
+        });
+      });
+    });
+  });
+
   describe('GET /invoices/:id', () => {
     describe('Usuario no autenticado', () => {
       let response;

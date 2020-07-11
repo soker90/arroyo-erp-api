@@ -54,12 +54,12 @@ class InvoicesController {
       .catch(this._handleError.bind(this, res));
   }
 
-  invoicesByProvider(req, res) {
+  invoicesShort(req, res) {
     logService.logInfo(
-      '[invoicesByProvider] - List of invoices of the provider'
+      '[invoicesShort] - List of invoices with short info'
     );
-    Promise.resolve(req)
-      .then(this.invoiceService.invoicesByProvider)
+    Promise.resolve(req.query)
+      .then(this.invoiceService.invoicesShort)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
