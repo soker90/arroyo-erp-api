@@ -5,6 +5,9 @@ const { ProviderMissingName, ProviderMissingId } = require('../../../errors/prov
  * Validate params
  * @param {string} name
  * @param {string} address
+ * @param {String} city
+ * @param {string} postalCode
+ * @param {string} province
  * @param {string} phone
  * @param {string} email
  * @param {string} businessName
@@ -15,6 +18,9 @@ const { ProviderMissingName, ProviderMissingId } = require('../../../errors/prov
 const _validateParams = ({
   name,
   address,
+  city,
+  postalCode,
+  province,
   phone,
   email,
   businessName,
@@ -24,6 +30,9 @@ const _validateParams = ({
   if (!name) throw new ProviderMissingName();
   return {
     name,
+    city,
+    postalCode,
+    province,
     address,
     phone,
     email,
