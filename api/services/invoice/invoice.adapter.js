@@ -1,4 +1,16 @@
 /**
+ * Devuelve un objecto con los datos de la factura
+ * @param invoice
+ * @returns {{nOrder: *, dateRegister: *, dateInvoice: number, nInvoice: *}}
+ */
+const invoiceDataAdapter = invoice => ({
+  dateRegister: invoice.dateRegister,
+  dateInvoice: invoice.dateInvoice,
+  nOrder: invoice.nOrder,
+  nInvoice: invoice.nInvoice,
+});
+
+/**
  * Devuelve un objecto con los dato y totales de la factura
  * @param {object} invoice
  * @returns {{data: {nOrder: *, dateRegister: (number|Requireable<number>),
@@ -6,12 +18,7 @@
  * totals: {total: *, re: *, iva: *, taxBase: *}}}
  */
 const invoiceDataAndTotals = invoice => ({
-  data: {
-    dateRegister: invoice.dateRegister,
-    dateInvoice: invoice.dateInvoice,
-    nOrder: invoice.nOrder,
-    nInvoice: invoice.nInvoice,
-  },
+  data: invoiceDataAdapter(invoice),
   totals: {
     taxBase: invoice.taxBase,
     iva: invoice.iva,
@@ -52,4 +59,5 @@ const invoiceAdapter = invoice => ({
 module.exports = {
   invoiceAdapter,
   invoiceDataAndTotals,
+  invoiceDataAdapter,
 };

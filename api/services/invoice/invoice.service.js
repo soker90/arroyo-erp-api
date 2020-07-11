@@ -7,7 +7,7 @@ const {
   InvoiceParamsMissing,
 } = require('../../../errors/invoice.errors');
 const { calcNewShopping, addInvoiceToDeliveryOrder } = require('./utils');
-const { invoiceAdapter } = require('./invoice.adapter');
+const { invoiceAdapter, invoiceDataAdapter } = require('./invoice.adapter');
 
 /**
  * Create invoice
@@ -76,9 +76,8 @@ const invoicesByProvider = async ({
 
 /**
  * Genera el número de orden correspondiente a la factura
- * @param id
- * @returns {Promise<React.NamedExoticComponent<{readonly nInvoice?: *, readonly dateInvoice?: *,
- * readonly nOrder?: *, readonly dateRegister?: *, readonly setDate?: *}>>}
+ * @param {String} id
+ * @returns {Promise<{nOrder: *, dateRegister: *, dateInvoice: number, nInvoice: *}>}
  */
 const invoiceConfirm = async ({ id }) => {
   const invoiceData = await InvoiceModel.findOne({ _id: id });
@@ -89,8 +88,9 @@ const invoiceConfirm = async ({ id }) => {
   const dateInvoice = new Date(invoiceData.dateInvoice);
 
   invoiceData.nOrder = await AutoIncrement.increment(`invoice${dateInvoice.getFullYear()}`);
+  invoiceData.save();
 
-  return invoiceData;
+  return invoiceDataAdapter(invoiceData);
 };
 
 /**

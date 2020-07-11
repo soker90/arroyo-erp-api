@@ -263,7 +263,7 @@ describe('InvoicesController', () => {
             supertest(app)
               .patch(`/invoices/${invoice._id}`)
               .send({
-                data: invoiceData,
+                totals: invoiceTotals,
               })
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
