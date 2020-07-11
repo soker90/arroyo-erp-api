@@ -97,14 +97,21 @@ describe('InvoicesController', () => {
               .toBe(200);
           });
 
+          test('Devuelve un array con un elemento', () => {
+            expect(JSON.parse(response.text).length)
+              .toBe(1);
+          });
+
           test('Los datos son correctos', () => {
-            const json = JSON.parse(response.text);
-            //expect(json._id)
-            //  .toBe(invoice._id);
+            const json = JSON.parse(response.text)[0];
+            expect(JSON.stringify(json._id))
+              .toEqual(JSON.stringify(invoice._id));
             expect(json.nOrder)
               .toBe(invoice.nOrder);
-            expect(json.total).toBe(invoice.total);
-            expect(json.dateInvoice).toBe(invoice.dateInvoice);
+            expect(json.total)
+              .toBe(invoice.total);
+            expect(json.dateInvoice)
+              .toBe(invoice.dateInvoice);
           });
         });
       });
