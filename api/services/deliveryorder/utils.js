@@ -2,13 +2,13 @@ const {
   ProductModel,
   PriceModel,
   DeliveryOrderModel,
-} = require("arroyo-erp-models");
+} = require('arroyo-erp-models');
 
 /**
  * Calcula los totales del albarán
  * @param deliveryOrder
  */
-const calcData = (deliveryOrder) => {
+const calcData = deliveryOrder => {
   const size = deliveryOrder.products.length;
   let ivaDO = 0;
   let reDO = 0;
@@ -16,7 +16,9 @@ const calcData = (deliveryOrder) => {
   let taxBaseDO = 0;
   let rateDO = 0;
 
-  deliveryOrder.products.forEach(({ iva, re, total, taxBase, rate }) => {
+  deliveryOrder.products.forEach(({
+    iva, re, total, taxBase, rate,
+  }) => {
     ivaDO += iva;
     reDO += re;
     totalDO += total;
@@ -24,12 +26,12 @@ const calcData = (deliveryOrder) => {
     if (rate) rateDO += rate;
   });
 
-  deliveryOrder.set("size", size);
-  deliveryOrder.set("iva", ivaDO);
-  deliveryOrder.set("re", reDO);
-  deliveryOrder.set("total", totalDO);
-  deliveryOrder.set("taxBase", taxBaseDO);
-  deliveryOrder.set("rate", rateDO);
+  deliveryOrder.set('size', size);
+  deliveryOrder.set('iva', ivaDO);
+  deliveryOrder.set('re', reDO);
+  deliveryOrder.set('total', totalDO);
+  deliveryOrder.set('taxBase', taxBaseDO);
+  deliveryOrder.set('rate', rateDO);
   deliveryOrder.save();
   return deliveryOrder;
 };
@@ -44,7 +46,9 @@ const calcData = (deliveryOrder) => {
  * iva: number, price: number, name: *, diff: number, taxBase: number}>}
  */
 const calcProduct = async (product, price, quantity, date = 0) => {
-  const { name, iva, re, code, rate } = await ProductModel.findOne({
+  const {
+    name, iva, re, code, rate,
+  } = await ProductModel.findOne({
     _id: product,
   });
 
@@ -55,7 +59,7 @@ const calcProduct = async (product, price, quantity, date = 0) => {
       $lt: date,
     },
   }).sort({ date: -1 });
-  const lastPrice = prices.length ? prices[0].price : 0;
+  const lastPrice = prices.length ? prices[0].price : null;
 
   const rateCalc = rate ? rate * quantity : 0;
   const taxBase = quantity * price + rateCalc;
@@ -70,7 +74,7 @@ const calcProduct = async (product, price, quantity, date = 0) => {
     name,
     taxBase,
     ...(rate && { rate }),
-    diff: price - lastPrice,
+    ...(lastPrice !== null && { diff: price - lastPrice }),
     iva: ivaTotal,
     re: reTotal,
     total: taxBase + ivaTotal + reTotal,
@@ -82,18 +86,22 @@ const calcProduct = async (product, price, quantity, date = 0) => {
  * @param {String} provider
  * @return {Object}
  */
-const getFreeDeliveryOrders = async (provider) => {
+const getFreeDeliveryOrders = async provider => {
   const freeOrders = await DeliveryOrderModel.find({
     provider,
     invoice: { $exists: false },
   }).lean();
 
-  const free = freeOrders.map(({ _id, date, total, products }) => ({
+  const free = freeOrders.map(({
+    _id, date, total, products,
+  }) => ({
     _id,
     date,
     total,
     products: products.map(
-      ({ name, price, quantity, total: totalProduct }) => ({
+      ({
+        name, price, quantity, total: totalProduct,
+      }) => ({
         name,
         price,
         quantity,
@@ -122,7 +130,9 @@ const getInInvoicesDeliveryOrders = async (provider, offset, limit) => {
     .lean();
 
   const data = inInvoicesOrders.map(
-    ({ _id, date, total, nOrder, nInvoice }) => ({
+    ({
+      _id, date, total, nOrder, nInvoice,
+    }) => ({
       _id,
       date,
       total,
