@@ -9,6 +9,10 @@ const {
   calcData, calcProduct, getFreeDeliveryOrders, getInInvoicesDeliveryOrders,
 } = require('./utils');
 
+const {
+  refreshInvoice,
+} = require('../invoice/utils');
+
 /**
  * Return all delivery orders
  * @return {Promise<{data: any}>}
@@ -110,6 +114,7 @@ const addProduct = async ({
       return response;
     })
     .then(calcData)
+    .then(refreshInvoice)
     .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
@@ -141,6 +146,7 @@ const updateProduct = async ({
       return response;
     })
     .then(calcData)
+    .then(refreshInvoice)
     .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
@@ -166,6 +172,7 @@ const deleteProduct = async ({
       return response;
     })
     .then(calcData)
+    .then(refreshInvoice)
     .then(data => new DeliveryOrderAdapter(data).productsResponse());
 };
 
