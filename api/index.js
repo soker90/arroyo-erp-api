@@ -58,11 +58,12 @@ module.exports = async app => {
     authMiddleware,
     productController.create.bind(productController)
   );
-  app.patch(
+  app.put(
     '/products/:id',
     authMiddleware,
     productController.edit.bind(productController)
   );
+  app.get('/products/:id', authMiddleware, productController.product.bind(productController));
   app.post(
     '/products/:id/prices',
     authMiddleware,

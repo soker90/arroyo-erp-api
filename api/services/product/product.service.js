@@ -1,6 +1,8 @@
 /* eslint-disable nonblock-statement-body-position */
-const { ProductModel, PriceModel } = require('arroyo-erp-models');
-const { ProductMissingParams, ProductMissingUpdate, ProductNotFound } = require('../../../errors/product.errors');
+const { ProductModel, PriceModel, ProviderModel } = require('arroyo-erp-models');
+const {
+  ProductMissingParams, ProductMissingUpdate, ProductNotFound, ProviderNotFound,
+} = require('../../../errors/product.errors');
 
 /**
  * Validate params
@@ -24,6 +26,7 @@ const _validateParams = ({
 }) => {
   if (!code || !name || !provider || !iva || !re)
     throw new ProductMissingParams();
+
   return {
     code,
     name,
@@ -55,21 +58,15 @@ const products = async ({ provider }) => {
  */
 const create = async product => {
   const data = _validateParams(product);
+  const provider = await ProviderModel.findOne({ _id: data.provider });
 
-  await new ProductModel(data).save();
-};
+  if (!provider)
+    throw new ProviderNotFound();
 
-/**
- * Edit product
- * @param {Object} params
- * @param {Object} body
- */
-const update = async ({ params, body }) => {
-  if (!params.id) throw new ProductMissingParams();
-
-  const data = _validateParams(body);
-  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data })
-    .leans();
+  await new ProductModel({
+    ...data,
+    nameProvider: provider.name,
+  }).save();
 };
 
 /**
@@ -87,7 +84,29 @@ const _validateProductId = async id => {
   }
   if (!product)
     throw new ProductNotFound();
+
+  return product;
 };
+
+/**
+ * Edit product
+ * @param {Object} params
+ * @param {Object} body
+ */
+const update = async ({ params, body }) => {
+  if (!params.id) throw new ProductMissingParams();
+  await _validateProductId(params.id);
+
+  const data = _validateParams(body);
+  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data });
+};
+
+/**
+ * Return the product
+ * @param {string} id
+ * @returns {Promise<void>}
+ */
+const product = ({ id }) => _validateProductId(id);
 
 /**
  * Update price of the product
@@ -113,4 +132,5 @@ module.exports = {
   create,
   update,
   updatePrice,
+  product,
 };

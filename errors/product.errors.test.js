@@ -52,4 +52,20 @@ describe('ProductErrors', () => {
       expect(err.message).toEqual('CustomMessage');
     });
   });
+
+  describe('ProviderNotFound', () => {
+    test('should exist and extend from Error', () => {
+      expect(new ProductErrors.ProviderNotFound()).toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new ProductErrors.ProviderNotFound();
+      expect(err.message).toEqual('No se ha encontrado el proveedor');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new ProductErrors.ProviderNotFound('CustomMessage');
+      expect(err.message).toEqual('CustomMessage');
+    });
+  });
 });

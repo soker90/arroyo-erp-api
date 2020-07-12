@@ -19,8 +19,11 @@ class ProductController {
     switch (error.name) {
     case 'ProductMissingParams':
     case 'ProductMissingUpdate':
-    case 'ProductNotFound':
       this.errorHandler.sendValidationError(res)(error);
+      break;
+    case 'ProductNotFound':
+    case 'ProviderNotFound':
+      this.errorHandler.sendNotFound(res)(error);
       break;
     default:
       this.errorHandler.sendError(res)(error);
@@ -60,6 +63,14 @@ class ProductController {
       .then(this.productService.update)
       .then(() => res.status(204)
         .send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  product(req, res) {
+    logService.logInfo('[products] - Get product');
+    Promise.resolve(req.params)
+      .then(this.productService.product)
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
