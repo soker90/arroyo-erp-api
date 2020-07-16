@@ -1,42 +1,9 @@
 /* eslint-disable nonblock-statement-body-position */
 const { ProductModel, PriceModel, ProviderModel } = require('arroyo-erp-models');
 const {
-  ProductMissingParams, ProductMissingUpdate, ProductNotFound, ProviderNotFound,
+  ProductMissingParams, ProductMissingUpdate, ProviderNotFound,
 } = require('../../../errors/product.errors');
-
-/**
- * Validate params
- * @param {number} code
- * @param {string} name
- * @param {string} provider
- * @param {number} fee
- * @param {number} iva
- * @param {number} re
- * @return {Object}
- * @private
- */
-const _validateParams = ({
-  code,
-  name,
-  rate,
-  iva,
-  re,
-  provider,
-  historicPrice,
-}) => {
-  if (!code || !name || !provider || !iva || !re)
-    throw new ProductMissingParams();
-
-  return {
-    code,
-    name,
-    ...(rate && { rate }),
-    iva,
-    re,
-    provider,
-    ...(historicPrice && { historicPrice }),
-  };
-};
+const { getPricesOfProduct, validateProductId, validateParams } = require('./utils/index');
 
 /**
  * Return all product witch the filter
@@ -57,7 +24,7 @@ const products = async ({ provider }) => {
  * @return {Promise<string>}
  */
 const create = async product => {
-  const data = _validateParams(product);
+  const data = validateParams(product);
   const provider = await ProviderModel.findOne({ _id: data.provider });
 
   if (!provider)
@@ -70,43 +37,27 @@ const create = async product => {
 };
 
 /**
- * Validate if existe id
- * @param {string} id
- * @return {Promise<void>}
- * @private
- */
-const _validateProductId = async id => {
-  let product;
-  try {
-    product = await ProductModel.findOne({ _id: id });
-  } catch (e) {
-    throw new ProductNotFound();
-  }
-  if (!product)
-    throw new ProductNotFound();
-
-  return product;
-};
-
-/**
  * Edit product
  * @param {Object} params
  * @param {Object} body
  */
 const update = async ({ params, body }) => {
   if (!params.id) throw new ProductMissingParams();
-  await _validateProductId(params.id);
+  await validateProductId(params.id);
 
-  const data = _validateParams(body);
+  const data = validateParams(body);
   await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data });
 };
 
 /**
  * Return the product
  * @param {string} id
- * @returns {Promise<void>}
+ * @returns {Object}
  */
-const product = ({ id }) => _validateProductId(id);
+const product = async ({ id }) => ({
+  product: await validateProductId(id),
+  prices: await getPricesOfProduct(id),
+});
 
 /**
  * Update price of the product
@@ -118,7 +69,7 @@ const updatePrice = async ({ params, body }) => {
   if (!body.price || typeof body.price !== 'number' || !body.date || typeof body.date !== 'number')
     throw new ProductMissingUpdate();
 
-  await _validateProductId(params.id);
+  await validateProductId(params.id);
 
   await new PriceModel({
     date: body.date,
