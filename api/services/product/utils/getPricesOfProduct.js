@@ -6,6 +6,7 @@ const { PriceModel } = require('arroyo-erp-models');
  * @returns {*|Promise<void>|PromiseLike<any>|Promise<any>}
  */
 const getPricesOfProduct = product => PriceModel.find({ product })
+  .sort({ date: -1 })
   .then(prices => prices.map(({ date, price }) => ({
     date,
     price,
