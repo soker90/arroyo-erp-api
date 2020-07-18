@@ -1,7 +1,7 @@
 const { DeliveryOrderModel, InvoiceModel } = require('arroyo-erp-models');
 const {
   InvoiceNotFoundDeliveryOrder,
-} = require('../../../errors/invoice.errors');
+} = require('../../../../errors/invoice.errors');
 
 /**
  * Obtiene los datos de los albaranes de la factura
