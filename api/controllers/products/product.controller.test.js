@@ -185,7 +185,7 @@ describe('ProductController', () => {
         });
 
         test('La información es correcta', () => {
-          const json = JSON.parse(response.text);
+          const json = JSON.parse(response.text).product;
           expect(JSON.stringify(json._id))
             .toEqual(JSON.stringify(product._id));
           expect(json.code)
