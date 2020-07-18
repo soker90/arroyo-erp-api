@@ -45,8 +45,8 @@ const update = async ({ params, body }) => {
   if (!params.id) throw new ProductMissingParams();
   await validateProductId(params.id);
 
-  const data = validateParams(body);
-  await ProductModel.findOneAndUpdate({ _id: params.id }, { $set: data });
+  const data = validateParams(body, true);
+  return ProductModel.findOneAndUpdate({ _id: params.id }, data, { new: true });
 };
 
 /**

@@ -1,12 +1,11 @@
 class DeliveryOrderAdapter {
   constructor({
-    _id, provider, nameProvider, products, size, iva, re, total, date, taxBase,
+    _id, provider, nameProvider, products, iva, re, total, date, taxBase,
   }) {
     this._id = _id;
     this.provider = provider;
     this.nameProvider = nameProvider;
     this.products = products;
-    this.size = size;
     this.iva = iva;
     this.re = re;
     this.total = total;

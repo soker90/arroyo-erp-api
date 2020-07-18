@@ -8,6 +8,7 @@ const { ProductMissingParams } = require('../../../../errors/product.errors');
  * @param {number} fee
  * @param {number} iva
  * @param {number} re
+ * @param {boolean} isUpdate
  * @return {Object}
  * @private
  */
@@ -18,9 +19,8 @@ const validateParams = ({
   iva,
   re,
   provider,
-  historicPrice,
-}) => {
-  if (!code || !name || !provider || !iva || !re) throw new ProductMissingParams();
+}, isUpdate = false) => {
+  if (!code || !name || !(provider || isUpdate) || !iva || !re) throw new ProductMissingParams();
 
   return {
     code,
@@ -28,8 +28,7 @@ const validateParams = ({
     ...(rate && { rate }),
     iva,
     re,
-    provider,
-    ...(historicPrice && { historicPrice }),
+    ...(provider && { provider }),
   };
 };
 

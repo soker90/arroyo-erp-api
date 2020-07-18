@@ -61,8 +61,7 @@ class ProductController {
     logService.logInfo('[products] - Edit product');
     Promise.resolve(req)
       .then(this.productService.update)
-      .then(() => res.status(204)
-        .send())
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
