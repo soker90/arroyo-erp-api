@@ -1,6 +1,6 @@
 class DeliveryOrderAdapter {
   constructor({
-    _id, provider, nameProvider, products, iva, re, total, date, taxBase,
+    _id, provider, nameProvider, products, iva, re, total, date, taxBase, rate,
   }) {
     this._id = _id;
     this.provider = provider;
@@ -11,6 +11,7 @@ class DeliveryOrderAdapter {
     this.total = total;
     this.date = date;
     this.taxBase = taxBase;
+    this.rate = rate;
   }
 
   /**
@@ -20,24 +21,27 @@ class DeliveryOrderAdapter {
    */
   _generateTotals() {
     const {
-      iva, re, total, taxBase,
+      iva, re, total, taxBase, rate,
     } = this;
     return {
       iva,
       re,
       total,
       taxBase,
+      rate,
     };
   }
 
   /**
    * Create JSON for response of create
-   * @return {{date: *, provider: *, selectedProducts: *, _id: *, hasRate: boolean,
-   * totals: {total: *, re: *, iva: *}, nameProvider: *, products: *}}
+   * @return {
+   * {date: *, provider: *, _id: *, totals:
+   * {total: Number, re: Number, iva: Number},
+   * nameProvider: *, products: *}}
    */
   standardResponse() {
     const {
-      _id, provider, nameProvider, products, date, hasRate,
+      _id, provider, nameProvider, products, date,
     } = this;
     return {
       _id,
@@ -45,7 +49,6 @@ class DeliveryOrderAdapter {
       nameProvider,
       date,
       products,
-      hasRate,
       totals: this._generateTotals(),
     };
   }

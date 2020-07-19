@@ -4,12 +4,13 @@ const {
   DeliveryOrderModel,
 } = require('arroyo-erp-models');
 
+const { roundNumber } = require('../../../utils');
+
 /**
  * Calcula los totales del albarán
  * @param deliveryOrder
  */
 const calcData = deliveryOrder => {
-  const size = deliveryOrder.products.length;
   let ivaDO = 0;
   let reDO = 0;
   let totalDO = 0;
@@ -26,7 +27,6 @@ const calcData = deliveryOrder => {
     if (rate) rateDO += rate;
   });
 
-  deliveryOrder.set('size', size);
   deliveryOrder.set('iva', ivaDO);
   deliveryOrder.set('re', reDO);
   deliveryOrder.set('total', totalDO);
@@ -47,7 +47,7 @@ const calcData = deliveryOrder => {
  */
 const calcProduct = async (product, price, quantity, date = 0) => {
   const {
-    name, iva, re, code, rate,
+    name, iva, re, code, rate, _id,
   } = await ProductModel.findOne({
     _id: product,
   });
@@ -61,12 +61,13 @@ const calcProduct = async (product, price, quantity, date = 0) => {
   }).sort({ date: -1 });
   const lastPrice = prices.length ? prices[0].price : null;
 
-  const rateCalc = rate ? rate * quantity : 0;
-  const taxBase = quantity * price + rateCalc;
-  const ivaTotal = taxBase * iva;
-  const reTotal = taxBase * re;
+  const rateCalc = rate ? roundNumber(rate * quantity) : 0;
+  const taxBase = roundNumber(quantity * price + rateCalc);
+  const ivaTotal = roundNumber(taxBase * iva);
+  const reTotal = roundNumber(taxBase * re);
 
   return {
+    _id,
     code,
     product,
     price: Number(price),

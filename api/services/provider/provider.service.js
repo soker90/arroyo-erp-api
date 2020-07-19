@@ -1,5 +1,6 @@
-const { ProviderModel } = require('arroyo-erp-models');
+const { ProviderModel, BillingModel } = require('arroyo-erp-models');
 const { ProviderMissingName, ProviderMissingId } = require('../../../errors/provider.errors');
+const { billingAdapter, noBillingData } = require('./provider.adapter');
 
 /**
  * Validate params
@@ -25,7 +26,6 @@ const _validateParams = ({
   email,
   businessName,
   cif,
-  hasRate,
 }) => {
   if (!name) throw new ProviderMissingName();
   return {
@@ -38,7 +38,6 @@ const _validateParams = ({
     email,
     businessName,
     cif,
-    hasRate,
   };
 };
 
@@ -88,7 +87,19 @@ const provider = async ({ id }) => {
 
   const data = await ProviderModel.findOne({ _id: id })
     .lean();
-  return data;
+
+  console.log(data);
+  const billing = await BillingModel.findOne({
+    provider: id,
+    year: new Date().getFullYear(),
+  })
+    .then(billingAdapter)
+    .catch(noBillingData);
+
+  return {
+    provider: data,
+    billing,
+  };
 };
 
 module.exports = {

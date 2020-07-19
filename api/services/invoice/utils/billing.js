@@ -1,4 +1,5 @@
 const { BillingModel, InvoiceModel } = require('arroyo-erp-models');
+const { roundNumber } = require('../../../../utils');
 
 /**
  * Suma todas las facturas del provedor entre las fechas dadas
@@ -84,7 +85,7 @@ const refreshBilling = async (dateTime, provider) => {
     year,
     provider,
     trimester,
-    sum: totals.sum,
+    sum: roundNumber(totals.sum),
   });
 };
 
