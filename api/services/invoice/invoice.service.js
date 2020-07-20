@@ -6,7 +6,9 @@ const {
   InvoiceInvalidDateInvoice,
   InvoiceParamsMissing,
 } = require('../../../errors/invoice.errors');
-const { calcNewShopping, addInvoiceToDeliveryOrder, refreshBilling } = require('./utils');
+const {
+  calcNewShopping, addInvoiceToDeliveryOrder, refreshBilling, addNOrderToDeliveryOrder,
+} = require('./utils');
 const { invoiceAdapter, invoiceDataAdapter } = require('./invoice.adapter');
 
 /**
@@ -89,6 +91,7 @@ const invoiceConfirm = async ({ id }) => {
 
   invoiceData.nOrder = await AutoIncrement.increment(`invoice${dateInvoice.getFullYear()}`);
   invoiceData.save()
+    .then(addNOrderToDeliveryOrder)
     .then(() => refreshBilling(invoiceData.dateInvoice, invoiceData.provider));
 
   return invoiceDataAdapter(invoiceData);
