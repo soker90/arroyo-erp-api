@@ -20,7 +20,7 @@ const validateParams = ({
   re,
   provider,
 }, isUpdate = false) => {
-  if (!code || !name || !(provider || isUpdate) || !iva || !re) throw new ProductMissingParams();
+  if (!name || !(provider || isUpdate) || !iva || !re) throw new ProductMissingParams();
 
   return {
     code,
