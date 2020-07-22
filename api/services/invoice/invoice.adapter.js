@@ -46,7 +46,7 @@ const invoiceAdapter = invoice => ({
   deliveryOrders: invoice.deliveryOrders.map(deliveryOrder => ({
     _id: deliveryOrder._id,
     date: deliveryOrder.date,
-    total: deliveryOrder.total,
+    taxBase: deliveryOrder.taxBase,
     products: deliveryOrder.products.map(product => ({
       price: product.price,
       quantity: product.quantity,

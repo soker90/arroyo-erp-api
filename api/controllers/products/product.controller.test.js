@@ -53,12 +53,12 @@ describe('ProductController', () => {
           .toBeTruthy();
       });
 
-      describe('Falta code', () => {
+      describe('Falta iva', () => {
         let response;
 
         before(done => {
           const product = { ...productData };
-          delete product.code;
+          delete product.iva;
           supertest(app)
             .post('/products')
             .set('Authorization', `Bearer ${token}`)
