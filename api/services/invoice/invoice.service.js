@@ -48,13 +48,22 @@ const invoice = async ({ id }) => {
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoices = async ({ offset, limit }) => (
-  await InvoiceModel.find({}, '_id nameProvider nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
+const invoices = async ({ offset, limit, year }) => {
+  const start = new Date(year);
+  const nextYear = Number(year) + 1;
+  const end = new Date(nextYear.toString());
+
+  return await InvoiceModel.find({
+    dateRegister: {
+      $gte: start,
+      $lt: end,
+    },
+  }, '_id nameProvider nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
     .sort({ nOrder: -1 })
     .skip(offset || 0)
     .limit(limit)
-    .lean()
-);
+    .lean();
+};
 
 /**
  * Devuelve las facturas del proveedor
