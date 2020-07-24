@@ -4,7 +4,7 @@
  * @param {number} decimals
  * @returns {number}
  */
-const roundNumber = (num, decimals = 2) => {
+const roundNumber = (num, decimals = 3) => {
   const baseDecimals = Math.pow(10, decimals);
   return Math.round((num + Number.EPSILON) * baseDecimals) / baseDecimals;
 };
