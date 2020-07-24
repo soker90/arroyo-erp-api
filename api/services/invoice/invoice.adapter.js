@@ -51,7 +51,7 @@ const invoiceAdapter = invoice => ({
       price: product.price,
       quantity: product.quantity,
       name: product.name,
-      total: product.total,
+      taxBase: product.taxBase,
     })),
   })),
 });

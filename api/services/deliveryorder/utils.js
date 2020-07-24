@@ -94,19 +94,19 @@ const getFreeDeliveryOrders = async provider => {
   }).lean();
 
   const free = freeOrders.map(({
-    _id, date, total, products,
+    _id, date, taxBase, products,
   }) => ({
     _id,
     date,
-    total,
+    taxBase,
     products: products.map(
       ({
-        name, price, quantity, total: totalProduct,
+        name, price, quantity, taxBase: totalProduct,
       }) => ({
         name,
         price,
         quantity,
-        total: totalProduct,
+        taxBase: totalProduct,
       })
     ),
   }));
