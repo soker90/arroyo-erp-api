@@ -71,6 +71,18 @@ class InvoiceParamsMissing extends Error {
   }
 }
 
+class InvoiceWithOrderNumber extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'La factura ya tiene número de orden') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvoiceMissingDeliveryOrders,
   InvoiceNotFoundDeliveryOrder,
@@ -78,4 +90,5 @@ module.exports = {
   InvoiceIdNotFound,
   InvoiceInvalidDateInvoice,
   InvoiceParamsMissing,
+  InvoiceWithOrderNumber,
 };

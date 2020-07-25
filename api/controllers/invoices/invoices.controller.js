@@ -7,9 +7,10 @@ const TYPE = 'InvoiceController';
 const logService = new LogService(TYPE);
 
 class InvoicesController {
-  constructor({ invoiceService, errorHandler }) {
+  constructor({ invoiceService, errorHandler }, { invoiceAdapter }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
+    this.invoiceAdapter = invoiceAdapter;
   }
 
   _handleError(res, error) {
@@ -39,6 +40,7 @@ class InvoicesController {
     logService.logInfo('[inovice]  - Get invoice');
     Promise.resolve(req.params)
       .then(this.invoiceService.invoice)
+      .then(this.invoiceAdapter.fullResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -56,7 +58,7 @@ class InvoicesController {
 
   invoicesShort(req, res) {
     logService.logInfo(
-      '[invoicesShort] - List of invoices with short info'
+      '[invoicesShort] - List of invoices with short info',
     );
     Promise.resolve(req.query)
       .then(this.invoiceService.invoicesShort)
@@ -82,43 +84,10 @@ class InvoicesController {
     logService.logInfo('[invoices]  - Edit invoices');
     Promise.resolve(req)
       .then(this.invoiceService.invoiceEdit)
+      .then(this.invoiceAdapter.conditionalDataTotalsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
-
-  /**
-   * Add product to delivery order
-   */
-  /* addProduct(req, res) {
-    logService.logInfo('[delivery orders] - Add product to a delivery order');
-    Promise.resolve(req)
-      .then(this.deliveryOrderService.addProduct)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  } */
-
-  /**
-   * Add product to delivery order
-   */
-  /* updateProduct(req, res) {
-    logService.logInfo('[delivery orders] - Update product of a delivery order');
-    Promise.resolve(req)
-      .then(this.deliveryOrderService.updateProduct)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  } */
-
-  /**
-   * Add product to delivery order
-   */
-
-  /* deleteProduct(req, res) {
-    logService.logInfo('[delivery orders] - Delete product of the delivery order');
-    Promise.resolve(req.params)
-      .then(this.deliveryOrderService.deleteProduct)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  } */
 
   /**
    * Return invoice
@@ -127,6 +96,7 @@ class InvoicesController {
     logService.logInfo('[inovice]  - Confirm invoice');
     Promise.resolve(req.params)
       .then(this.invoiceService.invoiceConfirm)
+      .then(this.invoiceAdapter.dataResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

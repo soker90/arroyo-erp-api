@@ -12,6 +12,8 @@ const {
   deliveryOrderService,
   invoiceService,
 } = require('./services');
+
+const adapters = require('./adapters');
 const { authMiddleware } = require('../components/auth');
 
 const errorHandler = require('../components/error-handlers');
@@ -39,7 +41,7 @@ const deliveryOrderController = new DeliveryOrderController({
 const invoicesController = new InvoiceController({
   errorHandler,
   invoiceService,
-});
+}, adapters);
 
 module.exports = async app => {
   app.get('/monit/health', (req, res) => res.send('OK'));

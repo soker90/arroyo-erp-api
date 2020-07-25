@@ -1,15 +1,17 @@
-const { InvoiceModel, AutoIncrement } = require('arroyo-erp-models');
+const { InvoiceModel } = require('arroyo-erp-models');
 const {
   InvoiceMissingDeliveryOrders,
   InvoiceMissingId,
   InvoiceIdNotFound,
-  InvoiceInvalidDateInvoice,
   InvoiceParamsMissing,
 } = require('../../../errors/invoice.errors');
 const {
-  calcNewShopping, addInvoiceToDeliveryOrder, refreshBilling, addNOrderToDeliveryOrder,
+  calcNewShopping, addInvoiceToDeliveryOrder,
 } = require('./utils');
-const { invoiceAdapter, invoiceDataAdapter } = require('./invoice.adapter');
+const { invoiceAdapter } = require('./invoice.adapter');
+
+// Split services
+const invoiceConfirm = require('./invoiceConfirm');
 
 /**
  * Create invoice
@@ -41,7 +43,7 @@ const invoice = async ({ id }) => {
     .lean();
 
   if (!invoiceData) throw new InvoiceIdNotFound();
-  return invoiceAdapter(invoiceData);
+  return invoiceData;
 };
 /**
  *
@@ -86,27 +88,6 @@ const invoicesShort = async ({
 };
 
 /**
- * Genera el número de orden correspondiente a la factura
- * @param {String} id
- * @returns {Promise<{nOrder: *, dateRegister: *, dateInvoice: number, nInvoice: *}>}
- */
-const invoiceConfirm = async ({ id }) => {
-  const invoiceData = await InvoiceModel.findOne({ _id: id });
-
-  if (!invoiceData) throw new InvoiceIdNotFound();
-  if (!invoiceData.dateInvoice || typeof invoiceData.dateInvoice !== 'number') throw new InvoiceInvalidDateInvoice();
-
-  const dateInvoice = new Date(invoiceData.dateInvoice);
-
-  invoiceData.nOrder = await AutoIncrement.increment(`invoice${dateInvoice.getFullYear()}`);
-  invoiceData.save()
-    .then(addNOrderToDeliveryOrder)
-    .then(() => refreshBilling(invoiceData.dateInvoice, invoiceData.provider));
-
-  return invoiceDataAdapter(invoiceData);
-};
-
-/**
  * Modifica la factura
  * @param {String} id
  * @param {{dateRegister: number, dateInvoice: number, nInvoice: string}} data
@@ -144,13 +125,11 @@ const invoiceEdit = ({ params: { id }, body: { data, totals } }) => {
 
   return InvoiceModel
     .findOneAndUpdate({ _id: id }, newData, { new: true })
-    .then(invoiceUpdated => {
-      const adapter = invoiceAdapter(invoiceUpdated);
-      return {
-        ...(data && { data: adapter.data }),
-        ...(totals && { totals: adapter.totals }),
-      };
-    });
+    .then(invoiceUpdated => ({
+      invoice: invoiceUpdated,
+      data: Boolean(data),
+      totals: Boolean(totals),
+    }));
 };
 
 module.exports = {
