@@ -39,8 +39,8 @@ const calcData = deliveryOrder => {
 /**
  * Calcula los datos de un producto del albarán
  * @param {string} product
- * @param {string | number} price
- * @param {string | number} quantity
+ * @param {number} price
+ * @param {number} quantity
  * @param {Number} date
  * @return {Promise<{product: *, total: number, code: *, quantity: number, re: number,
  * iva: number, price: number, name: *, diff: number, taxBase: number}>}
