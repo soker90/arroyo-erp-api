@@ -42,7 +42,7 @@
     "eslint-plugin-jest": "^23.18.2",
     "jest": "^26.1.0",
     "jest-circus": "^26.1.0",
-    "mongodb-memory-server": "^6.6.1",
+    "mongodb-memory-server": "^6.6.2",
     "nock": "^13.0.2",
     "supertest": "^4.0.2"
   },
