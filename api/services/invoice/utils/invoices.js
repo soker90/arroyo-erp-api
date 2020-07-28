@@ -2,6 +2,7 @@ const { DeliveryOrderModel, InvoiceModel } = require('arroyo-erp-models');
 const {
   InvoiceNotFoundDeliveryOrder,
 } = require('../../../../errors/invoice.errors');
+const { roundNumber } = require('../../../../utils');
 
 /**
  * Obtiene los datos de los albaranes de la factura
@@ -14,7 +15,6 @@ const _calcDeliveryOrdersData = async deliveryOrdersData => {
   let reI = 0;
   let totalI = 0;
   let taxBaseI = 0;
-  let rateI = 0;
   const deliveryOrders = [];
 
   for (const deliveryOrderId of deliveryOrdersData) {
@@ -28,18 +28,16 @@ const _calcDeliveryOrdersData = async deliveryOrdersData => {
     reI += deliveryOrder.re;
     totalI += deliveryOrder.total;
     taxBaseI += deliveryOrder.taxBase;
-    if (deliveryOrder.rate) rateI += deliveryOrder.rate;
 
     deliveryOrders.push(deliveryOrder);
   }
 
   return {
     deliveryOrders,
-    total: totalI,
-    iva: ivaI,
-    ...(rateI && { rate: rateI }),
-    re: reI,
-    taxBase: taxBaseI,
+    total: roundNumber(totalI, 2),
+    iva: roundNumber(ivaI, 2),
+    re: roundNumber(reI, 2),
+    taxBase: roundNumber(taxBaseI, 2),
     ...(deliveryOrders.length && {
       nameProvider: deliveryOrders[0].nameProvider,
       provider: deliveryOrders[0].provider,
@@ -73,7 +71,7 @@ const refreshInvoice = async deliveryOrder => {
           .findIndex(deliveryOrdersSaved => deliveryOrdersSaved._id === deliveryOrder._id);
         invoice.deliveryOrders[deliveryOrderIndex] = deliveryOrder;
         return _calcDeliveryOrdersData(invoice.deliveryOrders);
-      }
+      },
     );
 
   await InvoiceModel.update({ _id: deliveryOrder.invoice }, newData);
