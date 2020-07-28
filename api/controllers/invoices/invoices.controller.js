@@ -7,10 +7,11 @@ const TYPE = 'InvoiceController';
 const logService = new LogService(TYPE);
 
 class InvoicesController {
-  constructor({ invoiceService, errorHandler }, { invoiceAdapter }) {
+  constructor({ invoiceService, paymentService }, errorHandler, { invoiceAdapter }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
     this.invoiceAdapter = invoiceAdapter;
+    this.paymentService = paymentService;
   }
 
   _handleError(res, error) {
@@ -94,8 +95,9 @@ class InvoicesController {
    */
   invoiceConfirm(req, res) {
     logService.logInfo('[inovice]  - Confirm invoice');
-    Promise.resolve(req.params)
+    Promise.resolve(req)
       .then(this.invoiceService.invoiceConfirm)
+      .tap(this.paymentService.create)
       .then(this.invoiceAdapter.dataResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

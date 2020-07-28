@@ -53,11 +53,17 @@ const createPayment = async (ids, invoices, datePayment, paymentType) => {
 /**
  * Genera el número de orden correspondiente a la factura
  * @param {String} id
+ * @param {Number} datePayment
+ * @param {String} type
  * @returns {Promise<{nOrder: *, dateRegister: *, dateInvoice: number, nInvoice: *}>}
  */
-const invoiceConfirm = async ({ id }) => {
+const invoiceConfirm = async ({ params: { id }, body: { datePayment, type } }) => {
   const invoiceData = await _findInvoice(id);
   invoiceData.nOrder = await _generateOrderNumber(invoiceData.dateInvoice);
+  invoiceData.payment = {
+    datePayment,
+    type,
+  };
 
   invoiceData.save()
     .then(addNOrderToDeliveryOrder)

@@ -10,8 +10,9 @@ const {
   productService,
   providerService,
   deliveryOrderService,
-  invoiceService,
 } = require('./services');
+
+const services = require('./services');
 
 const adapters = require('./adapters');
 const { authMiddleware } = require('../components/auth');
@@ -38,10 +39,7 @@ const deliveryOrderController = new DeliveryOrderController({
   deliveryOrderService,
 });
 
-const invoicesController = new InvoiceController({
-  errorHandler,
-  invoiceService,
-}, adapters);
+const invoicesController = new InvoiceController(services, errorHandler, adapters);
 
 module.exports = async app => {
   app.get('/monit/health', (req, res) => res.send('OK'));
