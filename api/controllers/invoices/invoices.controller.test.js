@@ -463,6 +463,7 @@ describe('InvoicesController', () => {
           supertest(app)
             .patch(`/invoices/${invoice._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)
+            .send({ type: 'Efectivo' })
             .end((err, res) => {
               response = res;
               done();
@@ -475,6 +476,36 @@ describe('InvoicesController', () => {
 
           expect(response.statusCode)
             .toBe(422);
+        });
+      });
+
+      describe('No tiene tipo de pago', () => {
+        let response;
+        let invoice;
+
+        before(() => InvoiceModel.create({
+          dateInvoice: Date.now(),
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(`/invoices/${invoice._id}/confirm`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', async () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(400);
         });
       });
 
@@ -493,6 +524,7 @@ describe('InvoicesController', () => {
           supertest(app)
             .patch(`/invoices/${invoice._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)
+            .send({ type: 'Efectivo' })
             .end((err, res) => {
               response = res;
               done();

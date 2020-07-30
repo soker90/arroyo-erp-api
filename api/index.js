@@ -13,6 +13,7 @@ const {
 } = require('./services');
 
 const services = require('./services');
+const validators = require('./validators');
 
 const adapters = require('./adapters');
 const { authMiddleware } = require('../components/auth');
@@ -39,7 +40,7 @@ const deliveryOrderController = new DeliveryOrderController({
   deliveryOrderService,
 });
 
-const invoicesController = new InvoiceController(services, errorHandler, adapters);
+const invoicesController = new InvoiceController(services, errorHandler, adapters, validators);
 
 module.exports = async app => {
   app.get('/monit/health', (req, res) => res.send('OK'));

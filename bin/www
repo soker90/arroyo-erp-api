@@ -8,7 +8,7 @@ const port = process.env.PORT || config.port;
 
 process.on('uncaughtException', err => {
   // eslint-disable-next-line no-console
-  console.errorTrack('uncaughtException exception: ', err);
+  console.error('uncaughtException exception: ', err);
 });
 
 app.set('port', port);
@@ -17,7 +17,7 @@ const server = http.createServer(app);
 
 function onError(error) {
   // eslint-disable-next-line no-console
-  console.errorTrack('[onError] - There was an error starting the server', error);
+  console.error('[onError] - There was an error starting the server', error);
   process.exit(1);
 }
 
