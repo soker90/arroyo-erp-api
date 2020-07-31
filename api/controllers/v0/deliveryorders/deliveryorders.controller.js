@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 
-const LogService = require('../../services/log.service');
+const LogService = require('../../../services/log.service');
 
 const TYPE = 'DeliveryOrderController';
 

@@ -1,13 +1,5 @@
-const AccountController = require('./account');
-const ProductController = require('./products');
-const ProviderController = require('./providers');
-const DeliveryOrderController = require('./deliveryorders');
-const InvoiceController = require('./invoices');
+const RoutesV0 = require('./v0');
 
 module.exports = {
-  AccountController,
-  ProductController,
-  ProviderController,
-  DeliveryOrderController,
-  InvoiceController,
+  0: [...RoutesV0],
 };

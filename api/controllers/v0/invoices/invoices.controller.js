@@ -1,14 +1,15 @@
 const Promise = require('bluebird');
 
-const LogService = require('../../services/log.service');
+const LogService = require('../../../services/log.service');
 
 const TYPE = 'InvoiceController';
 
 const logService = new LogService(TYPE);
 
 class InvoicesController {
-  constructor({ invoiceService, paymentService }, errorHandler, { invoiceAdapter },
-    { invoiceValidator }) {
+  constructor({
+    invoiceService, paymentService, errorHandler, invoiceAdapter, invoiceValidator,
+  }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
     this.invoiceAdapter = invoiceAdapter;

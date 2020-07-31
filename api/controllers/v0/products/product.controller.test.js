@@ -1,8 +1,8 @@
 const supertest = require('supertest');
 const { mongoose, ProductModel, ProviderModel } = require('arroyo-erp-models');
-const testDB = require('../../../test/test-db')(mongoose);
-const requestLogin = require('../../../test/request-login');
-const app = require('../../..');
+const testDB = require('../../../../test/test-db')(mongoose);
+const requestLogin = require('../../../../test/request-login');
+const app = require('../../../../index');
 
 const productData = {
   code: '3333',

@@ -1,8 +1,8 @@
 const supertest = require('supertest');
 const { mongoose, ProviderModel } = require('arroyo-erp-models');
-const testDB = require('../../../test/test-db')(mongoose);
-const requestLogin = require('../../../test/request-login');
-const app = require('../../..');
+const testDB = require('../../../../test/test-db')(mongoose);
+const requestLogin = require('../../../../test/request-login');
+const app = require('../../../../index');
 
 describe('ProvidersController', () => {
   beforeAll(() => testDB.connect());
