@@ -39,7 +39,7 @@
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jest": "^23.19.0",
+    "eslint-plugin-jest": "^23.20.0",
     "jest": "^26.2.1",
     "jest-circus": "^26.2.1",
     "mongodb-memory-server": "^6.6.3",
