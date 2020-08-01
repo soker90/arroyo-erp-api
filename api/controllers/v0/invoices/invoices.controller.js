@@ -100,8 +100,8 @@ class InvoicesController {
   invoiceConfirm(req, res) {
     logService.logInfo('[inovice]  - Confirm invoice');
     Promise.resolve(req)
-      // .tap(this.invoiceValidator.validateId)
-      // .tap(this.invoiceValidator.confirmParams)
+      .tap(this.invoiceValidator.validateId)
+      .tap(this.invoiceValidator.confirmParams)
       .then(this.invoiceService.invoiceConfirm)
       .tap(this.paymentService.create)
       .then(this.invoiceAdapter.dataResponse)
