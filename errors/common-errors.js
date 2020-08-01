@@ -14,7 +14,15 @@ class ParamNotValidError extends Error {
   }
 }
 
+class DateNotValid extends Error {
+  constructor(msg = 'La fecha no es válida') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   MissingParamsError,
   ParamNotValidError,
+  DateNotValid,
 };

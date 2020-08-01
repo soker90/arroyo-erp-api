@@ -88,7 +88,6 @@ const provider = async ({ id }) => {
   const data = await ProviderModel.findOne({ _id: id })
     .lean();
 
-  console.log(data);
   const billing = await BillingModel.findOne({
     provider: id,
     year: new Date().getFullYear(),

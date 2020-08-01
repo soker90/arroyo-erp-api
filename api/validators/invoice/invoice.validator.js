@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 const { InvoiceModel } = require('arroyo-erp-models');
-const { invoiceErrors } = require('../../../errors');
+const { invoiceErrors, commonErrors } = require('../../../errors');
 
 /**
  * Check if exist id
@@ -26,8 +26,9 @@ const _isInvalidDate = date => !date || typeof date !== 'number';
  * @param {String} id
  * @returns {Promise<void>}
  */
-const confirmParams = async ({ body: { type }, params: { id } }) => {
+const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) => {
   if (!type) throw new invoiceErrors.InvoiceParamsMissing();
+  if (paymentDate && typeof paymentDate !== 'number') throw new commonErrors.DateNotValid();
 
   const invoice = await InvoiceModel.findOne({ _id: id });
 

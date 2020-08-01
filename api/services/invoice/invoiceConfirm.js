@@ -21,16 +21,16 @@ const _generateOrderNumber = date => {
  * @param {String} type
  * @returns {Promise<{nOrder: *, dateRegister: *, dateInvoice: number, nInvoice: *}>}
  */
-const invoiceConfirm = async ({ params: { id }, body: { datePayment, type } }) => {
+const invoiceConfirm = async ({ params: { id }, body: { paymentDate, type } }) => {
   const invoiceData = await InvoiceModel.findOne({ _id: id });
   invoiceData.nOrder = await _generateOrderNumber(invoiceData.dateInvoice);
 
   invoiceData.payment = {
-    datePayment,
+    paymentDate,
     type,
   };
 
-  invoiceData.save()
+  await invoiceData.save()
     .then(addNOrderToDeliveryOrder)
     .then(() => refreshBilling(invoiceData.dateInvoice, invoiceData.provider));
 
