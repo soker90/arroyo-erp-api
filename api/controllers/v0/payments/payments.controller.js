@@ -43,8 +43,8 @@ class PaymentsController {
       .tap(this.paymentValidator.validateId)
       .tap(this.paymentValidator.confirmParams)
       .then(this.paymentService.confirm)
-      .then(() => res.status(204)
-        .send())
+      .then(this.paymentService.payments)
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 }

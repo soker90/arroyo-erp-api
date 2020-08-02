@@ -318,12 +318,17 @@ describe('PaymentsController', () => {
             });
         });
 
-        test('Debería dar un 204', () => {
+        test('Debería dar un 200', () => {
           expect(token)
             .toBeTruthy();
 
           expect(response.statusCode)
-            .toBe(204);
+            .toBe(200);
+        });
+
+        test('Debería devolver un array', () => {
+          expect(Array.isArray(response.body))
+            .toBe(true);
         });
       });
 
@@ -351,12 +356,17 @@ describe('PaymentsController', () => {
             });
         });
 
-        test('Debería dar un 204', () => {
+        test('Debería dar un 200', () => {
           expect(token)
             .toBeTruthy();
 
           expect(response.statusCode)
-            .toBe(204);
+            .toBe(200);
+        });
+
+        test('Debería devolver un array', () => {
+          expect(Array.isArray(response.body))
+            .toBe(true);
         });
       });
     });
