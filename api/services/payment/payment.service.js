@@ -44,6 +44,7 @@ const confirm = async ({ params: { id }, body: { paymentDate, type, numCheque } 
   const payment = await PaymentModel
     .findOneAndUpdate({ _id: id }, paymentData, { new: true });
 
+  console.log(payment);
   for (const invoiceId of payment.invoices)
     await InvoiceModel.findOneAndUpdate({ _id: invoiceId }, { payment: paymentData });
 };

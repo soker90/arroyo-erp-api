@@ -58,7 +58,7 @@ const invoicesShort = async ({
     ...(provider && { provider }),
   };
 
-  return await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total')
+  return await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid')
     .sort({ nOrder: -1 })
     .skip(offset || 0)
     .limit(limit)

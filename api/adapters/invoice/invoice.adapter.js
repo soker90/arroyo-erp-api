@@ -73,6 +73,7 @@ const fullResponse = invoice => ({
       taxBase: product.taxBase,
     })),
   })),
+  ...(invoice.payment && { payment: invoice.payment }),
 });
 
 module.exports = {
