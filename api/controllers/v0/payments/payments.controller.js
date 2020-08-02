@@ -8,14 +8,18 @@ const logService = new LogService(TYPE);
 
 class PaymentsController {
   constructor({
-    paymentService, errorHandler,
+    paymentService, errorHandler, paymentValidator,
   }) {
     this.errorHandler = errorHandler;
     this.paymentService = paymentService;
+    this.paymentValidator = paymentValidator;
   }
 
   _handleError(res, error) {
     switch (error.name) {
+    case 'PaymentIdNotFound':
+      this.errorHandler.sendNotFound(res)(error);
+      break;
     default:
       this.errorHandler.sendError(res)(error);
       break;
@@ -30,6 +34,17 @@ class PaymentsController {
     Promise.resolve(req.query)
       .then(this.paymentService.payments)
       .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  confirm(req, res) {
+    logService.logInfo('[payment]  - Confirma la realización del pago');
+    Promise.resolve(req)
+      .tap(this.paymentValidator.validateId)
+      .tap(this.paymentValidator.confirmParams)
+      .then(this.paymentService.confirm)
+      .then(() => res.status(204)
+        .send())
       .catch(this._handleError.bind(this, res));
   }
 }

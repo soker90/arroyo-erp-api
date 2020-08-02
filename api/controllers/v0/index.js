@@ -13,7 +13,7 @@ module.exports = [
   ...AccountController(services),
   ...DeliveryOrderController(services),
   ...InvoiceController(services, validators, adapters),
-  ...PaymentController(services),
+  ...PaymentController(services, validators),
   ...ProductController(services),
   ...ProviderController(services),
 ];

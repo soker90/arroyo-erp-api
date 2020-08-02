@@ -1,15 +1,15 @@
 /* eslint-disable max-classes-per-file */
 
 class MissingParamsError extends Error {
-  constructor(message) {
-    super(message);
+  constructor(msg = 'Faltan campos') {
+    super(msg);
     this.name = this.constructor.name;
   }
 }
 
 class ParamNotValidError extends Error {
-  constructor(message) {
-    super(message);
+  constructor(msg = 'Algunos campos no son válidos') {
+    super(msg);
     this.name = this.constructor.name;
   }
 }

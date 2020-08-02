@@ -1,5 +1,5 @@
 /* eslint-disable nonblock-statement-body-position */
-const { PaymentModel } = require('arroyo-erp-models');
+const { PaymentModel, InvoiceModel } = require('arroyo-erp-models');
 
 /**
  * Create payment
@@ -25,7 +25,31 @@ const create = async invoice => {
  */
 const payments = () => PaymentModel.find({ paid: { $exists: false } });
 
+/**
+ * Confirma la realización del pago
+ * @param {String} id
+ * @param {number} paymentDate
+ * @param {string} type
+ * @param {string} numCheque
+ * @returns {Promise<void>}
+ */
+const confirm = async ({ params: { id }, body: { paymentDate, type, numCheque } }) => {
+  const paymentData = {
+    paymentDate,
+    type,
+    ...(numCheque && { numCheque }),
+    paid: true,
+  };
+
+  const payment = await PaymentModel
+    .findOneAndUpdate({ _id: id }, paymentData, { new: true });
+
+  for (const invoiceId of payment.invoices)
+    await InvoiceModel.findOneAndUpdate({ _id: invoiceId }, { payment: paymentData });
+};
+
 module.exports = {
   create,
   payments,
+  confirm,
 };
