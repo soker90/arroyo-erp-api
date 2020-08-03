@@ -32,5 +32,16 @@ module.exports = ({ paymentService }, { paymentValidator }) => {
       authMiddleware,
     ],
   },
+  {
+    method: 'post',
+    domain: 'payments',
+    path: '/merge',
+    handler: paymentsController.merge,
+    bindTo: paymentsController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
   ];
 };

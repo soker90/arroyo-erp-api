@@ -24,4 +24,23 @@ describe('PaymentErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('PaymentsMissings', () => {
+    test('should exist and extend from Error', () => {
+      expect(new PaymentErrors.PaymentsMissing())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new PaymentErrors.PaymentsMissing();
+      expect(err.message)
+        .toEqual('Debes seleccionar 2 o mas pagos');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new PaymentErrors.PaymentsMissing('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });

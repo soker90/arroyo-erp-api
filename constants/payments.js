@@ -4,6 +4,7 @@ const TYPE_PAYMENT = {
   CHEQUE: 'Talón',
   MONEY_ORDER: 'Giro',
   TRANSFER: 'Transferencia',
+  CARD: 'Tarjeta',
 };
 
 module.exports = {

@@ -1,5 +1,6 @@
 /* eslint-disable nonblock-statement-body-position */
 const { PaymentModel, InvoiceModel } = require('arroyo-erp-models');
+const { roundNumber } = require('../../../utils');
 
 /**
  * Create payment
@@ -23,7 +24,10 @@ const create = async invoice => {
  *Devuelve todos los pagos no abonados
  * @returns {*}
  */
-const payments = () => PaymentModel.find({ paid: { $exists: false } });
+const payments = () => PaymentModel.find({
+  paid: { $exists: false },
+  $or: [{ merged: { $exists: false } }, { merged: false }],
+});
 
 /**
  * Confirma la realización del pago
@@ -48,8 +52,41 @@ const confirm = async ({ params: { id }, body: { paymentDate, type, numCheque } 
     await InvoiceModel.findOneAndUpdate({ _id: invoiceId }, { payment: paymentData });
 };
 
+// TODO refactor, sin terminar, hora de cenar
+const merge = async ({ payments }) => {
+  let firstPayment = null;
+  let amount = 0;
+  let nOrder = '';
+  let invoices = [];
+  for (const payment of payments) {
+    const paymentData = await PaymentModel.findOneAndUpdate({ _id: payment }, { merged: true });
+    amount += paymentData.amount;
+    nOrder += `${paymentData.nOrder} `;
+    invoices = invoices.concat(paymentData.invoices);
+    if (!firstPayment) firstPayment = paymentData;
+    paymentData.set('merged', true);
+    paymentData.save();
+  }
+
+  const {
+    provider, paymentDate, type, numCheque,
+  } = firstPayment;
+
+  await new PaymentModel({
+    provider,
+    ...(paymentDate && { paymentDate }),
+    type,
+    ...(numCheque && { numCheque }),
+    payments,
+    invoices,
+    amount: roundNumber(amount),
+    nOrder,
+  }).save();
+};
+
 module.exports = {
   create,
   payments,
   confirm,
+  merge,
 };

@@ -47,6 +47,16 @@ class PaymentsController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  merge(req, res) {
+    logService.logInfo('[payment]  - Fusiona varios pagos');
+    Promise.resolve(req.body)
+      .tap(this.paymentValidator.havePayments)
+      .then(this.paymentService.merge)
+      .then(this.paymentService.payments)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = PaymentsController;
