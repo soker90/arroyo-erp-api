@@ -47,7 +47,7 @@ const confirmParams = async ({ body: { type, paymentDate, numCheque } }) => {
  */
 const havePayments = async ({ payments }) => {
   if (payments?.length < 2) throw new paymentErrors.PaymentsMissing();
-  Promise.all(payments.map(_checkIdPayment));
+  await Promise.all(payments.map(_checkIdPayment));
 };
 
 module.exports = {
