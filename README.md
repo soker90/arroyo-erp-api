@@ -1,4 +1,9 @@
 # arroyo-erp-api
+
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=soker90/arroyo-erp-api)](https://dependabot.com)
+[![dependencies Status](https://david-dm.org/soker90/arroyo-erp-api/status.svg)](https://david-dm.org/soker90/arroyo-erp-api)
+[![devDependencies Status](https://david-dm.org/soker90/arroyo-erp-api/dev-status.svg)](https://david-dm.org/soker90/arroyo-erp-api?type=dev)
+
 Backend de Arroyo ERP, hecho con node.js y express. Un backoffice para gestión de pymes.
 
 ---
