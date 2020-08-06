@@ -388,6 +388,8 @@ describe('PaymentsController', () => {
   });
 
   describe('POST /payments/merge', () => {
+    before(() => testDB.clean());
+
     describe('Usuario no autenticado', () => {
       let response;
 

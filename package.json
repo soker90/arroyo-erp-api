@@ -68,7 +68,7 @@
     "testResultsProcessor": "jest-sonar-reporter"
   },
   "jestSonar": {
-    "reportPath": "reports",
+    "reportPath": "coverage",
     "reportFile": "test-report.xml",
     "indent": 2
   }
