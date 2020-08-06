@@ -8,23 +8,27 @@ const { Router } = require('express');
  * [[{path, route},[path, route}],[{path, route},{path, route}],[{path, route},[path, route}]]
  */
 function buildApiVersionRouters(routes) {
-  return Object.keys(routes).reduce((acc, version) => {
-    acc.push(routes[version].reduce((versionRoutes, route) => {
-      const {
-        domain,
-        path,
-        method,
-      } = route;
+  return Object.keys(routes)
+    .reduce((acc, version) => {
+      acc.push(routes[version].reduce((versionRoutes, route) => {
+        const {
+          domain,
+          path,
+          method,
+        } = route;
 
-      const finalDomain = (domain) ? `/${domain}` : '';
+        const finalDomain = (domain) ? `/${domain}` : '';
 
-      versionRoutes.push({ path: `${method}_${finalDomain}/${path}`, route });
+        versionRoutes.push({
+          path: `${method}_${finalDomain}/${path}`,
+          route,
+        });
 
-      return versionRoutes;
-    }, []));
+        return versionRoutes;
+      }, []));
 
-    return acc;
-  }, []);
+      return acc;
+    }, []);
 }
 
 /**
@@ -99,8 +103,6 @@ function buildRouter(routes, defaultMiddlewares = []) {
   */
   const builtVersion = buildApiVersionRouters(routes);
 
-  // console.debug('builtVersion:', JSON.stringify(builtVersion, null, 2));
-
   // builtVersion = [[{},{}], [{},{},{}], [{}]]
   return builtVersion.reduce((appRouter, apiVersion, index) => {
     // apiVersion = [{},{}]
@@ -108,8 +110,6 @@ function buildRouter(routes, defaultMiddlewares = []) {
 
     // merge controllers in this version with those in previous version(only one for "path")
     const finalControllers = buildActualRoutesObject(apiVersion, previousApiVersion);
-
-    // console.debug(`finalControllers[${index}]:`, JSON.stringify(finalControllers, null, 2));
 
     // save the actual api version routes to be used with the next api version routes
     builtVersion[index] = finalControllers;
