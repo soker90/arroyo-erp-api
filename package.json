@@ -44,6 +44,7 @@
     "eslint-plugin-jest": "^23.20.0",
     "jest": "^26.2.2",
     "jest-circus": "^26.2.2",
+    "jest-sonar-reporter": "^2.0.0",
     "mongodb-memory-server": "^6.6.3",
     "nock": "^13.0.3",
     "supertest": "^4.0.2"
