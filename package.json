@@ -64,6 +64,7 @@
     "collectCoverage": true,
     "collectCoverageFrom": [],
     "coveragePathIgnorePatterns": [],
-    "testRunner": "jest-circus/runner"
-  }
+    "testRunner": "jest-circus/runner",
+    "testResultsProcessor": "jest-sonar-reporter"
+  },
 }
