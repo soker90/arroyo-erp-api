@@ -66,5 +66,5 @@
     "coveragePathIgnorePatterns": [],
     "testRunner": "jest-circus/runner",
     "testResultsProcessor": "jest-sonar-reporter"
-  },
+  }
 }
