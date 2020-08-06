@@ -51,7 +51,9 @@ const merge = async ({ payments }) => {
   let nOrder = '';
   let invoices = [];
 
+  // eslint-disable-next-line no-restricted-syntax
   for (const payment of payments) {
+    // eslint-disable-next-line no-await-in-loop
     const paymentData = await _addMergeParam(payment);
     amount += paymentData.amount;
     nOrder += `${paymentData.nOrder} `;
