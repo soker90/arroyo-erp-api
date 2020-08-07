@@ -24,7 +24,20 @@ class PaymentsMissing extends Error {
   }
 }
 
+class PaymentDivideNotMerged extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'No puedes dividir un pago no fusionado') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   PaymentIdNotFound,
   PaymentsMissing,
+  PaymentDivideNotMerged,
 };

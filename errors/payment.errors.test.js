@@ -43,4 +43,23 @@ describe('PaymentErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('PaymentDivideNotMerged', () => {
+    test('should exist and extend from Error', () => {
+      expect(new PaymentErrors.PaymentDivideNotMerged())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new PaymentErrors.PaymentDivideNotMerged();
+      expect(err.message)
+        .toEqual('No puedes dividir un pago no fusionado');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new PaymentErrors.PaymentDivideNotMerged('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });

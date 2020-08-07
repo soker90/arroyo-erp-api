@@ -1,5 +1,6 @@
 /* eslint-disable nonblock-statement-body-position */
 const { PaymentModel } = require('arroyo-erp-models');
+const Promise = require('bluebird');
 
 const merge = require('./merge');
 const confirm = require('./confirm');
@@ -31,9 +32,28 @@ const payments = () => PaymentModel.find({
   $or: [{ merged: { $exists: false } }, { merged: false }],
 });
 
+/**
+ * Elimina el pago fusionado y elimina el tag merged a los antiguos pagos
+ * @param {String} id
+ * @returns {Promise<void>}
+ */
+const divide = async ({ id }) => {
+  const mergePayment = await PaymentModel.findOne({ _id: id });
+
+  await Promise.map(
+    mergePayment.payments,
+    payment => (
+      PaymentModel.findOneAndUpdate({ _id: payment }, { merge: false })
+    ),
+  );
+
+  await PaymentModel.deleteOne({ _id: id });
+};
+
 module.exports = {
   create,
   payments,
   confirm,
   merge,
+  divide,
 };

@@ -18,6 +18,7 @@ class PaymentsController {
   _handleError(res, error) {
     switch (error.name) {
     case 'PaymentIdNotFound':
+    case 'PaymentDivideNotMerged':
       this.errorHandler.sendNotFound(res)(error);
       break;
     default:
@@ -53,6 +54,17 @@ class PaymentsController {
     Promise.resolve(req.body)
       .tap(this.paymentValidator.havePayments)
       .then(this.paymentService.merge)
+      .then(this.paymentService.payments)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  divide(req, res) {
+    logService.logInfo('[payment] - Divide un pago fusionado');
+    Promise.resolve(req.params)
+      .tap(this.paymentValidator.validateId)
+      .tap(this.paymentValidator.isMerged)
+      .tap(this.paymentService.divide)
       .then(this.paymentService.payments)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

@@ -50,8 +50,19 @@ const havePayments = async ({ payments }) => {
   await Promise.all(payments.map(_checkIdPayment));
 };
 
+/**
+ * Comprueba que el pago contiene pagos, por lo que está fusionado
+ * @param id
+ * @returns {Promise<void>}
+ */
+const isMerged = async id => {
+  const { payments } = await PaymentModel.findOne({ _id: id });
+  if (!payments || payments.length < 2) throw new paymentErrors.PaymentDivideNotMerged();
+};
+
 module.exports = {
   confirmParams,
   validateId,
   havePayments,
+  isMerged,
 };
