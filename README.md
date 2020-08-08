@@ -4,7 +4,6 @@
 [![dependencies Status](https://david-dm.org/soker90/arroyo-erp-api/status.svg)](https://david-dm.org/soker90/arroyo-erp-api)
 [![devDependencies Status](https://david-dm.org/soker90/arroyo-erp-api/dev-status.svg)](https://david-dm.org/soker90/arroyo-erp-api?type=dev)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=soker90_arroyo-erp-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=soker90_arroyo-erp-api)
-![Code style](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)
 [![codecov](https://codecov.io/gh/soker90/arroyo-erp-api/branch/master/graph/badge.svg)](https://codecov.io/gh/soker90/arroyo-erp-api)
 
 Backend de Arroyo ERP, hecho con node.js y express. Un backoffice para gestión de pymes.
