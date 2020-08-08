@@ -8,7 +8,11 @@
 [![codecov](https://codecov.io/gh/soker90/arroyo-erp-api/branch/master/graph/badge.svg)](https://codecov.io/gh/soker90/arroyo-erp-api)
 
 Backend de Arroyo ERP, hecho con node.js y express. Un backoffice para gestión de pymes.
-
+---
+## TODO
+Una vez terminado el modulo de proveedores de compras y antes de seguir con el siguiente:
+- [ ] Coverage > 95%
+- [ ] Refactor de servicios, traslado de código a validator y adapters
 ---
 ## Requisitos
 
