@@ -43,7 +43,7 @@ const divide = async ({ id }) => {
   await Promise.map(
     mergePayment.payments,
     payment => (
-      PaymentModel.findOneAndUpdate({ _id: payment }, { merge: false })
+      PaymentModel.findOneAndUpdate({ _id: payment }, { merged: false })
     ),
   );
 

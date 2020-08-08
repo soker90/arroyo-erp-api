@@ -543,4 +543,151 @@ describe('PaymentsController', () => {
       });
     });
   });
+
+  describe('PUT /payments/divide/:id', () => {
+    beforeAll(() => testDB.clean());
+
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .put('/payments/divide/5e430c9b7d2d2ded823b153b')
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El id del pago no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .put('/payments/divide/5e430c9b7d2d2ded823b153b')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.status)
+            .toBe(404);
+        });
+      });
+
+      describe('No es un pago fusionado', () => {
+        let response;
+        let payment;
+
+        before(() => PaymentModel.create(paymentMock)
+          .then(paymentCreated => {
+            payment = paymentCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .put(`/payments/divide/${payment._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.status)
+            .toBe(400);
+        });
+      });
+
+      describe('Se envía un pago fusionado', () => {
+        let response;
+        let payment;
+        let payment2;
+        let paymentMerged;
+
+        before(async () => {
+          await testDB.clean();
+          payment = await PaymentModel.create({
+            ...paymentMock,
+            merged: true,
+          });
+
+          payment2 = await PaymentModel.create({
+            ...paymentMock,
+            merged: true,
+          });
+
+          paymentMerged = await PaymentModel.create({
+            ...paymentMock,
+            payments: [payment._id, payment2._id],
+          });
+        });
+
+        beforeAll(done => {
+          supertest(app)
+            .put(`/payments/divide/${paymentMerged._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Se recibe un array con un pago', () => {
+          expect(response.body.length)
+            .toBe(2);
+        });
+
+        test('Se envía la respuesta correcta', () => {
+          const paymentReceived = response.body[0];
+          expect(paymentReceived.amount)
+            .toBe(paymentMock.amount);
+          expect(paymentReceived.invoices.toString())
+            .toBe(paymentMock.invoices
+              .toString());
+          expect(paymentReceived.nOrder)
+            .toBe(paymentReceived.nOrder);
+          expect(paymentReceived.paymentDate)
+            .toBe(paymentMock.paymentDate);
+          expect(paymentReceived.provider)
+            .toBe(paymentMock.provider);
+          expect(paymentReceived.type)
+            .toBe(paymentMock.type);
+        });
+      });
+    });
+  });
 });

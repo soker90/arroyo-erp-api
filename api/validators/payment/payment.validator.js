@@ -18,7 +18,8 @@ const _checkIdPayment = async id => {
  * @param {String} id
  * @returns {Promise<void>}
  */
-const validateId = ({ params: { id } }) => _checkIdPayment(id);
+const validateId = ({ id }) => _checkIdPayment(id);
+const validateIdParam = ({ params }) => validateId(params);
 
 /**
  * Check if invalid date
@@ -55,7 +56,7 @@ const havePayments = async ({ payments }) => {
  * @param id
  * @returns {Promise<void>}
  */
-const isMerged = async id => {
+const isMerged = async ({ id }) => {
   const { payments } = await PaymentModel.findOne({ _id: id });
   if (!payments || payments.length < 2) throw new paymentErrors.PaymentDivideNotMerged();
 };
@@ -65,4 +66,5 @@ module.exports = {
   validateId,
   havePayments,
   isMerged,
+  validateIdParam,
 };

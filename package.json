@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "arroyo-erp-models": "^0.8.2",
+    "arroyo-erp-models": "^0.8.3",
     "axios": "^0.19.2",
     "bcrypt": "^5.0.0",
     "bluebird": "^3.7.2",

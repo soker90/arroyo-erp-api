@@ -28,12 +28,12 @@ const invoice = async ({ id }) => {
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoices = async ({ offset, limit, year }) => {
+const invoices = ({ offset, limit, year }) => {
   const start = new Date(year);
   const nextYear = Number(year) + 1;
   const end = new Date(nextYear.toString());
 
-  return await InvoiceModel.find({
+  return InvoiceModel.find({
     dateRegister: {
       $gte: start,
       $lt: end,
@@ -50,7 +50,7 @@ const invoices = async ({ offset, limit, year }) => {
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoicesShort = async ({
+const invoicesShort = ({
   concept, provider, offset, limit,
 }) => {
   const filter = {
@@ -58,7 +58,7 @@ const invoicesShort = async ({
     ...(provider && { provider }),
   };
 
-  return await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid')
+  return InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid')
     .sort({ nOrder: -1 })
     .skip(offset || 0)
     .limit(limit)

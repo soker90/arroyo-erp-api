@@ -43,5 +43,16 @@ module.exports = ({ paymentService }, { paymentValidator }) => {
       authMiddleware,
     ],
   },
+  {
+    method: 'put',
+    domain: 'payments',
+    path: '/divide/:id',
+    handler: paymentsController.divide,
+    bindTo: paymentsController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
   ];
 };

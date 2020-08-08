@@ -62,6 +62,7 @@ const calcNewShopping = async invoice => ({
  * @returns {Promise<{invoice}|*>}
  */
 const refreshInvoice = async deliveryOrder => {
+  // TODO
   if (!deliveryOrder.invoice) return deliveryOrder;
 
   const newData = await InvoiceModel.findOne({ _id: deliveryOrder.invoice })
@@ -75,6 +76,7 @@ const refreshInvoice = async deliveryOrder => {
     );
 
   await InvoiceModel.update({ _id: deliveryOrder.invoice }, newData);
+
   return deliveryOrder;
 };
 

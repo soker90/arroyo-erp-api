@@ -58,7 +58,8 @@ const calcProduct = async (product, price, quantity, date = 0) => {
       $gt: 0,
       $lt: date,
     },
-  }).sort({ date: -1 });
+  })
+    .sort({ date: -1 });
   const lastPrice = prices.length ? prices[0].price : null;
 
   const rateCalc = rate ? roundNumber(rate * quantity) : 0;
@@ -91,9 +92,11 @@ const getFreeDeliveryOrders = async provider => {
   const freeOrders = await DeliveryOrderModel.find({
     provider,
     invoice: { $exists: false },
-  }).lean();
+  })
+    .lean();
 
-  const free = freeOrders.map(({
+  // TODO to adapter
+  return freeOrders.map(({
     _id, date, taxBase, products,
   }) => ({
     _id,
@@ -107,11 +110,9 @@ const getFreeDeliveryOrders = async provider => {
         price,
         quantity,
         taxBase: totalProduct,
-      })
+      }),
     ),
   }));
-
-  return free;
 };
 
 /**
@@ -139,13 +140,14 @@ const getInInvoicesDeliveryOrders = async (provider, offset, limit) => {
       total,
       nOrder,
       nInvoice,
-    })
+    }),
   );
 
   const count = await DeliveryOrderModel.find({
     provider,
     nOrder: { $exists: true },
-  }).countDocuments();
+  })
+    .countDocuments();
 
   return {
     count,
