@@ -10,14 +10,14 @@
 Backend de Arroyo ERP, hecho con node.js y express. Un backoffice para gestión de pymes.
 
 ---
-## Requirements
+## Requisitos
 
 Para desarrollar necesitas Node.js y un gestor de paquetes para node como npm.
 
 ### Node
 - #### Instalación en ArchLinux
 
-  Puedes instalar nodejs y npm fácilmente con apt, con los siguientes comandos
+  Puedes instalar nodejs y npm fácilmente con pacman, con los siguientes comandos
 
       $ sudo pacman -Sy nodejs npm
 
