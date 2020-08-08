@@ -11,7 +11,7 @@ const refreshToken = (res, { user }) => {
   res.set(
     'Token', signToken(user),
   );
-  res.set('Access-Control-Expose-Headers', '*, Token');
+  res.set('Access-Control-Expose-Headers', 'origin, Token');
 };
 
 const handleVerifyTokenError = res => (error) => {
