@@ -14,15 +14,8 @@ const invoiceEdit = require('./invoiceEdit');
  * @param {String} id
  * @returns {Promise<*>}
  */
-const invoice = async ({ id }) => {
-  if (!id) throw new InvoiceMissingId();
+const invoice = ({ id }) => InvoiceModel.findOne({ _id: id });
 
-  const invoiceData = await InvoiceModel.findOne({ _id: id })
-    .lean();
-
-  if (!invoiceData) throw new InvoiceIdNotFound();
-  return invoiceData;
-};
 /**
  *
  * @param {Object} params

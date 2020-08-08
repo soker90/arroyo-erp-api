@@ -32,6 +32,7 @@ class InvoicesController {
     case 'InvoiceParamsMissing':
       this.errorHandler.sendBadRequest(res)(error);
       break;
+      /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;
@@ -44,6 +45,7 @@ class InvoicesController {
   invoice(req, res) {
     logService.logInfo('[inovice]  - Get invoice');
     Promise.resolve(req.params)
+      .tap(this.invoiceValidator.validateId)
       .then(this.invoiceService.invoice)
       .then(this.invoiceAdapter.fullResponse)
       .then(data => res.send(data))
@@ -56,6 +58,7 @@ class InvoicesController {
   invoices(req, res) {
     logService.logInfo('[invoices] - List of invoices');
     Promise.resolve(req.query)
+      .tap(this.invoiceValidator.isValidYear)
       .then(this.invoiceService.invoices)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
@@ -100,7 +103,7 @@ class InvoicesController {
   invoiceConfirm(req, res) {
     logService.logInfo('[inovice]  - Confirm invoice');
     Promise.resolve(req)
-      .tap(this.invoiceValidator.validateId)
+      .tap(this.invoiceValidator.validateIdParam)
       .tap(this.invoiceValidator.confirmParams)
       .then(this.invoiceService.invoiceConfirm)
       .tap(this.paymentService.create)

@@ -7,9 +7,26 @@ const { invoiceErrors, commonErrors } = require('../../../errors');
  * @param {String} id
  * @returns {Promise<void>}
  */
-const validateId = async ({ params: { id } }) => {
+const _checkId = async id => {
+  if (!id) throw new invoiceErrors.InvoiceMissingId();
   const invoiceExist = await InvoiceModel.exists({ _id: id });
   if (!invoiceExist) throw new invoiceErrors.InvoiceIdNotFound();
+};
+/**
+ * Check if exist id
+ * @param {String} id
+ * @returns {Promise<void>}
+ */
+const validateId = ({ id }) => _checkId(id);
+const validateIdParam = ({ params }) => validateId(params);
+
+/**
+ * Check if year if valid
+ * @param {String} year
+ */
+const isValidYear = ({ year }) => {
+  // eslint-disable-next-line no-restricted-globals,radix
+  if (!parseInt(year)) throw new commonErrors.ParamNotValidError();
 };
 
 /**
@@ -39,4 +56,6 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
 module.exports = {
   confirmParams,
   validateId,
+  validateIdParam,
+  isValidYear,
 };

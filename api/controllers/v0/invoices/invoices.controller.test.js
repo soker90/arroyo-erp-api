@@ -3,12 +3,152 @@ const { mongoose, InvoiceModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
+const { commonErrors } = require('../../../../errors');
+
+const invoiceMock = {
+  total: 295.74,
+  dateInvoice: 1594474393373,
+  dateRegister: 1594474393373,
+  nInvoice: '22/2020',
+  nOrder: 2,
+};
 
 describe('InvoicesController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());
 
+  describe('GET /invoices', () => {
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get('/invoices')
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No se envía año', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get('/invoices')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('Devuelve el mensaje correcto', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.ParamNotValidError().message);
+        });
+      });
+
+      describe('Sin facturas', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get('/invoices?year=2020')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Devuelve un array', () => {
+          expect(response.body)
+            .toEqual([]);
+        });
+      });
+
+      describe('Dispone de facturas', () => {
+        let invoice;
+
+        before(() => InvoiceModel.create(invoiceMock)
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        describe('No se pasa offset ni limit', () => {
+          let response;
+
+          before(done => {
+            supertest(app)
+              .get('/invoices?year=2020')
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('Devuelve un array con un elemento', () => {
+            expect(response.body.length)
+              .toBe(1);
+          });
+
+          test('Los datos son correctos', () => {
+            const json = JSON.parse(response.text)[0];
+            expect(JSON.stringify(json._id))
+              .toEqual(JSON.stringify(invoice._id));
+            expect(json.nOrder)
+              .toBe(invoice.nOrder);
+            expect(json.total)
+              .toBe(invoice.total);
+            expect(json.dateInvoice)
+              .toBe(invoice.dateInvoice);
+          });
+        });
+      });
+    });
+  });
+
   describe('GET /invoices/short', () => {
+    before(() => testDB.clean());
+
     describe('Usuario no autenticado', () => {
       let response;
 
