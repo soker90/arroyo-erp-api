@@ -1,16 +1,86 @@
 const supertest = require('supertest');
-const { mongoose, InvoiceModel } = require('arroyo-erp-models');
+const { mongoose, InvoiceModel, DeliveryOrderModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const { commonErrors } = require('../../../../errors');
+const { CONCEPT } = require('../../../../constants');
+const { roundNumber } = require('../../../../utils');
+
+const deliveryOrderMock = {
+  provider: '5f14857d3ae0d32b417e8d0c',
+  nameProvider: 'Primero',
+  date: 1596632580000.0,
+  total: 75.48,
+  iva: 6.8,
+  rate: 0.5,
+  re: 0.68,
+  taxBase: 68,
+  products: [
+    {
+      code: '',
+      product: '5f188ec1deae8d5c1b549336',
+      price: 8,
+      quantity: 8,
+      name: 'yiuyi',
+      taxBase: 68,
+      rate: 0.5,
+      iva: 6.8,
+      re: 0.68,
+      total: 75.48,
+    },
+  ],
+};
+
+const deliveryOrder2Mock = {
+  provider: '5f14857d3ae0d32b417e8d0c',
+  nameProvider: 'Primero',
+  date: 1597323720000.0,
+  size: 0,
+  total: 69.544,
+  iva: 2.624,
+  rate: 0.201,
+  re: 1.312,
+  taxBase: 65.608,
+  products: [
+    {
+      code: '12',
+      product: '5f148a51702f6d366d76d9c4',
+      price: 8,
+      quantity: 8,
+      name: 'prueba',
+      taxBase: 65.608,
+      rate: 0.201,
+      diff: 7,
+      iva: 2.624,
+      re: 1.312,
+      total: 69.544,
+    },
+  ],
+};
 
 const invoiceMock = {
-  total: 295.74,
-  dateInvoice: 1594474393373,
-  dateRegister: 1594474393373,
-  nInvoice: '22/2020',
-  nOrder: 2,
+  deliveryOrders: [
+    deliveryOrderMock, deliveryOrder2Mock,
+  ],
+  total: 75.48,
+  iva: 6.8,
+  re: 0.68,
+  taxBase: 68,
+  nameProvider: 'Primero',
+  provider: '5f14857d3ae0d32b417e8d0c',
+  dateRegister: 1596891828425.0,
+  concept: 'Compras',
+  __v: 0,
+  dateInvoice: 1597410180000.0,
+  nInvoice: '33',
+  nOrder: 47,
+  payment: {
+    paymentDate: 1596891780000.0,
+    type: 'Talón',
+    numCheque: '888',
+    paid: true,
+  },
 };
 
 describe('InvoicesController', () => {
@@ -315,7 +385,7 @@ describe('InvoicesController', () => {
         let response;
         let invoice;
 
-        before(() => InvoiceModel.create({})
+        before(() => InvoiceModel.create(invoiceMock)
           .then(invoiceCreated => {
             invoice = invoiceCreated;
           }));
@@ -330,12 +400,234 @@ describe('InvoicesController', () => {
             });
         });
 
-        test('Debería dar un 200', async () => {
+        test('Debería dar un 200', () => {
           expect(token)
             .toBeTruthy();
 
           expect(response.statusCode)
             .toBe(200);
+        });
+
+        test('Los datos son correctos', () => {
+          const bodyResponse = response.body;
+          expect(bodyResponse.provider)
+            .toBe(invoiceMock.provider);
+          expect(bodyResponse.name)
+            .toBe(invoiceMock.name);
+          expect(bodyResponse.deliveryOrders.length)
+            .toBe(invoiceMock.deliveryOrders.length);
+        });
+      });
+    });
+  });
+
+  describe('POST /invoices', () => {
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post('/invoices')
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No se envía concepto', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post('/invoices')
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', async () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(400);
+        });
+      });
+
+      describe('No se envía albaranes', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post('/invoices')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ concept: CONCEPT.COMPRAS })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', async () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(400);
+        });
+      });
+
+      describe('El abarán no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post('/invoices')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              concept: CONCEPT.COMPRAS,
+              deliveryOrders: ['5f188ec1deae8d5c1b549336'],
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', async () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(404);
+        });
+      });
+
+      describe('Se crea la factura correctamente', () => {
+        let response;
+        let deliveryOrder;
+
+        before(() => DeliveryOrderModel.create(deliveryOrderMock)
+          .then(orderCreated => {
+            deliveryOrder = orderCreated;
+          }));
+
+        describe('Se crea la factura de un albarán', () => {
+          beforeAll(done => {
+            supertest(app)
+              .post('/invoices/')
+              .send({
+                concept: CONCEPT.COMPRAS,
+                deliveryOrders: [deliveryOrder._id],
+              })
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(token)
+              .toBeTruthy();
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('Devuelve los datos correctos', () => {
+            const deliveryOrderResponse = response.body.deliveryOrders[0];
+            expect(response.body.concept)
+              .toBe(CONCEPT.COMPRAS);
+            expect(deliveryOrder._id.toString())
+              .toBe(deliveryOrderResponse._id);
+            expect(response.body.iva)
+              .toBe(deliveryOrder.iva);
+            expect(response.body.nameProvider)
+              .toBe(deliveryOrder.nameProvider);
+            expect(response.body.provider)
+              .toBe(deliveryOrder.provider);
+            expect(response.body.re)
+              .toBe(deliveryOrder.re);
+            expect(response.body.taxBase)
+              .toBe(deliveryOrder.taxBase);
+            expect(response.body.total)
+              .toBe(deliveryOrder.total);
+          });
+        });
+
+        describe('Se crea la factura de dos albaranes', () => {
+          let deliveryOrder2;
+          before(() => DeliveryOrderModel.create(deliveryOrder2Mock)
+            .then(orderCreated => {
+              deliveryOrder2 = orderCreated;
+            }));
+
+          beforeAll(done => {
+            supertest(app)
+              .post('/invoices/')
+              .send({
+                concept: CONCEPT.COMPRAS,
+                deliveryOrders: [deliveryOrder._id, deliveryOrder2._id],
+              })
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(token)
+              .toBeTruthy();
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('Devuelve los datos correctos', () => {
+            const deliveryOrderResponse = response.body.deliveryOrders[0];
+            const deliveryOrder2Response = response.body.deliveryOrders[1];
+            expect(response.body.concept)
+              .toBe(CONCEPT.COMPRAS);
+            expect(deliveryOrder._id.toString())
+              .toBe(deliveryOrderResponse._id);
+            expect(deliveryOrder2._id.toString())
+              .toBe(deliveryOrder2Response._id);
+            expect(response.body.iva)
+              .toBe(roundNumber(deliveryOrder.iva + deliveryOrder2.iva, 2));
+            expect(response.body.nameProvider)
+              .toBe(deliveryOrder.nameProvider);
+            expect(response.body.provider)
+              .toBe(deliveryOrder.provider);
+            expect(response.body.re)
+              .toBe(roundNumber(deliveryOrder.re + deliveryOrder2.re, 2));
+            expect(response.body.taxBase)
+              .toBe(roundNumber(deliveryOrder.taxBase + deliveryOrder2.taxBase, 2));
+            expect(response.body.total)
+              .toBe(roundNumber(deliveryOrder.total + deliveryOrder2.total, 2));
+          });
         });
       });
     });

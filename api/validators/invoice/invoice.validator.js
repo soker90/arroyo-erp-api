@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 const { InvoiceModel } = require('arroyo-erp-models');
 const { invoiceErrors, commonErrors } = require('../../../errors');
+const { CONCEPT } = require('../../../constants');
 
 /**
  * Check if exist id
@@ -53,9 +54,22 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
   if (invoice.nOrder) throw new invoiceErrors.InvoiceWithOrderNumber();
 };
 
+/**
+ * Valida los datos envíados para crear una factura
+ * @param concept
+ * @param deliveryOrders
+ */
+const createParams = ({ concept, deliveryOrders }) => {
+  if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
+  if (concept === CONCEPT.COMPRAS && !deliveryOrders?.length)
+    // eslint-disable-next-line
+    throw new invoiceErrors.InvoiceMissingDeliveryOrders();
+};
+
 module.exports = {
   confirmParams,
   validateId,
   validateIdParam,
   isValidYear,
+  createParams,
 };

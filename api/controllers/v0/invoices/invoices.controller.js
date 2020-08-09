@@ -20,16 +20,16 @@ class InvoicesController {
   _handleError(res, error) {
     switch (error.name) {
     case 'InvoiceInvalidDateInvoice':
-    case 'InvoiceMissingDeliveryOrders':
-    case 'InvoiceNotFoundDeliveryOrder':
     case 'DateNotValid':
       this.errorHandler.sendValidationError(res)(error);
       break;
+    case 'InvoiceNotFoundDeliveryOrder':
     case 'InvoiceIdNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
-    case 'InvoiceMissingId':
+    case 'InvoiceMissingDeliveryOrders':
     case 'InvoiceParamsMissing':
+    case 'InvoiceWithoutDeliveryOrders':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -80,6 +80,7 @@ class InvoicesController {
   create(req, res) {
     logService.logInfo('[invoices] - Create invoice');
     Promise.resolve(req.body)
+      .tap(this.invoiceValidator.createParams)
       .then(this.invoiceService.create)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
