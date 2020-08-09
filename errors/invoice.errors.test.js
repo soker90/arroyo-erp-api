@@ -99,4 +99,23 @@ describe('InvoiceErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('InvoiceWithOrderNumber', () => {
+    test('should exist and extend from Error', () => {
+      expect(new InvoiceErrors.InvoiceWithOrderNumber())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new InvoiceErrors.InvoiceWithOrderNumber();
+      expect(err.message)
+        .toEqual('La factura ya tiene número de orden');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new InvoiceErrors.InvoiceWithOrderNumber('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });

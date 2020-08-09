@@ -5,7 +5,6 @@ const paymentErrors = require('./payment.errors');
 const productErrors = require('./product.errors');
 const providerErrors = require('./provider.errors');
 const userErrors = require('./user.errors');
-const validationErrors = require('./validation.error');
 
 module.exports = {
   commonErrors,
@@ -15,5 +14,4 @@ module.exports = {
   productErrors,
   providerErrors,
   userErrors,
-  validationErrors,
 };
