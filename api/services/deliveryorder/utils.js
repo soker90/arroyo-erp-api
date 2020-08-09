@@ -122,13 +122,13 @@ const getFreeDeliveryOrders = async provider => {
  * @param {Number} limit
  * @return {Promise<{data: *, count: *}>}
  */
-const getInInvoicesDeliveryOrders = async (provider, offset, limit) => {
+const getInInvoicesDeliveryOrders = async (provider, offset = 0, limit = 10) => {
   const inInvoicesOrders = await DeliveryOrderModel.find({
     provider,
     invoice: { $exists: true },
-  })
-    .skip(0)
-    .limit(10)
+  }, null, { skip: 2 })
+    .skip(offset)
+    .limit(limit)
     .lean();
 
   const data = inInvoicesOrders.map(

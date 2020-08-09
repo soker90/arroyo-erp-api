@@ -11,7 +11,7 @@ const ProviderController = require('./providers');
 
 module.exports = [
   ...AccountController(services),
-  ...DeliveryOrderController(services),
+  ...DeliveryOrderController(services, validators),
   ...InvoiceController(services, validators, adapters),
   ...PaymentController(services, validators),
   ...ProductController(services),

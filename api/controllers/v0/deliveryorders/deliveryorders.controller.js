@@ -6,20 +6,27 @@ const TYPE = 'DeliveryOrderController';
 
 const logService = new LogService(TYPE);
 
+// TODO: Refactorizar toda la parte de albaranes
 class DeliveryOrdersController {
   constructor({
     deliveryOrderService,
     errorHandler,
+    deliveryOrderValidator,
   }) {
     this.deliveryOrderService = deliveryOrderService;
     this.errorHandler = errorHandler;
+    this.deliveryOrderValidator = deliveryOrderValidator;
   }
 
   _handleError(res, error) {
-    switch (error.code) {
-    case 400:
+    switch (error.name) {
+    case 'DeliveryOrderMissing':
       this.errorHandler.sendBadRequest(res)(error);
       break;
+    case 'DeliveryOrderProviderNotFound':
+      this.errorHandler.sendNotFound(res)(error);
+      break;
+      /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;
@@ -43,6 +50,7 @@ class DeliveryOrdersController {
   create(req, res) {
     logService.logInfo('[delivery orders] - Create delivery order');
     Promise.resolve(req.body)
+      .tap(this.deliveryOrderValidator.validateProvider)
       .then(this.deliveryOrderService.create)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

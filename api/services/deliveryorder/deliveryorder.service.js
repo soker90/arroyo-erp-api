@@ -17,9 +17,11 @@ const {
  * Return all delivery orders
  * @return {Promise<{data: any}>}
  */
-const orders = async ({ provider }) => {
+const orders = async ({ provider, offset, limit }) => {
   const free = await getFreeDeliveryOrders(provider);
-  const inInvoices = await getInInvoicesDeliveryOrders(provider);
+  const inInvoices = await getInInvoicesDeliveryOrders(
+    provider, parseInt(offset, 10), parseInt(limit, 10),
+  );
 
   return {
     free,
@@ -32,10 +34,7 @@ const orders = async ({ provider }) => {
  * @param {string} provider
  */
 const create = async ({ provider }) => {
-  if (!provider) throw new DeliveryOrderMissingId();
-
   const { name, hasRate } = await ProviderModel.findOne({ _id: provider });
-  if (!name) throw new DeliveryOrderProviderNotFound();
 
   const data = {
     provider,
