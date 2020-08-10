@@ -12,10 +12,12 @@ class DeliveryOrdersController {
     deliveryOrderService,
     errorHandler,
     deliveryOrderValidator,
+    productValidator,
   }) {
     this.deliveryOrderService = deliveryOrderService;
     this.errorHandler = errorHandler;
     this.deliveryOrderValidator = deliveryOrderValidator;
+    this.productValidator = productValidator;
   }
 
   _handleError(res, error) {
@@ -24,6 +26,8 @@ class DeliveryOrdersController {
       this.errorHandler.sendBadRequest(res)(error);
       break;
     case 'DeliveryOrderProviderNotFound':
+    case 'DeliveryOrderNotFound':
+    case 'ProductNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
       /* istanbul ignore next */
@@ -84,6 +88,8 @@ class DeliveryOrdersController {
   addProduct(req, res) {
     logService.logInfo('[delivery orders] - Add product to a delivery order');
     Promise.resolve(req)
+      .tap(this.deliveryOrderValidator.validateIdParam)
+      .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.addProduct)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

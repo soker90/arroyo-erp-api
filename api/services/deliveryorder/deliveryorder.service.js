@@ -99,23 +99,18 @@ const addProduct = async ({
   params: { id }, body: {
     product, price, quantity,
   },
-}) => {
-  if (!id) throw new DeliveryOrderMissingId();
-  if (!quantity || !product || !price) throw new DeliveryOrderMissing();
-
-  return await DeliveryOrderModel.findOne({ _id: id })
-    .then(async response => {
-      const newProduct = await calcProduct(product, price, quantity, response.date);
-      response.set('products', [
-        ...response.products,
-        newProduct,
-      ]);
-      return response;
-    })
-    .then(calcData)
-    .then(refreshInvoice)
-    .then(data => new DeliveryOrderAdapter(data).productsResponse());
-};
+}) => await DeliveryOrderModel.findOne({ _id: id })
+  .then(async response => {
+    const newProduct = await calcProduct(product, price, quantity, response.date);
+    response.set('products', [
+      ...response.products,
+      newProduct,
+    ]);
+    return response;
+  })
+  .then(calcData)
+  .then(refreshInvoice)
+  .then(data => new DeliveryOrderAdapter(data).productsResponse());
 
 /**
  * Actualiza un producto del albarán

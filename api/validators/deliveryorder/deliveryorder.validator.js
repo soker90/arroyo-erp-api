@@ -1,5 +1,5 @@
-const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
-const { deliveryOrderErrors } = require('../../../errors');
+const { DeliveryOrderModel, ProviderModel, ProductModel } = require('arroyo-erp-models');
+const { deliveryOrderErrors, productErrors } = require('../../../errors');
 
 /**
  * Check if exist id
@@ -31,8 +31,22 @@ const validateProvider = async ({ provider }) => {
   if (!providerExist) throw new deliveryOrderErrors.DeliveryOrderProviderNotFound();
 };
 
+/**
+ * Valida los parametros para añadir o modificar un producto
+ * @param quantity
+ * @param product
+ * @param price
+ * @returns {Promise<void>}
+ */
+const validateProductParams = async ({ body: { quantity, product, price } }) => {
+  if (!quantity || !product || !price) throw new deliveryOrderErrors.DeliveryOrderMissing();
+  const productExist = ProductModel.exists({ _id: product });
+  if (!productExist) throw new productErrors.ProductNotFound();
+};
+
 module.exports = {
   validateId,
   validateIdParam,
   validateProvider,
+  validateProductParams,
 };

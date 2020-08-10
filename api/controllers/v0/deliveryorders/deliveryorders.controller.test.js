@@ -3,7 +3,7 @@ const { mongoose, DeliveryOrderModel, ProviderModel } = require('arroyo-erp-mode
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
-const { deliveryOrderErrors } = require('../../../../errors');
+const { deliveryOrderErrors, productErrors } = require('../../../../errors');
 const { CONCEPT } = require('../../../../constants');
 const { roundNumber } = require('../../../../utils');
 
@@ -453,7 +453,8 @@ describe('DeliveryOrderController', () => {
         });
 
         test('El mensaje de error es correcto', () => {
-          expect(response.body._id).toBe(deliveryOrder._id.toString());
+          expect(response.body._id)
+            .toBe(deliveryOrder._id.toString());
           expect(response.body.date)
             .toBe(date);
         });
@@ -530,6 +531,202 @@ describe('DeliveryOrderController', () => {
             .toBe(0);
           expect(response.body.totals.total)
             .toBe(0);
+        });
+      });
+    });
+  });
+
+  describe('GET /deliveryorders/:id', () => {
+    const PATH = '/deliveryorders';
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(`${PATH}/5f14857d3ae0d32b417e8d0c`)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No existe el albarán', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get(`${PATH}/5f14857d3ae0d32b417e8d0c`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es el correcto', () => {
+          expect(response.body.message)
+            .toBe(new deliveryOrderErrors.DeliveryOrderNotFound().message);
+        });
+      });
+
+      describe('Devuelve correctamente el albarán', () => {
+        let deliveryOrder;
+        let response;
+
+        before(() => DeliveryOrderModel.create(deliveryOrder2Mock)
+          .then(created => {
+            deliveryOrder = created;
+          }));
+
+        before(done => {
+          supertest(app)
+            .get(`${PATH}/${deliveryOrder._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('La respuesta es correcta', () => {
+          expect(response.body._id.localeCompare(deliveryOrder._id))
+            .toBe(0);
+          expect(response.body.provider)
+            .toBe(deliveryOrder2Mock.provider);
+          expect(response.body.nameProvider)
+            .toBe(deliveryOrder2Mock.nameProvider);
+          expect(response.body.products.length)
+            .toBe(1);
+          expect(response.body.nOrder)
+            .toBe(deliveryOrder2Mock.nOrder);
+          expect(response.body.invoice)
+            .toBe(deliveryOrder2Mock.invoice);
+        });
+      });
+    });
+  });
+
+  describe('POST /deliveryorders/:id/product', () => {
+    const PATH = id => `/deliveryorders/${id}/product`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post(PATH('5f14857d3ae0d32b417e8d0c'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El albarán no existe', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .post(PATH('5f14857d3ae0d32b417e8d0c'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new deliveryOrderErrors.DeliveryOrderNotFound().message);
+        });
+      });
+
+      describe('No se envía producto', () => {
+        let response;
+        let deliveryOrder;
+
+        before(() => DeliveryOrderModel.create(deliveryOrderMock)
+          .then(deliveryOrderCreated => {
+            deliveryOrder = deliveryOrderCreated;
+          }));
+
+        before(done => {
+          supertest(app)
+            .post(PATH(deliveryOrder._id))
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              quantity: 8,
+              price: 3.3,
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductMissingParams().message);
         });
       });
     });
