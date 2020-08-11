@@ -40,8 +40,21 @@ const validateProvider = async ({ provider }) => {
  */
 const validateProductParams = async ({ body: { quantity, product, price } }) => {
   if (!quantity || !product || !price) throw new deliveryOrderErrors.DeliveryOrderMissing();
-  const productExist = ProductModel.exists({ _id: product });
-  if (!productExist) throw new productErrors.ProductNotFound();
+};
+
+/**
+ * Comprueba que existe el índice del producto en el albarán
+ * @param {string} id
+ * @param {number} index
+ * @returns {Promise<void>}
+ */
+const validateProductIndex = async ({ params: { id, index } }) => {
+  if (index < 0) throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
+  const deliveryOrder = await DeliveryOrderModel.find({ _id: id });
+
+  if (deliveryOrder.products.length > index)
+  // eslint-disable-next-line
+    throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
 };
 
 module.exports = {
@@ -49,4 +62,5 @@ module.exports = {
   validateIdParam,
   validateProvider,
   validateProductParams,
+  validateProductIndex,
 };

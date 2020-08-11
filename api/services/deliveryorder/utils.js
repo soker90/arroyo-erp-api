@@ -27,11 +27,11 @@ const calcData = deliveryOrder => {
     if (rate) rateDO += rate;
   });
 
-  deliveryOrder.set('iva', ivaDO);
-  deliveryOrder.set('re', reDO);
+  deliveryOrder.set('iva', roundNumber(ivaDO, 3));
+  deliveryOrder.set('re', roundNumber(reDO, 3));
   deliveryOrder.set('total', totalDO);
   deliveryOrder.set('taxBase', taxBaseDO);
-  deliveryOrder.set('rate', rateDO);
+  deliveryOrder.set('rate', roundNumber(rateDO, 3));
   deliveryOrder.save();
   return deliveryOrder;
 };

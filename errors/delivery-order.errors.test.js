@@ -81,4 +81,23 @@ describe('DeliveryOrderErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('DeliveryOrderProductIndexNotFound', () => {
+    test('should exist and extend from Error', () => {
+      expect(new DeliveryOrderErrors.DeliveryOrderProductIndexNotFound())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderProductIndexNotFound();
+      expect(err.message)
+        .toEqual('El indice de producto del albarán no existe');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderProductIndexNotFound('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });
