@@ -48,14 +48,14 @@ const validateProductParams = async ({ body: { quantity, product, price } }) => 
  * @param {number} index
  * @returns {Promise<void>}
  */
-const validateProductIndex = async ({ params: { id, index } }) => {
+const validateProductIndex = async ({ id, index }) => {
   if (index < 0) throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
-  const deliveryOrder = await DeliveryOrderModel.find({ _id: id });
+  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id });
 
-  if (deliveryOrder.products.length > index)
-  // eslint-disable-next-line
-    throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
+  if (index >= deliveryOrder.products.length) throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
 };
+
+const validateProductIndexParams = ({ params }) => validateProductIndex(params);
 
 module.exports = {
   validateId,
@@ -63,4 +63,5 @@ module.exports = {
   validateProvider,
   validateProductParams,
   validateProductIndex,
+  validateProductIndexParams,
 };

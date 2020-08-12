@@ -103,9 +103,9 @@ class DeliveryOrdersController {
   updateProduct(req, res) {
     logService.logInfo('[delivery orders] - Update product of a delivery order');
     Promise.resolve(req)
-      .tap(this.deliveryOrderValidator.validateProductParams)
       .tap(this.deliveryOrderValidator.validateIdParam)
-      .tap(this.deliveryOrderValidator.validateProductIndex)
+      .tap(this.deliveryOrderValidator.validateProductIndexParams)
+      .tap(this.deliveryOrderValidator.validateProductParams)
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.updateProduct)
       .then(data => res.send(data))
@@ -118,6 +118,8 @@ class DeliveryOrdersController {
   deleteProduct(req, res) {
     logService.logInfo('[delivery orders] - Delete product of the delivery order');
     Promise.resolve(req.params)
+      .tap(this.deliveryOrderValidator.validateId)
+      .tap(this.deliveryOrderValidator.validateProductIndex)
       .then(this.deliveryOrderService.deleteProduct)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

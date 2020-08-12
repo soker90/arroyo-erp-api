@@ -886,7 +886,7 @@ describe('DeliveryOrderController', () => {
     });
   });
 
-  /* describe('PUT /deliveryorders/:id/product', () => {
+  describe('PUT /deliveryorders/:id/product', () => {
     const PATH = (id, index) => `/deliveryorders/${id}/product/${index}`;
     describe('Usuario no autenticado', () => {
       let response;
@@ -945,8 +945,7 @@ describe('DeliveryOrderController', () => {
         });
       });
 
-      describe('El producto no existe', () => {
-        let response;
+      describe('El albarán existe', () => {
         let deliveryOrder;
 
         before(() => DeliveryOrderModel.create(deliveryOrderMock)
@@ -954,15 +953,258 @@ describe('DeliveryOrderController', () => {
             deliveryOrder = deliveryOrderCreated;
           }));
 
+        describe('El índice del producto no existe', () => {
+          let response;
+
+          before(done => {
+            supertest(app)
+              .put(PATH(deliveryOrder._id, 1))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 404', () => {
+            expect(response.statusCode)
+              .toBe(404);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new deliveryOrderErrors.DeliveryOrderProductIndexNotFound().message);
+          });
+        });
+
+        describe('El índice del producto existe', () => {
+          describe('No se envía producto', () => {
+            let response;
+            before(done => {
+              supertest(app)
+                .put(PATH(deliveryOrder._id, 0))
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                  quantity: 8,
+                  price: 3.3,
+                })
+                .end((err, res) => {
+                  response = res;
+                  done();
+                });
+            });
+
+            test('Debería dar un 400', () => {
+              expect(response.statusCode)
+                .toBe(400);
+            });
+
+            test('El mensaje de error es correcto', () => {
+              expect(response.body.message)
+                .toBe(new deliveryOrderErrors.DeliveryOrderMissing().message);
+            });
+          });
+          describe('El producto no existe', () => {
+            let response;
+
+            before(done => {
+              supertest(app)
+                .put(PATH(deliveryOrder._id, 0))
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                  quantity: 8,
+                  price: 3.3,
+                  product: '5f14857d3ae0d32b417e8d0c',
+                })
+                .end((err, res) => {
+                  response = res;
+                  done();
+                });
+            });
+
+            test('Debería dar un 404', () => {
+              expect(response.statusCode)
+                .toBe(404);
+            });
+
+            test('El mensaje de error es correcto', () => {
+              expect(response.body.message)
+                .toBe(new productErrors.ProductNotFound().message);
+            });
+          });
+          describe('El producto existe', () => {
+            let product;
+
+            before(async () => {
+              product = await ProductModel.create(productMock);
+            });
+
+            describe('No se envia cantidad', () => {
+              let response;
+
+              before(done => {
+                supertest(app)
+                  .put(PATH(deliveryOrder._id, 0))
+                  .set('Authorization', `Bearer ${token}`)
+                  .send({
+                    product: product._id,
+                    price: 3.3,
+                  })
+                  .end((err, res) => {
+                    response = res;
+                    done();
+                  });
+              });
+
+              test('Debería dar un 400', () => {
+                expect(response.statusCode)
+                  .toBe(400);
+              });
+
+              test('El mensaje de error es correcto', () => {
+                expect(response.body.message)
+                  .toBe(new deliveryOrderErrors.DeliveryOrderMissing().message);
+              });
+            });
+
+            describe('No se envia precio', () => {
+              let response;
+
+              before(done => {
+                supertest(app)
+                  .put(PATH(deliveryOrder._id, 0))
+                  .set('Authorization', `Bearer ${token}`)
+                  .send({
+                    product: product._id,
+                    quantity: 4,
+                  })
+                  .end((err, res) => {
+                    response = res;
+                    done();
+                  });
+              });
+
+              test('Debería dar un 400', () => {
+                expect(response.statusCode)
+                  .toBe(400);
+              });
+
+              test('El mensaje de error es correcto', () => {
+                expect(response.body.message)
+                  .toBe(new deliveryOrderErrors.DeliveryOrderMissing().message);
+              });
+            });
+
+            describe('Se envían los daots correctos', () => {
+              let response;
+              let body;
+
+              before(done => {
+                body = {
+                  product: product._id,
+                  quantity: 4,
+                  price: 12,
+                };
+                supertest(app)
+                  .put(PATH(deliveryOrder._id, 0))
+                  .set('Authorization', `Bearer ${token}`)
+                  .send(body)
+                  .end((err, res) => {
+                    response = res;
+                    done();
+                  });
+              });
+
+              test('Debería dar un 200', () => {
+                expect(response.statusCode)
+                  .toBe(200);
+              });
+
+              test('Los datos enviados son correctos', () => {
+                const productReceived = response.body.products[0];
+                const rate = body.quantity * productMock.rate;
+                const taxBase = rate + (body.price * body.quantity);
+                const re = roundNumber(taxBase * productMock.re, 3);
+                const iva = roundNumber(taxBase * productMock.iva, 3);
+                const total = taxBase + re + iva;
+                expect(response.body.products.length)
+                  .toBe(1);
+                expect(productReceived.rate)
+                  .toBe(roundNumber(productMock.rate, 3));
+                expect(productReceived.iva)
+                  .toBe(iva);
+                expect(productReceived.price)
+                  .toBe(body.price);
+                expect(productReceived._id)
+                  .toBe(product._id.toString());
+                expect(productReceived.quantity)
+                  .toBe(body.quantity);
+                expect(productReceived.re)
+                  .toBe(re);
+                expect(productReceived.taxBase)
+                  .toBe(taxBase);
+                expect(productReceived.total)
+                  .toBe(total);
+                expect(response.body.totals.iva)
+                  .toBe(iva);
+                expect(response.body.totals.rate)
+                  .toBe(productMock.rate);
+                expect(response.body.totals.re)
+                  .toBe(re);
+                expect(response.body.totals.taxBase)
+                  .toBe(taxBase);
+                expect(response.body.totals.total)
+                  .toBe(total);
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  describe('DELETE /deliveryorders/:id/product', () => {
+    const PATH = (id, index) => `/deliveryorders/${id}/product/${index}`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .delete(PATH('5f14857d3ae0d32b417e8d0c', 0))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El albarán no existe', () => {
+        let response;
+
         before(done => {
           supertest(app)
-            .put(PATH(deliveryOrder._id, 0))
+            .delete(PATH('5f14857d3ae0d32b417e8d0c', 0))
             .set('Authorization', `Bearer ${token}`)
-            .send({
-              quantity: 8,
-              price: 3.3,
-              product: '5f14857d3ae0d32b417e8d0c',
-            })
             .end((err, res) => {
               response = res;
               done();
@@ -976,12 +1218,11 @@ describe('DeliveryOrderController', () => {
 
         test('El mensaje de error es correcto', () => {
           expect(response.body.message)
-            .toBe(new productErrors.ProductNotFound().message);
+            .toBe(new deliveryOrderErrors.DeliveryOrderNotFound().message);
         });
       });
 
-      describe('No se envía producto', () => {
-        let response;
+      describe('El albarán existe', () => {
         let deliveryOrder;
 
         before(() => DeliveryOrderModel.create(deliveryOrderMock)
@@ -989,162 +1230,65 @@ describe('DeliveryOrderController', () => {
             deliveryOrder = deliveryOrderCreated;
           }));
 
-        before(done => {
-          supertest(app)
-            .post(PATH(deliveryOrder._id))
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-              quantity: 8,
-              price: 3.3,
-            })
-            .end((err, res) => {
-              response = res;
-              done();
+        describe('El índice del producto no existe', () => {
+          let response;
+
+          before(done => {
+            supertest(app)
+              .delete(PATH(deliveryOrder._id, 1))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 404', () => {
+            expect(response.statusCode)
+              .toBe(404);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new deliveryOrderErrors.DeliveryOrderProductIndexNotFound().message);
+          });
+        });
+
+        describe('El índice del producto existe', () => {
+          describe('Se elemina el producto correctamente', () => {
+            let response;
+            before(done => {
+              supertest(app)
+                .delete(PATH(deliveryOrder._id, 0))
+                .set('Authorization', `Bearer ${token}`)
+                .end((err, res) => {
+                  response = res;
+                  done();
+                });
             });
-        });
 
-        test('Debería dar un 400', () => {
-          expect(response.statusCode)
-            .toBe(400);
-        });
+            test('Debería dar un 200', () => {
+              expect(response.statusCode)
+                .toBe(200);
+            });
 
-        test('El mensaje de error es correcto', () => {
-          expect(response.body.message)
-            .toBe(new deliveryOrderErrors.DeliveryOrderMissing().message);
-        });
-      });
-
-      describe('El producto existe', () => {
-        let deliveryOrder;
-        let product;
-
-        before(async () => {
-          deliveryOrder = await DeliveryOrderModel.create(deliveryOrderMock);
-          product = await ProductModel.create(productMock);
-        });
-
-        describe('No se envia cantidad', () => {
-          let response;
-
-          before(done => {
-            supertest(app)
-              .post(PATH(deliveryOrder._id))
-              .set('Authorization', `Bearer ${token}`)
-              .send({
-                product: product._id,
-                price: 3.3,
-              })
-              .end((err, res) => {
-                response = res;
-                done();
-              });
-          });
-
-          test('Debería dar un 400', () => {
-            expect(response.statusCode)
-              .toBe(400);
-          });
-
-          test('El mensaje de error es correcto', () => {
-            expect(response.body.message)
-              .toBe(new deliveryOrderErrors.DeliveryOrderMissing().message);
-          });
-        });
-
-        describe('No se envia precio', () => {
-          let response;
-
-          before(done => {
-            supertest(app)
-              .post(PATH(deliveryOrder._id))
-              .set('Authorization', `Bearer ${token}`)
-              .send({
-                product: product._id,
-                quantity: 4,
-              })
-              .end((err, res) => {
-                response = res;
-                done();
-              });
-          });
-
-          test('Debería dar un 400', () => {
-            expect(response.statusCode)
-              .toBe(400);
-          });
-
-          test('El mensaje de error es correcto', () => {
-            expect(response.body.message)
-              .toBe(new deliveryOrderErrors.DeliveryOrderMissing().message);
-          });
-        });
-
-        describe('Se envían los daots correctos', () => {
-          let response;
-          let body;
-
-          before(done => {
-            body = {
-              product: product._id,
-              quantity: 4,
-              price: 12,
-            };
-            supertest(app)
-              .post(PATH(deliveryOrder._id))
-              .set('Authorization', `Bearer ${token}`)
-              .send(body)
-              .end((err, res) => {
-                response = res;
-                done();
-              });
-          });
-
-          test('Debería dar un 200', () => {
-            expect(response.statusCode)
-              .toBe(200);
-          });
-
-          test('Los datos enviados son correctos', () => {
-            const productReceived = response.body.products[1];
-            const rate = body.quantity * productMock.rate;
-            const taxBase = rate + (body.price * body.quantity);
-            const re = roundNumber(taxBase * productMock.re, 3);
-            const iva = roundNumber(taxBase * productMock.iva, 3);
-            expect(response.body.products.length)
-              .toBe(2);
-            expect(productReceived.code)
-              .toBe(productMock.code);
-            expect(productReceived.name)
-              .toBe(productMock.name);
-            expect(productReceived.rate)
-              .toBe(roundNumber(productMock.rate, 3));
-            expect(productReceived.iva)
-              .toBe(iva);
-            expect(productReceived.price)
-              .toBe(body.price);
-            expect(productReceived._id)
-              .toBe(product._id.toString());
-            expect(productReceived.quantity)
-              .toBe(body.quantity);
-            expect(productReceived.re)
-              .toBe(re);
-            expect(productReceived.taxBase)
-              .toBe(taxBase);
-            expect(productReceived.total)
-              .toBe(taxBase + re + iva);
-            expect(response.body.totals.iva)
-              .toBe(8.752);
-            expect(response.body.totals.rate)
-              .toBe(0.701);
-            expect(response.body.totals.re)
-              .toBe(1.656);
-            expect(response.body.totals.taxBase)
-              .toBe(116.804);
-            expect(response.body.totals.total)
-              .toBe(127.212);
+            test('La respuesta es correcta', () => {
+              expect(response.body.products.length)
+                .toBe(0);
+              expect(response.body.totals.iva)
+                .toBe(0);
+              expect(response.body.totals.rate)
+                .toBe(0);
+              expect(response.body.totals.re)
+                .toBe(0);
+              expect(response.body.totals.taxBase)
+                .toBe(0);
+              expect(response.body.totals.total)
+                .toBe(0);
+            });
           });
         });
       });
     });
-  }); */
+  });
 });

@@ -150,25 +150,19 @@ const updateProduct = async ({
  * @param {number} index
  * @return {Promise<void>}
  */
-const deleteProduct = async ({
+const deleteProduct = ({
   id, index,
-}) => {
-  if (!id) throw new DeliveryOrderMissingId();
-  if (!index) throw new DeliveryOrderMissing();
+}) => DeliveryOrderModel.findOne({ _id: id })
+  .then(response => {
+    const { products } = response;
 
-  return await DeliveryOrderModel.findOne({ _id: id })
-    .then(response => {
-      const { products } = response;
-      if (index >= products.length || index < 0) throw new DeliveryOrderMissing('Index incorrecto');
-
-      products.splice(index, 1);
-      response.set('products', products);
-      return response;
-    })
-    .then(calcData)
-    .then(refreshInvoice)
-    .then(data => new DeliveryOrderAdapter(data).productsResponse());
-};
+    products.splice(index, 1);
+    response.set('products', products);
+    return response;
+  })
+  .then(calcData)
+  .then(refreshInvoice)
+  .then(data => new DeliveryOrderAdapter(data).productsResponse());
 
 module.exports = {
   orders,
