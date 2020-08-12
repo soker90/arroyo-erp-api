@@ -25,6 +25,7 @@ class ProductController {
     case 'ProviderNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
+      /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;

@@ -3,8 +3,9 @@ const { mongoose, ProductModel, ProviderModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
+const { deliveryOrderErrors, productErrors } = require('../../../../errors');
 
-const productData = {
+const productMock = {
   code: '3333',
   name: 'Test product mod',
   provider: '5e41b4e1e6dabb35ee94f1d0',
@@ -14,9 +15,157 @@ const productData = {
   re: 1.2,
   rate: 2,
 };
+
+const product2Mock = {
+  code: '4444',
+  name: 'Otro prdoucto',
+  provider: '5f1ac206dbcc4879c9c14c54',
+  nameProvider: 'Proveedor',
+  amount: 5.4,
+  iva: 3.445,
+  re: 3.21,
+  rate: 5,
+};
 describe('ProductController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());
+
+  describe('GET /products', () => {
+    const PATH = '/products';
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      before(done => {
+        supertest(app)
+          .get(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Existe el token', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No existen productos', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Devuelve un array sin elementos', () => {
+          expect(response.body.length)
+            .toBe(0);
+        });
+      });
+
+      describe('Hay productos', () => {
+        let response;
+        let product;
+
+        before(() => ProductModel.create(productMock)
+          .then(productCreated => {
+            product = productCreated;
+          }));
+
+        describe('Se obtienen los productos', () => {
+          beforeAll(done => {
+            supertest(app)
+              .get(PATH)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('La información es correcta', () => {
+            expect(response.body.length)
+              .toBe(1);
+            const productResponse = response.body[0];
+            expect(productResponse._id)
+              .toEqual(product._id.toString());
+            expect(productResponse.code)
+              .toBe(product.code);
+            expect(productResponse.name)
+              .toBe(product.name);
+          });
+        });
+
+        describe('Se filtran los productos por proveedor', () => {
+          let product2;
+
+          before(() => ProductModel.create(product2Mock)
+            .then(productCreated => {
+              product2 = productCreated;
+            }));
+
+          beforeAll(done => {
+            supertest(app)
+              .get(`${PATH}?provider=${product2.provider}`)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('La información es correcta', () => {
+            expect(response.body.length)
+              .toBe(1);
+            const productResponse = response.body[0];
+            expect(productResponse._id)
+              .toEqual(product2._id.toString());
+            expect(productResponse.code)
+              .toBe(product2.code);
+            expect(productResponse.name)
+              .toBe(product2.name);
+          });
+        });
+      });
+    });
+  });
 
   describe('POST /products', () => {
     describe('Usuario no autenticado', () => {
@@ -57,7 +206,7 @@ describe('ProductController', () => {
         let response;
 
         before(done => {
-          const product = { ...productData };
+          const product = { ...productMock };
           delete product.iva;
           supertest(app)
             .post('/products')
@@ -90,7 +239,7 @@ describe('ProductController', () => {
             .post('/products')
             .set('Authorization', `Bearer ${token}`)
             .send({
-              ...productData,
+              ...productMock,
               provider: provider._id,
             })
             .end((err, res) => {
@@ -102,6 +251,121 @@ describe('ProductController', () => {
         test('Debería dar un 201', () => {
           expect(response.statusCode)
             .toBe(201);
+        });
+      });
+    });
+  });
+
+  describe('PUT /products', () => {
+    const PATH = id => `/products/${id}`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      before(done => {
+        supertest(app)
+          .put(PATH('5f1ac206dbcc4879c9c14c54'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Existe el token', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No existe el producto', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .put(PATH('5f1ac206dbcc4879c9c14c54'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductNotFound().message);
+        });
+      });
+
+      describe('Existe el producto', () => {
+        let product;
+
+        before(() => ProductModel.create(productMock)
+          .then(productCreated => {
+            product = productCreated;
+          }));
+        describe('Se modifica el producto correctamente', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .put(PATH(product._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                code: product2Mock.code,
+                name: product2Mock.name,
+                iva: product2Mock.iva,
+                re: product2Mock.re,
+                rate: product2Mock.rate,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('La respuesta es correcta', () => {
+            expect(response.body._id)
+              .toBe(product._id.toString());
+            expect(response.body.code)
+              .toBe(product2Mock.code);
+            expect(response.body.iva)
+              .toBe(product2Mock.iva);
+            expect(response.body.name)
+              .toBe(product2Mock.name);
+            expect(response.body.nameProvider)
+              .toBe(product.nameProvider);
+            expect(response.body.provider)
+              .toBe(product.provider);
+            expect(response.body.rate)
+              .toBe(product2Mock.rate);
+            expect(response.body.re)
+              .toBe(product2Mock.re);
+          });
         });
       });
     });
@@ -166,7 +430,7 @@ describe('ProductController', () => {
         let product;
 
         before(async () => {
-          product = await ProductModel.create(productData);
+          product = await ProductModel.create(productMock);
         });
 
         beforeAll(done => {
@@ -210,7 +474,7 @@ describe('ProductController', () => {
   describe('POST /products/:id/prices', () => {
     let product;
     before(async () => {
-      product = await ProductModel.create(productData);
+      product = await ProductModel.create(productMock);
     });
     describe('Usuario no autenticado', () => {
       let response;
