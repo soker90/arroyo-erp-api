@@ -83,8 +83,6 @@ const update = async ({ params, body }) => {
  * @return {Promise<{data: *}>}
  */
 const provider = async ({ id }) => {
-  if (!id) throw new ProviderMissingId();
-
   const data = await ProviderModel.findOne({ _id: id })
     .lean();
 

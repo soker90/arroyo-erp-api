@@ -3,10 +3,11 @@ const errorHandler = require('../../../../components/error-handlers');
 
 const ProviderController = require('./providers.controller');
 
-module.exports = ({ providerService }) => {
+module.exports = ({ providerService }, { providerValidator }) => {
   const providerController = new ProviderController({
     errorHandler,
     providerService,
+    providerValidator,
   });
 
   return [{

@@ -21,18 +21,18 @@ describe('ProviderErrors', () => {
     });
   });
 
-  describe('ProviderMissingId', () => {
+  describe('ProviderIdNotFound', () => {
     test('should exist and extend from Error', () => {
-      expect(new ProviderErrors.ProviderMissingId()).toBeInstanceOf(Error);
+      expect(new ProviderErrors.ProviderIdNotFound()).toBeInstanceOf(Error);
     });
 
     test('should define a default message', () => {
-      const err = new ProviderErrors.ProviderMissingId();
-      expect(err.message).toEqual('Falta el id del proveedor');
+      const err = new ProviderErrors.ProviderIdNotFound();
+      expect(err.message).toEqual('No existe el proveedor');
     });
 
     test('should allow passing a custom message', () => {
-      const err = new ProviderErrors.ProviderMissingId('CustomMessage');
+      const err = new ProviderErrors.ProviderIdNotFound('CustomMessage');
       expect(err.message).toEqual('CustomMessage');
     });
   });

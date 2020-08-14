@@ -10,16 +10,22 @@ class ProvidersController {
   constructor({
     providerService,
     errorHandler,
+    providerValidator,
   }) {
     this.providerService = providerService;
     this.errorHandler = errorHandler;
+    this.providerValidator = providerValidator;
   }
 
   _handleError(res, error) {
-    switch (error.code) {
-    case 400:
+    switch (error.name) {
+    case 'ProviderMissingName':
       this.errorHandler.sendBadRequest(res)(error);
       break;
+    case 'ProviderIdNotFound':
+      this.errorHandler.sendNotFound(res)(error);
+      break;
+      /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;
@@ -55,6 +61,7 @@ class ProvidersController {
   edit(req, res) {
     logService.logInfo('[providers] - Edit provider');
     Promise.resolve(req)
+      .tap(this.providerValidator.validateIdParam)
       .then(this.providerService.update)
       .then(() => res.status(204)
         .send())
@@ -67,6 +74,7 @@ class ProvidersController {
   provider(req, res) {
     logService.logInfo('[providers] - List of providers');
     Promise.resolve(req.params)
+      .tap(this.providerValidator.validateId)
       .then(this.providerService.provider)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

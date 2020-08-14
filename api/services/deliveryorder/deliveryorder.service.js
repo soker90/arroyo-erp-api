@@ -1,7 +1,7 @@
 const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
 const { INITIAL_SCHEMA } = require('./constants');
 const {
-  DeliveryOrderMissingId, DeliveryOrderProviderNotFound, DeliveryOrderNotFound,
+  DeliveryOrderMissingId, DeliveryOrderNotFound,
   DeliveryOrderMissing,
 } = require('../../../errors/delivery-order.errors');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
@@ -34,12 +34,11 @@ const orders = async ({ provider, offset, limit }) => {
  * @param {string} provider
  */
 const create = async ({ provider }) => {
-  const { name, hasRate } = await ProviderModel.findOne({ _id: provider });
+  const { name } = await ProviderModel.findOne({ _id: provider });
 
   const data = {
     provider,
     nameProvider: name,
-    ...(hasRate && { hasRate }),
     ...INITIAL_SCHEMA,
   };
 
@@ -78,8 +77,6 @@ const update = async ({ params, body: { date } }) => {
  * @return {Promise<{data: *}>}
  */
 const deliveryOrder = async ({ id }) => {
-  if (!id) throw new DeliveryOrderMissingId();
-
   const deliveryOrderData = await DeliveryOrderModel.findOne({ _id: id })
     .lean();
 
@@ -125,24 +122,18 @@ const updateProduct = async ({
   params: { id, index }, body: {
     product, price, quantity,
   },
-}) => {
-  if (!id) throw new DeliveryOrderMissingId();
-  if (!quantity || !product || !price) throw new DeliveryOrderMissing();
+}) => await DeliveryOrderModel.findOne({ _id: id })
+  .then(async response => {
+    const productModified = await calcProduct(product, price, quantity, response.date);
+    const products = response.products.slice();
 
-  return await DeliveryOrderModel.findOne({ _id: id })
-    .then(async response => {
-      const productModified = await calcProduct(product, price, quantity, response.date);
-      const products = response.products.slice();
-      if (index >= products.length || index < 0) throw new DeliveryOrderMissing('Index incorrecto');
-
-      products[index] = productModified;
-      response.set('products', products);
-      return response;
-    })
-    .then(calcData)
-    .then(refreshInvoice)
-    .then(data => new DeliveryOrderAdapter(data).productsResponse());
-};
+    products[index] = productModified;
+    response.set('products', products);
+    return response;
+  })
+  .then(calcData)
+  .then(refreshInvoice)
+  .then(data => new DeliveryOrderAdapter(data).productsResponse());
 
 /**
  * Elimina un producto del albarán

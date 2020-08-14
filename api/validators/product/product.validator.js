@@ -7,7 +7,6 @@ const { productErrors } = require('../../../errors');
  * @returns {Promise<void>}
  */
 const _checkId = async id => {
-  if (!id) throw new productErrors.ProductMissingParams();
   const productExist = await ProductModel.exists({ _id: id });
   if (!productExist) throw new productErrors.ProductNotFound();
 };
