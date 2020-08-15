@@ -941,6 +941,45 @@ describe('InvoicesController', () => {
         });
       });
 
+      describe('La fecha de factura es incorrecta', () => {
+        let response;
+        let invoice;
+
+        before(() => InvoiceModel.create({
+          dateInvoice: Date.now(),
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(`/invoices/${invoice._id}/confirm`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              type: 'Efectivo',
+              paymentDate: 'test',
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 422', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(422);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.DateNotValid().message);
+        });
+      });
+
       describe('Asigna el número de orden', () => {
         let response;
         let invoice;

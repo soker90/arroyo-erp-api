@@ -2,33 +2,17 @@ const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
 const { INITIAL_SCHEMA } = require('./constants');
 const {
   DeliveryOrderMissingId, DeliveryOrderNotFound,
-  DeliveryOrderMissing,
 } = require('../../../errors/delivery-order.errors');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
 const {
-  calcData, calcProduct, getFreeDeliveryOrders, getInInvoicesDeliveryOrders,
+  calcData, calcProduct,
 } = require('./utils');
 
 const {
   refreshInvoice,
 } = require('../invoice/utils');
 
-/**
- * Return all delivery orders
- * @return {Promise<{data: any}>}
- */
-const orders = async ({ provider, offset, limit }) => {
-  const free = await getFreeDeliveryOrders(provider);
-  const inInvoices = await getInInvoicesDeliveryOrders(
-    provider, parseInt(offset, 10), parseInt(limit, 10),
-  );
-
-  return {
-    free,
-    inInvoices,
-  };
-};
-
+const orders = require('./services/orders');
 /**
  * Create product
  * @param {string} provider

@@ -13,11 +13,15 @@ class DeliveryOrdersController {
     errorHandler,
     deliveryOrderValidator,
     productValidator,
+    providerValidator,
+    deliveryOrderAdapter,
   }) {
     this.deliveryOrderService = deliveryOrderService;
     this.errorHandler = errorHandler;
     this.deliveryOrderValidator = deliveryOrderValidator;
     this.productValidator = productValidator;
+    this.providerValidator = providerValidator;
+    this.deliveryOrderAdapter = deliveryOrderAdapter;
   }
 
   _handleError(res, error) {
@@ -44,7 +48,9 @@ class DeliveryOrdersController {
   orders(req, res) {
     logService.logInfo('[delivery orders] - List of delivery orders');
     Promise.resolve(req.query)
+      .tap(this.providerValidator.validateProvider)
       .then(this.deliveryOrderService.orders)
+      .then(this.deliveryOrderAdapter.ordersResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

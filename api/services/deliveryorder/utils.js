@@ -1,7 +1,6 @@
 const {
   ProductModel,
   PriceModel,
-  DeliveryOrderModel,
 } = require('arroyo-erp-models');
 
 const { roundNumber } = require('../../../utils');
@@ -83,81 +82,7 @@ const calcProduct = async (product, price, quantity, date = 0) => {
   };
 };
 
-/**
- * Get all free delivery orders for one provider
- * @param {String} provider
- * @return {Object}
- */
-const getFreeDeliveryOrders = async provider => {
-  const freeOrders = await DeliveryOrderModel.find({
-    provider,
-    invoice: { $exists: false },
-  })
-    .lean();
-
-  // TODO to adapter
-  return freeOrders.map(({
-    _id, date, taxBase, products,
-  }) => ({
-    _id,
-    date,
-    taxBase,
-    products: products.map(
-      ({
-        name, price, quantity, taxBase: totalProduct,
-      }) => ({
-        name,
-        price,
-        quantity,
-        taxBase: totalProduct,
-      }),
-    ),
-  }));
-};
-
-/**
- * Get all free delivery orders for one provider
- * @param {String} provider
- * @param {Number} offset
- * @param {Number} limit
- * @return {Promise<{data: *, count: *}>}
- */
-const getInInvoicesDeliveryOrders = async (provider, offset = 0, limit = 10) => {
-  const inInvoicesOrders = await DeliveryOrderModel.find({
-    provider,
-    invoice: { $exists: true },
-  }, null, { skip: 2 })
-    .skip(offset)
-    .limit(limit)
-    .lean();
-
-  const data = inInvoicesOrders.map(
-    ({
-      _id, date, total, nOrder, nInvoice,
-    }) => ({
-      _id,
-      date,
-      total,
-      nOrder,
-      nInvoice,
-    }),
-  );
-
-  const count = await DeliveryOrderModel.find({
-    provider,
-    nOrder: { $exists: true },
-  })
-    .countDocuments();
-
-  return {
-    count,
-    data,
-  };
-};
-
 module.exports = {
   calcData,
   calcProduct,
-  getFreeDeliveryOrders,
-  getInInvoicesDeliveryOrders,
 };

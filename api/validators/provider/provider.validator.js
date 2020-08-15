@@ -18,8 +18,12 @@ const _checkId = async id => {
  */
 const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
+const validateProviderIfExist = data => data?.provider && _checkId(data.provider);
+const validateProvider = ({ provider }) => provider && _checkId(provider);
 
 module.exports = {
   validateIdParam,
   validateId,
+  validateProviderIfExist,
+  validateProvider,
 };
