@@ -9,7 +9,6 @@ const { CONCEPT } = require('../../../constants');
  * @returns {Promise<void>}
  */
 const _checkId = async id => {
-  if (!id) throw new invoiceErrors.InvoiceMissingId();
   const invoiceExist = await InvoiceModel.exists({ _id: id });
   if (!invoiceExist) throw new invoiceErrors.InvoiceIdNotFound();
 };
@@ -62,7 +61,8 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
 const createParams = ({ concept, deliveryOrders }) => {
   if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
   if (concept === CONCEPT.COMPRAS && !deliveryOrders?.length)
-    // eslint-disable-next-line
+  // eslint-disable-next-line
+
     throw new invoiceErrors.InvoiceMissingDeliveryOrders();
 };
 

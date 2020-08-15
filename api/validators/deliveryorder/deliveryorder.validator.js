@@ -1,5 +1,5 @@
-const { DeliveryOrderModel, ProviderModel, ProductModel } = require('arroyo-erp-models');
-const { deliveryOrderErrors, productErrors } = require('../../../errors');
+const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
+const { deliveryOrderErrors } = require('../../../errors');
 
 /**
  * Check if exist id
@@ -7,7 +7,6 @@ const { deliveryOrderErrors, productErrors } = require('../../../errors');
  * @returns {Promise<void>}
  */
 const _checkId = async id => {
-  if (!id) throw new deliveryOrderErrors.DeliveryOrderMissing();
   const deliveryOrderExist = await DeliveryOrderModel.exists({ _id: id });
   if (!deliveryOrderExist) throw new deliveryOrderErrors.DeliveryOrderNotFound();
 };

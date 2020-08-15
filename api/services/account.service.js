@@ -1,7 +1,9 @@
 const { AccountModel } = require('arroyo-erp-models');
 const { compare } = require('bcrypt');
-const { InvalidLogin, UserNotFound, UserExist, InvalidPassword } = require('../../errors/user.errors');
-const { signToken, verifyToken } = require('../../components/auth/auth.service');
+const {
+  InvalidLogin, UserNotFound, UserExist, InvalidPassword,
+} = require('../../errors/user.errors');
+const { signToken } = require('../../components/auth/auth.service');
 
 /**
  * Check user and password and return token
@@ -20,18 +22,7 @@ const login = async ({ username, password }) => {
 
   if (!isCorrect) throw new InvalidLogin();
 
-
   return { token: signToken(user.username) };
-};
-
-/**
- * Check token and return a new token
- * @param token
- * @return {Promise<{token: (undefined|*)}>}
- */
-const refreshToken = async ({ token }) => {
-  const dataToken = await verifyToken(token);
-  return { token: signToken(dataToken.user) };
 };
 
 /**
@@ -46,7 +37,6 @@ const createAccount = async ({ username, password }) => {
   if (userExist) throw new UserExist();
   if (!password) throw new InvalidPassword();
 
-
   await new AccountModel({
     username,
     password,
@@ -56,5 +46,4 @@ const createAccount = async ({ username, password }) => {
 module.exports = {
   login,
   createAccount,
-  refreshToken,
 };

@@ -8,12 +8,7 @@ const { ProductNotFound } = require('../../../../errors/product.errors');
  * @private
  */
 const validateProductId = async id => {
-  let product;
-  try {
-    product = await ProductModel.findOne({ _id: id });
-  } catch (e) {
-    throw new ProductNotFound();
-  }
+  const product = await ProductModel.findOne({ _id: id });
   if (!product) throw new ProductNotFound();
 
   return product;

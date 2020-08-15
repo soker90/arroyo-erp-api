@@ -17,6 +17,7 @@ function buildApiVersionRouters(routes) {
           method,
         } = route;
 
+        /* istanbul ignore next */
         const finalDomain = (domain) ? `/${domain}` : '';
 
         versionRoutes.push({
@@ -55,11 +56,18 @@ function createBuildRoute(defaultMiddlewares, version) {
     } = controller.route;
 
     const finalMiddlewares = [
-      ...(skipDefaultMiddlewares ? [] : defaultMiddlewares),
+      ...(
+        skipDefaultMiddlewares
+          /* istanbul ignore next */
+          ? []
+          : defaultMiddlewares
+      ),
       ...middlewares,
     ];
 
+    /* istanbul ignore next */
     const versionPart = !skipVersion ? `/v${version}` : '';
+    /* istanbul ignore next */
     const finalDomain = (domain) ? `/${domain}` : '';
     const finalPath = `${finalDomain}${versionPart}${path}`;
 
@@ -93,7 +101,11 @@ function buildActualRoutesObject(apiVersion, previousApiVersion) {
  * @param {array} [defaultMiddlewares=[]]
  * @returns {Router} express app router with actual api versioned routes
  */
-function buildRouter(routes, defaultMiddlewares = []) {
+function buildRouter(
+  routes,
+  /* istanbul ignore next */
+  defaultMiddlewares = [],
+) {
   /* build Array structure like:
    [
     [{path, route},[path, route}],
