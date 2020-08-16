@@ -15,4 +15,4 @@ COPY --chown=node:node . .
 
 EXPOSE 3008
 
-CMD npm start
+CMD ["npm", "start"]
