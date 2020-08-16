@@ -1,17 +1,18 @@
 FROM node:14
 
-WORKDIR /usr/src/app
+RUN mkdir -p /home/node/app/ /var/log \
+  && chown -R node:node /home/node/app
 
-# Install dependencies
-COPY package*.json ./
+WORKDIR /home/node/app
+
+COPY package.json package-lock.json ./
+
+USER node
+
 RUN npm install
 
-# Copy source files from host computer to the container
-COPY . .
+COPY --chown=node:node . .
 
-# Specify port app runs on
 EXPOSE 3008
 
-# Run the app
-CMD [ "npm", "start" ]
-
+CMD npm start

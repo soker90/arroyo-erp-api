@@ -5,11 +5,11 @@ const config = {
     timeout: '2h',
   },
   mongo: {
-    user: '',
-    pass: '',
+    user: process.env.DATABASE_ROOT_USERNAME || '',
+    pass: process.env.DATABASE_ROOT_PASSWORD || '',
     port: ['27017'],
     host: ['127.0.0.1'],
-    dataBaseName: 'arroyoErp',
+    dataBaseName: process.env.DATABASE_NAME || 'arroyoErp',
   },
   services: {
     spider: {
