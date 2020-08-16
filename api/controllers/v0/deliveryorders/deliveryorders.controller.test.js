@@ -141,10 +141,18 @@ describe('DeliveryOrderController', () => {
       describe('Dispone de albaranes', () => {
         let deliveryOrder;
         let deliveryOrder2;
+        let provider;
 
         before(async () => {
-          deliveryOrder = await DeliveryOrderModel.create(deliveryOrderMock);
-          deliveryOrder2 = await DeliveryOrderModel.create(deliveryOrder2Mock);
+          provider = await ProviderModel.create({ name: 'Primero' });
+          deliveryOrder = await DeliveryOrderModel.create({
+            ...deliveryOrderMock,
+            provider: provider._id,
+          });
+          deliveryOrder2 = await DeliveryOrderModel.create({
+            ...deliveryOrder2Mock,
+            provider: provider._id,
+          });
         });
 
         describe('No se pasa offset ni limit', () => {
@@ -161,7 +169,7 @@ describe('DeliveryOrderController', () => {
           });
 
           test('Debería dar un 200', () => {
-            expect(response.body)
+            expect(response.statusCode)
               .toBe(200);
           });
 
@@ -187,8 +195,14 @@ describe('DeliveryOrderController', () => {
           let deliveryOrder3;
 
           before(async () => {
-            deliveryOrder3 = await DeliveryOrderModel.create(deliveryOrder2Mock);
-            await DeliveryOrderModel.create(deliveryOrder2Mock);
+            deliveryOrder3 = await DeliveryOrderModel.create({
+              ...deliveryOrder2Mock,
+              provider: provider._id,
+            });
+            await DeliveryOrderModel.create({
+              ...deliveryOrder2Mock,
+              provider: provider._id,
+            });
           });
 
           beforeAll(done => {
