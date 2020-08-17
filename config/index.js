@@ -8,17 +8,8 @@ const config = {
     user: process.env.DATABASE_ROOT_USERNAME || '',
     pass: process.env.DATABASE_ROOT_PASSWORD || '',
     port: ['27017'],
-    host: ['127.0.0.1'],
+    host: [process.env.DATABASE_HOST || '127.0.0.1'],
     dataBaseName: process.env.DATABASE_NAME || 'arroyoErp',
-  },
-  services: {
-    spider: {
-      baseURL: 'http://localhost:8123',
-      trackElement: {
-        method: 'POST',
-        url: '/trackElement',
-      },
-    },
   },
 };
 
