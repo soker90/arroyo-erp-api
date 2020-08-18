@@ -416,14 +416,14 @@ describe('DeliveryOrderController', () => {
             });
         });
 
-        test('Debería dar un 400', () => {
+        test('Debería dar un 404', () => {
           expect(response.statusCode)
-            .toBe(400);
+            .toBe(404);
         });
 
         test('El mensaje de error es correcto', () => {
           expect(response.body.message)
-            .toBe(new deliveryOrderErrors.DeliveryOrderMissingId().message);
+            .toBe(new deliveryOrderErrors.DeliveryOrderNotFound().message);
         });
       });
 
@@ -449,7 +449,7 @@ describe('DeliveryOrderController', () => {
         });
 
         test('Debería dar un 200', () => {
-          expect(response.statusCode)
+          expect(response.body)
             .toBe(200);
         });
 

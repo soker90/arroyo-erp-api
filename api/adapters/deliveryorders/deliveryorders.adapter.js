@@ -56,6 +56,58 @@ const ordersResponse = data => ({
   inInvoices: _inInvoiceResponse(data),
 });
 
+/**
+ * Create object with totals
+ * @return {{total: Number, re: Number, iva: Number}}
+ * @private
+ */
+const _generateTotals = ({
+  iva, re, total, taxBase, rate,
+}) => ({
+  iva,
+  re,
+  total,
+  taxBase,
+  rate,
+});
+
+/**
+ * Create JSON for response of create
+ * @return {
+ * {date: *, provider: *, _id: *, totals:
+ * {total: Number, re: Number, iva: Number},
+ * nameProvider: *, products: *}}
+ */
+const standardResponse = ({
+  _id, provider, nameProvider, products, date, nOrder, invoice, iva, re, total, taxBase, rate,
+}) => ({
+  _id,
+  provider,
+  nameProvider,
+  date,
+  products,
+  nOrder,
+  invoice,
+  totals: _generateTotals({
+    iva,
+    re,
+    total,
+    taxBase,
+    rate,
+  }),
+});
+
+/**
+ * Create JSON for response for basic data
+ * @return {{date: *, nameProvider: *}}
+ */
+const basicResponse = ({ _id, date }) => ({
+  _id,
+  date,
+});
+
 module.exports = {
   ordersResponse,
+  standardResponse,
+  basicResponse,
 };

@@ -8,7 +8,7 @@ const { deliveryOrderErrors } = require('../../../errors');
  */
 const _checkId = async id => {
   const deliveryOrderExist = await DeliveryOrderModel.exists({ _id: id });
-  if (!deliveryOrderExist) throw new deliveryOrderErrors.DeliveryOrderNotFound();
+  if (!deliveryOrderExist) throw new deliveryOrderErrors.DeliveryOrderNotFound(id);
 };
 
 /**

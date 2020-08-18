@@ -1,7 +1,7 @@
 const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
 const { INITIAL_SCHEMA } = require('./constants');
 const {
-  DeliveryOrderMissingId, DeliveryOrderNotFound,
+  DeliveryOrderNotFound,
 } = require('../../../errors/delivery-order.errors');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
 const {
@@ -26,8 +26,7 @@ const create = async ({ provider }) => {
     ...INITIAL_SCHEMA,
   };
 
-  const newDeliveryOrder = await new DeliveryOrderModel(data).save();
-  return new DeliveryOrderAdapter(newDeliveryOrder).standardResponse();
+  return new DeliveryOrderModel(data).save();
 };
 
 /**
@@ -35,14 +34,12 @@ const create = async ({ provider }) => {
  * @param {Object} params
  * @param {Object} body
  */
-const update = async ({ params, body: { date } }) => {
-  if (!params.id || typeof date !== 'number') throw new DeliveryOrderMissingId();
-
+const update = ({ params, body: { date } }) => {
   const set = {
     ...(date && { date }),
   };
 
-  const data = await DeliveryOrderModel.findOneAndUpdate(
+  return DeliveryOrderModel.findOneAndUpdate(
     { _id: params.id },
     { $set: set },
     {
@@ -52,7 +49,6 @@ const update = async ({ params, body: { date } }) => {
       },
     },
   );
-  return new DeliveryOrderAdapter(data).basicResponse();
 };
 
 /**

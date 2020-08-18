@@ -63,6 +63,7 @@ class DeliveryOrdersController {
     Promise.resolve(req.body)
       .tap(this.deliveryOrderValidator.validateProvider)
       .then(this.deliveryOrderService.create)
+      .then(this.deliveryOrderAdapter.standardResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -73,7 +74,9 @@ class DeliveryOrdersController {
   edit(req, res) {
     logService.logInfo('[delivery orders]  - Edit delivery order');
     Promise.resolve(req)
+      // .then(this.deliveryOrderValidator.validateIdParam)
       .then(this.deliveryOrderService.update)
+      .then(this.deliveryOrderAdapter.basicResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
