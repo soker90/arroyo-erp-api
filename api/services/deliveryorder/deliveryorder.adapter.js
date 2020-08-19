@@ -35,43 +35,6 @@ class DeliveryOrderAdapter {
   }
 
   /**
-   * Create JSON for response of create
-   * @return {
-   * {date: *, provider: *, _id: *, totals:
-   * {total: Number, re: Number, iva: Number},
-   * nameProvider: *, products: *}}
-   */
-  standardResponse() {
-    const {
-      _id, provider, nameProvider, products, date, nOrder, invoice,
-    } = this;
-    return {
-      _id,
-      provider,
-      nameProvider,
-      date,
-      products,
-      nOrder,
-      invoice,
-      totals: this._generateTotals(),
-    };
-  }
-
-  /**
-   * Create JSON for response for basic data
-   * @return {{date: *, nameProvider: *}}
-   */
-  basicResponse() {
-    const {
-      _id, date,
-    } = this;
-    return {
-      _id,
-      date,
-    };
-  }
-
-  /**
    * Create JSON response with products and totals
    * @return {{totals: {total: Number, re: Number, iva: Number}, products: *}}
    */

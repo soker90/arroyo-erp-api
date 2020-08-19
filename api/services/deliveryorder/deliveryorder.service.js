@@ -1,7 +1,4 @@
 const { DeliveryOrderModel } = require('arroyo-erp-models');
-const {
-  DeliveryOrderNotFound,
-} = require('../../../errors/delivery-order.errors');
 const DeliveryOrderAdapter = require('./deliveryorder.adapter');
 const {
   calcData, calcProduct,
