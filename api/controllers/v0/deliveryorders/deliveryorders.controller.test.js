@@ -449,7 +449,7 @@ describe('DeliveryOrderController', () => {
         });
 
         test('Debería dar un 200', () => {
-          expect(response.body)
+          expect(response.statusCode)
             .toBe(200);
         });
 
