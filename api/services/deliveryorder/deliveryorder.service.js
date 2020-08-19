@@ -1,5 +1,4 @@
-const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
-const { INITIAL_SCHEMA } = require('./constants');
+const { DeliveryOrderModel } = require('arroyo-erp-models');
 const {
   DeliveryOrderNotFound,
 } = require('../../../errors/delivery-order.errors');
@@ -13,56 +12,15 @@ const {
 } = require('../invoice/utils');
 
 const orders = require('./services/orders');
-/**
- * Create product
- * @param {string} provider
- */
-const create = async ({ provider }) => {
-  const { name } = await ProviderModel.findOne({ _id: provider });
-
-  const data = {
-    provider,
-    nameProvider: name,
-    ...INITIAL_SCHEMA,
-  };
-
-  return new DeliveryOrderModel(data).save();
-};
-
-/**
- * Edit delivery order
- * @param {Object} params
- * @param {Object} body
- */
-const update = ({ params, body: { date } }) => {
-  const set = {
-    ...(date && { date }),
-  };
-
-  return DeliveryOrderModel.findOneAndUpdate(
-    { _id: params.id },
-    { $set: set },
-    {
-      new: true,
-      fields: {
-        ...(date && { date: 1 }),
-      },
-    },
-  );
-};
+const create = require('./services/create');
+const update = require('./services/update');
 
 /**
  * Get data from id
  * @param {string} id
  * @return {Promise<{data: *}>}
  */
-const deliveryOrder = async ({ id }) => {
-  const deliveryOrderData = await DeliveryOrderModel.findOne({ _id: id })
-    .lean();
-
-  if (!deliveryOrderData) throw new DeliveryOrderNotFound();
-  return new DeliveryOrderAdapter(deliveryOrderData).standardResponse();
-};
+const deliveryOrder = async ({ id }) => DeliveryOrderModel.findOne({ _id: id });
 
 /**
  * Add product to delivery order

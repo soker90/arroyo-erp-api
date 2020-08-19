@@ -87,7 +87,9 @@ class DeliveryOrdersController {
   deliveryOrder(req, res) {
     logService.logInfo('[delivery orders]  - Get delivery order');
     Promise.resolve(req.params)
+      .tap(this.deliveryOrderValidator.validateId)
       .then(this.deliveryOrderService.deliveryOrder)
+      .then(this.deliveryOrderAdapter.standardResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
