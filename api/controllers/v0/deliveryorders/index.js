@@ -5,7 +5,10 @@ module.exports = DeliveryOrderController;
 const { authMiddleware } = require('../../../../components/auth');
 const errorHandler = require('../../../../components/error-handlers');
 
-module.exports = ({ deliveryOrderService }, { deliveryOrderValidator, productValidator, providerValidator }, { deliveryOrderAdapter }) => {
+module.exports = (
+  { deliveryOrderService, invoiceService },
+  { deliveryOrderValidator, productValidator, providerValidator }, { deliveryOrderAdapter }
+) => {
   const deliveryOrderController = new DeliveryOrderController({
     errorHandler,
     deliveryOrderService,
@@ -13,6 +16,7 @@ module.exports = ({ deliveryOrderService }, { deliveryOrderValidator, productVal
     productValidator,
     providerValidator,
     deliveryOrderAdapter,
+    invoiceService,
   });
 
   return [{

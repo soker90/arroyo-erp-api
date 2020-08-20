@@ -1,12 +1,7 @@
 const { DeliveryOrderModel } = require('arroyo-erp-models');
-const DeliveryOrderAdapter = require('./deliveryorder.adapter');
 const {
   calcData, calcProduct,
 } = require('./utils');
-
-const {
-  refreshInvoice,
-} = require('../invoice/utils');
 
 const orders = require('./services/orders');
 const create = require('./services/create');
@@ -40,9 +35,7 @@ const addProduct = async ({
     ]);
     return response;
   })
-  .then(calcData)
-  .then(refreshInvoice)
-  .then(data => new DeliveryOrderAdapter(data).productsResponse());
+  .then(calcData);
 
 /**
  * Actualiza un producto del albarán
@@ -66,9 +59,7 @@ const updateProduct = async ({
     response.set('products', products);
     return response;
   })
-  .then(calcData)
-  .then(refreshInvoice)
-  .then(data => new DeliveryOrderAdapter(data).productsResponse());
+  .then(calcData);
 
 /**
  * Elimina un producto del albarán
@@ -86,9 +77,7 @@ const deleteProduct = ({
     response.set('products', products);
     return response;
   })
-  .then(calcData)
-  .then(refreshInvoice)
-  .then(data => new DeliveryOrderAdapter(data).productsResponse());
+  .then(calcData);
 
 module.exports = {
   orders,

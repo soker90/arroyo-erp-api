@@ -1,13 +1,10 @@
 const { InvoiceModel } = require('arroyo-erp-models');
-const {
-  InvoiceMissingId,
-  InvoiceIdNotFound,
-} = require('../../../errors/invoice.errors');
 
 // Split services
 const invoiceConfirm = require('./invoiceConfirm');
 const create = require('./create');
 const invoiceEdit = require('./invoiceEdit');
+const refresh = require('./refresh');
 
 /**
  * Get invoice data
@@ -65,4 +62,5 @@ module.exports = {
   invoicesShort,
   invoiceConfirm,
   invoiceEdit,
+  refresh,
 };

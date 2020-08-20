@@ -106,8 +106,26 @@ const basicResponse = ({ _id, date }) => ({
   date,
 });
 
+/**
+ * Create JSON response with products and totals
+ * @return {{totals: {total: Number, re: Number, iva: Number}, products: *}}
+ */
+const productsResponse = ({
+  products, iva, re, total, taxBase, rate,
+}) => ({
+  products,
+  totals: _generateTotals({
+    iva,
+    re,
+    total,
+    taxBase,
+    rate,
+  }),
+});
+
 module.exports = {
   ordersResponse,
   standardResponse,
   basicResponse,
+  productsResponse,
 };

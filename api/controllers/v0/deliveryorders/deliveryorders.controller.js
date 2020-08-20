@@ -15,6 +15,7 @@ class DeliveryOrdersController {
     productValidator,
     providerValidator,
     deliveryOrderAdapter,
+    invoiceService,
   }) {
     this.deliveryOrderService = deliveryOrderService;
     this.errorHandler = errorHandler;
@@ -22,6 +23,7 @@ class DeliveryOrdersController {
     this.productValidator = productValidator;
     this.providerValidator = providerValidator;
     this.deliveryOrderAdapter = deliveryOrderAdapter;
+    this.invoiceService = invoiceService;
   }
 
   _handleError(res, error) {
@@ -104,6 +106,8 @@ class DeliveryOrdersController {
       .tap(this.deliveryOrderValidator.validateProductParams)
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.addProduct)
+      .tap(this.invoiceService.refresh)
+      .then(this.deliveryOrderAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -119,6 +123,8 @@ class DeliveryOrdersController {
       .tap(this.deliveryOrderValidator.validateProductParams)
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.updateProduct)
+      .tap(this.invoiceService.refresh)
+      .then(this.deliveryOrderAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -132,6 +138,8 @@ class DeliveryOrdersController {
       .tap(this.deliveryOrderValidator.validateId)
       .tap(this.deliveryOrderValidator.validateProductIndex)
       .then(this.deliveryOrderService.deleteProduct)
+      .tap(this.invoiceService.refresh)
+      .then(this.deliveryOrderAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

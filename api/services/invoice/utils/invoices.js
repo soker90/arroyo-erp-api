@@ -1,4 +1,4 @@
-const { DeliveryOrderModel, InvoiceModel } = require('arroyo-erp-models');
+const { DeliveryOrderModel } = require('arroyo-erp-models');
 const {
   InvoiceNotFoundDeliveryOrder,
 } = require('../../../../errors/invoice.errors');
@@ -10,7 +10,7 @@ const { roundNumber } = require('../../../../utils');
  * @returns {Promise<{deliveryOrders: [], total: number, re: number, iva: number, taxBase: number}>}
  * @private
  */
-const _calcDeliveryOrdersData = async deliveryOrdersData => {
+const calcDeliveryOrdersData = async deliveryOrdersData => {
   let ivaI = 0;
   let reI = 0;
   let totalI = 0;
@@ -50,37 +50,12 @@ const _calcDeliveryOrdersData = async deliveryOrdersData => {
  * @param {Object} invoice
  */
 const calcNewShopping = async invoice => ({
-  ...(await _calcDeliveryOrdersData(invoice.deliveryOrders)),
+  ...(await calcDeliveryOrdersData(invoice.deliveryOrders)),
   dateRegister: Date.now(),
   concept: invoice.concept,
 });
 
-/**
- * Actualiza la factura del albaran dado, en caso de que este
- * esté en una factura
- * @param {Object} deliveryOrder
- * @returns {Promise<{invoice}|*>}
- */
-const refreshInvoice = async deliveryOrder => {
-  // TODO
-  if (!deliveryOrder.invoice) return deliveryOrder;
-
-  const newData = await InvoiceModel.findOne({ _id: deliveryOrder.invoice })
-    .then(
-      invoice => {
-        const deliveryOrderIndex = invoice.deliveryOrders
-          .findIndex(deliveryOrdersSaved => deliveryOrdersSaved._id === deliveryOrder._id);
-        invoice.deliveryOrders[deliveryOrderIndex] = deliveryOrder;
-        return _calcDeliveryOrdersData(invoice.deliveryOrders);
-      },
-    );
-
-  await InvoiceModel.update({ _id: deliveryOrder.invoice }, newData);
-
-  return deliveryOrder;
-};
-
 module.exports = {
   calcNewShopping,
-  refreshInvoice,
+  calcDeliveryOrdersData,
 };
