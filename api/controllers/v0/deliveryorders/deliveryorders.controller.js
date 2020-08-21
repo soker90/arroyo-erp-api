@@ -6,7 +6,6 @@ const TYPE = 'DeliveryOrderController';
 
 const logService = new LogService(TYPE);
 
-// TODO: Refactorizar toda la parte de albaranes
 class DeliveryOrdersController {
   constructor({
     deliveryOrderService,

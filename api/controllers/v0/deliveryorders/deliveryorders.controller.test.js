@@ -1,6 +1,6 @@
 const supertest = require('supertest');
 const {
-  mongoose, DeliveryOrderModel, ProviderModel, ProductModel,
+  mongoose, DeliveryOrderModel, ProviderModel, ProductModel, PriceModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
@@ -831,7 +831,7 @@ describe('DeliveryOrderController', () => {
           });
         });
 
-        describe('Se envían los daots correctos', () => {
+        describe('Se envían los datos correctos', () => {
           let response;
           let body;
 
@@ -894,6 +894,38 @@ describe('DeliveryOrderController', () => {
               .toBe(116.804);
             expect(response.body.totals.total)
               .toBe(127.212);
+          });
+        });
+
+        describe('Se envían los datos correctos', () => {
+          let response;
+          let body;
+
+          before(() => PriceModel.create({
+            date: 1595096040000,
+            product: product._id,
+            price: 1,
+          }));
+
+          before(done => {
+            body = {
+              product: product._id,
+              quantity: 4,
+              price: 12,
+            };
+            supertest(app)
+              .post(PATH(deliveryOrder._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send(body)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.statusCode)
+              .toBe(200);
           });
         });
       });

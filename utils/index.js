@@ -5,6 +5,7 @@
  * @returns {number}
  */
 const roundNumber = (num, decimals = 3) => {
+  // eslint-disable-next-line no-restricted-properties
   const baseDecimals = Math.pow(10, decimals);
   return Math.round(num * baseDecimals) / baseDecimals;
 };
@@ -16,13 +17,12 @@ const roundNumber = (num, decimals = 3) => {
  * @param {number} index
  * @returns {Array}
  */
-const replaceArrayElement = ({ array, element, index }) => (
-  Object.assign(
-    [],
-    array,
-    { [index]: element },
-  )
-);
+const replaceArrayElement = ({ array, element, index }) => {
+  const newArray = array.slice();
+  newArray[index] = element;
+  return newArray;
+};
+
 module.exports = {
   roundNumber,
   replaceArrayElement,
