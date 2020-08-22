@@ -10,16 +10,20 @@ class ProductController {
   constructor({
     productService,
     errorHandler,
+    providerValidator,
+    productValidator,
   }) {
     this.productService = productService;
     this.errorHandler = errorHandler;
+    this.providerValidator = providerValidator;
+    this.productValidator = productValidator;
   }
 
   _handleError(res, error) {
     switch (error.name) {
     case 'ProductMissingParams':
     case 'ProductMissingUpdate':
-      this.errorHandler.sendValidationError(res)(error);
+      this.errorHandler.sendBadRequest(res)(error);
       break;
     case 'ProductNotFound':
     case 'ProviderNotFound':
@@ -38,6 +42,7 @@ class ProductController {
   products(req, res) {
     logService.logInfo('[products] - List products');
     Promise.resolve(req.query)
+      .tap(this.providerValidator.validateProviderIfExist)
       .then(this.productService.products)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
@@ -49,6 +54,8 @@ class ProductController {
   create(req, res) {
     logService.logInfo('[products] - Create product');
     Promise.resolve(req.body)
+      .tap(this.providerValidator.validateFields)
+      .tap(this.providerValidator.validateProvider)
       .then(this.productService.create)
       .then(() => res.status(201)
         .send())
@@ -61,6 +68,8 @@ class ProductController {
   edit(req, res) {
     logService.logInfo('[products] - Edit product');
     Promise.resolve(req)
+      .tap(this.productValidator.validateIdParam)
+      .tap(this.providerValidator.validateFields)
       .then(this.productService.update)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

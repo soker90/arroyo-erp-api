@@ -3,7 +3,7 @@ const { mongoose, ProductModel, ProviderModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
-const { deliveryOrderErrors, productErrors } = require('../../../../errors');
+const { providerErrors, productErrors } = require('../../../../errors');
 
 const productMock = {
   code: '3333',
@@ -128,10 +128,51 @@ describe('ProductController', () => {
           });
         });
 
-        describe('Se filtran los productos por proveedor', () => {
+        describe('No existe el proveedor', () => {
           let product2;
 
           before(() => ProductModel.create(product2Mock)
+            .then(productCreated => {
+              product2 = productCreated;
+            }));
+
+          beforeAll(done => {
+            supertest(app)
+              .get(`${PATH}?provider=${product2.provider}`)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.statusCode)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new providerErrors.ProviderIdNotFound().message);
+          });
+        });
+
+        describe('Se filtran los productos por proveedor', () => {
+          let product2;
+          let provider;
+
+          before(() => ProviderModel.create({
+            name: 'Test',
+          })
+            .then(create => {
+              provider = create;
+            }));
+
+          before(() => ProductModel.create({
+            ...product2Mock,
+            provider: provider._id,
+            nameProvider: provider.name,
+          })
             .then(productCreated => {
               product2 = productCreated;
             }));
@@ -218,9 +259,14 @@ describe('ProductController', () => {
             });
         });
 
-        test('Debería dar un 422', () => {
+        test('Debería dar un 400', () => {
           expect(response.statusCode)
-            .toBe(422);
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new providerErrors.ProviderIdNotFound().message);
         });
       });
 
@@ -546,9 +592,9 @@ describe('ProductController', () => {
             });
         });
 
-        test('Debería dar un 422', async () => {
+        test('Debería dar un 400', () => {
           expect(response.statusCode)
-            .toBe(422);
+            .toBe(400);
         });
       });
 
@@ -566,9 +612,9 @@ describe('ProductController', () => {
             });
         });
 
-        test('Debería dar un 422', async () => {
+        test('Debería dar un 400', () => {
           expect(response.statusCode)
-            .toBe(422);
+            .toBe(400);
         });
       });
 
@@ -586,9 +632,9 @@ describe('ProductController', () => {
             });
         });
 
-        test('Debería dar un 422', async () => {
+        test('Debería dar un 400', () => {
           expect(response.statusCode)
-            .toBe(422);
+            .toBe(400);
         });
       });
     });

@@ -1,53 +1,13 @@
 /* eslint-disable nonblock-statement-body-position */
-const { ProductModel, PriceModel, ProviderModel } = require('arroyo-erp-models');
+const { PriceModel } = require('arroyo-erp-models');
 const {
-  ProductMissingParams, ProductMissingUpdate, ProviderNotFound,
+  ProductMissingUpdate,
 } = require('../../../errors/product.errors');
-const { getPricesOfProduct, validateProductId, validateParams } = require('./utils/index');
+const { getPricesOfProduct, validateProductId } = require('./utils/index');
 
-/**
- * Return all product witch the filter
- * @param {String} provider
- * @return {Promise<{data: any}>}
- */
-const products = async ({ provider }) => {
-  const filter = {
-    ...(provider && { provider }),
-  };
-  const data = await ProductModel.find(filter, 'name _id code')
-    .lean();
-  return data;
-};
-
-/**
- * Create product
- * @return {Promise<string>}
- */
-const create = async product => {
-  const data = validateParams(product);
-  const provider = await ProviderModel.findOne({ _id: data.provider });
-
-  if (!provider)
-    throw new ProviderNotFound();
-
-  await new ProductModel({
-    ...data,
-    nameProvider: provider.name,
-  }).save();
-};
-
-/**
- * Edit product
- * @param {Object} params
- * @param {Object} body
- */
-const update = async ({ params, body }) => {
-  if (!params.id) throw new ProductMissingParams();
-  await validateProductId(params.id);
-
-  const data = validateParams(body, true); // TODO adecentar esto...
-  return ProductModel.findOneAndUpdate({ _id: params.id }, data, { new: true });
-};
+const products = require('./services/products');
+const create = require('./services/create');
+const update = require('./services/update');
 
 /**
  * Return the product

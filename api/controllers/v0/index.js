@@ -14,6 +14,6 @@ module.exports = [
   ...DeliveryOrderController(services, validators, adapters),
   ...InvoiceController(services, validators, adapters),
   ...PaymentController(services, validators),
-  ...ProductController(services),
+  ...ProductController(services, validators),
   ...ProviderController(services, validators),
 ];
