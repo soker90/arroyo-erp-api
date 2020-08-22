@@ -44,7 +44,7 @@ const calcData = deliveryOrder => {
  * @return {Promise<{product: *, total: number, code: *, quantity: number, re: number,
  * iva: number, price: number, name: *, diff: number, taxBase: number}>}
  */
-const calcProduct = async (product, price, quantity, date = 0) => {
+const calcProduct = async (product, price, quantity, date) => {
   const {
     name, iva, re, code, rate, _id,
   } = await ProductModel.findOne({

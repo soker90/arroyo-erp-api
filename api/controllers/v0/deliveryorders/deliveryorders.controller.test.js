@@ -697,6 +697,41 @@ describe('DeliveryOrderController', () => {
         });
       });
 
+      describe('El albarán no tiene fecha', () => {
+        let response;
+        let deliveryOrder;
+
+        before(done => {
+          const mock = { ...deliveryOrderMock };
+          delete mock.date;
+          DeliveryOrderModel.create(mock)
+            .then(deliveryOrderCreated => {
+              deliveryOrder = deliveryOrderCreated;
+              done();
+            });
+        });
+
+        before(done => {
+          supertest(app)
+            .post(PATH(deliveryOrder._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new deliveryOrderErrors.DeliveryOrderDateRequired().message);
+        });
+      });
+
       describe('El producto no existe', () => {
         let response;
         let deliveryOrder;
@@ -1005,6 +1040,30 @@ describe('DeliveryOrderController', () => {
           before(done => {
             supertest(app)
               .put(PATH(deliveryOrder._id, 1))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 404', () => {
+            expect(response.statusCode)
+              .toBe(404);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new deliveryOrderErrors.DeliveryOrderProductIndexNotFound().message);
+          });
+        });
+
+        describe('El índice del producto es menor que 0', () => {
+          let response;
+
+          before(done => {
+            supertest(app)
+              .put(PATH(deliveryOrder._id, -1))
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
                 response = res;

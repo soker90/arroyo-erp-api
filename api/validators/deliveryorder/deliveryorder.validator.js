@@ -49,12 +49,22 @@ const validateProductParams = async ({ body: { quantity, product, price } }) => 
  */
 const validateProductIndex = async ({ id, index }) => {
   if (index < 0) throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
-  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id });
+  const { products } = await DeliveryOrderModel.findOne({ _id: id });
 
-  if (index >= deliveryOrder.products.length) throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
+  if (index >= products.length) throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
 };
 
 const validateProductIndexParams = ({ params }) => validateProductIndex(params);
+
+/**
+ * Check if exist id
+ * @param {String} id
+ * @returns {Promise<void>}
+ */
+const hasDate = async ({ params: { id } }) => {
+  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id });
+  if (!deliveryOrder.date) throw new deliveryOrderErrors.DeliveryOrderDateRequired();
+};
 
 module.exports = {
   validateId,
@@ -63,4 +73,5 @@ module.exports = {
   validateProductParams,
   validateProductIndex,
   validateProductIndexParams,
+  hasDate,
 };

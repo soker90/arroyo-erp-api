@@ -63,10 +63,23 @@ class DeliveryOrderProductIndexNotFound extends Error {
   }
 }
 
+class DeliveryOrderDateRequired extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'El albarán necesita una fecha') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   DeliveryOrderMissingId,
   DeliveryOrderMissing,
   DeliveryOrderProviderNotFound,
   DeliveryOrderNotFound,
   DeliveryOrderProductIndexNotFound,
+  DeliveryOrderDateRequired,
 };

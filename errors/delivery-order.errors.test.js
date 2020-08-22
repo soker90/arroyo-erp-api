@@ -100,4 +100,23 @@ describe('DeliveryOrderErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('DeliveryOrderDateRequired', () => {
+    test('should exist and extend from Error', () => {
+      expect(new DeliveryOrderErrors.DeliveryOrderDateRequired())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderDateRequired();
+      expect(err.message)
+        .toEqual('El albarán necesita una fecha');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderDateRequired('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });

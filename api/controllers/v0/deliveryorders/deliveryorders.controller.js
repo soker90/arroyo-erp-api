@@ -28,6 +28,7 @@ class DeliveryOrdersController {
   _handleError(res, error) {
     switch (error.name) {
     case 'DeliveryOrderMissing':
+    case 'DeliveryOrderDateRequired':
       this.errorHandler.sendBadRequest(res)(error);
       break;
     case 'DeliveryOrderProviderNotFound':
@@ -102,6 +103,7 @@ class DeliveryOrdersController {
     logService.logInfo('[delivery orders] - Add product to a delivery order');
     Promise.resolve(req)
       .tap(this.deliveryOrderValidator.validateIdParam)
+      .tap(this.deliveryOrderValidator.hasDate)
       .tap(this.deliveryOrderValidator.validateProductParams)
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.addProduct)
