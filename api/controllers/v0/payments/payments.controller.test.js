@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const { mongoose, PaymentModel } = require('arroyo-erp-models');
+const { mongoose, PaymentModel, InvoiceModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
@@ -314,12 +314,15 @@ describe('PaymentsController', () => {
         let response;
         let payment;
 
-        before(() => PaymentModel.create({})
-          .then(paymentCreated => {
-            payment = paymentCreated;
-          }));
+        before(async () => {
+          const invoice = await InvoiceModel.create({});
+          await PaymentModel.create({ invoices: invoice._id })
+            .then(paymentCreated => {
+              payment = paymentCreated;
+            });
+        });
 
-        beforeAll(done => {
+        before(done => {
           supertest(app)
             .patch(`/payments/${payment._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)

@@ -19,20 +19,18 @@ const _addMergeParam = payment => PaymentModel.findOneAndUpdate({ _id: payment }
  * @param {String} provider
  * @param {Number} paymentDate
  * @param {String} type
- * @param {String} numCheque
  * @returns {Promise<void>}
  * @private
  */
 const _createPayment = (
   amount, nOrder, invoices, payments, {
-    provider, paymentDate, type, numCheque,
+    provider, paymentDate, type,
   },
 ) => (
   new PaymentModel({
     provider,
     ...(paymentDate && { paymentDate }),
     type,
-    ...(numCheque && { numCheque }),
     payments,
     invoices,
     amount: roundNumber(amount),
