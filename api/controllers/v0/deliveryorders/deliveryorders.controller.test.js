@@ -1,6 +1,6 @@
 const supertest = require('supertest');
 const {
-  mongoose, DeliveryOrderModel, ProviderModel, ProductModel, PriceModel,
+  mongoose, DeliveryOrderModel, ProviderModel, ProductModel, PriceModel, InvoiceModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
@@ -1239,7 +1239,7 @@ describe('DeliveryOrderController', () => {
               });
             });
 
-            describe('Se envían los daots correctos', () => {
+            describe('Se envían los datos correctos', () => {
               let response;
               let body;
 
@@ -1299,6 +1299,42 @@ describe('DeliveryOrderController', () => {
                   .toBe(taxBase);
                 expect(response.body.totals.total)
                   .toBe(total);
+              });
+            });
+
+            describe('El albarán pertenece a una factura', () => {
+              let response;
+              let deliveryOrderInvoice;
+
+              before(async () => {
+                deliveryOrderInvoice = await DeliveryOrderModel.create(deliveryOrder2Mock);
+                const invoice = await InvoiceModel.create({
+                  deliveryOrders: [deliveryOrderInvoice._id],
+                });
+                await DeliveryOrderModel.updateOne(
+                  { _id: deliveryOrderInvoice._id },
+                  { invoice: invoice._id },
+                );
+              });
+
+              before(done => {
+                supertest(app)
+                  .put(PATH(deliveryOrderInvoice._id, 0))
+                  .set('Authorization', `Bearer ${token}`)
+                  .send({
+                    product: product._id,
+                    quantity: 4,
+                    price: 12,
+                  })
+                  .end((err, res) => {
+                    response = res;
+                    done();
+                  });
+              });
+
+              test('Debería dar un 200', () => {
+                expect(response.statusCode)
+                  .toBe(200);
               });
             });
           });

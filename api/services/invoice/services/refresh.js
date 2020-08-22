@@ -31,7 +31,7 @@ const refresh = async deliveryOrder => {
   const newData = await InvoiceModel.findOne({ _id: deliveryOrder.invoice })
     .then(({ deliveryOrders }) => generateNewDeliveryOrders(deliveryOrders, deliveryOrder));
 
-  await InvoiceModel.update({ _id: deliveryOrder.invoice }, newData);
+  await InvoiceModel.updateOne({ _id: deliveryOrder.invoice }, newData);
 };
 
 module.exports = refresh;
