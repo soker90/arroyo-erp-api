@@ -72,6 +72,15 @@ const productMock = {
   nameProvider: 'Primero',
 };
 
+const productNoRateMock = {
+  code: '12',
+  name: 'prueba',
+  iva: 0.04,
+  re: 0.02,
+  provider: '5f14857d3ae0d32b417e8d0c',
+  nameProvider: 'Primero',
+};
+
 describe('DeliveryOrderController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());
@@ -932,7 +941,37 @@ describe('DeliveryOrderController', () => {
           });
         });
 
-        describe('Se envían los datos correctos', () => {
+        describe('Se añade un producto sin tasa', () => {
+          let response;
+          let productNoRate;
+
+          before(() => ProductModel.create(productNoRateMock)
+            .then(productCreated => {
+              productNoRate = productCreated;
+            }));
+
+          before(done => {
+            supertest(app)
+              .post(PATH(deliveryOrder._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                product: productNoRate._id,
+                quantity: 4,
+                price: 12,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.statusCode)
+              .toBe(200);
+          });
+        });
+
+        describe('Se envían los datos correctos y tiene precio anterior', () => {
           let response;
           let body;
 
