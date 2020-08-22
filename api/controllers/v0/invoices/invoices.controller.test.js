@@ -671,6 +671,29 @@ describe('InvoicesController', () => {
           });
         });
       });
+
+      describe('Se crea una factura sin albaranes', () => {
+        let response;
+        beforeAll(done => {
+          supertest(app)
+            .post('/invoices/')
+            .send({
+              concept: CONCEPT.ALQUILER,
+            })
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+      });
     });
   });
 
