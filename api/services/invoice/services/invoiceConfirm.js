@@ -1,6 +1,6 @@
-const { InvoiceModel, AutoIncrement, PaymentModel } = require('arroyo-erp-models');
+const { InvoiceModel, AutoIncrement, DeliveryOrderModel } = require('arroyo-erp-models');
 const {
-  refreshBilling, addNOrderToDeliveryOrder,
+  refreshBilling,
 } = require('../utils');
 
 /**
@@ -12,6 +12,20 @@ const {
 const _generateOrderNumber = date => {
   const dateInvoice = new Date(date);
   return AutoIncrement.increment(`invoice${dateInvoice.getFullYear()}`);
+};
+
+/**
+ * Añade el numero de orden de la factura a los albaranes
+ * @param {Object} invoice
+ * @returns {Promise<void>}
+ */
+const _addNOrderToDeliveryOrder = async invoice => {
+  const { nOrder } = invoice;
+  for (const deliveryOrder of invoice.deliveryOrders) {
+    const model = await DeliveryOrderModel
+      .findOneAndUpdate({ _id: deliveryOrder._id }, { nOrder });
+    model.save();
+  }
 };
 
 /**
@@ -31,7 +45,7 @@ const invoiceConfirm = async ({ params: { id }, body: { paymentDate, type } }) =
   };
 
   await invoiceData.save()
-    .then(addNOrderToDeliveryOrder)
+    .then(_addNOrderToDeliveryOrder)
     .then(() => refreshBilling(invoiceData.dateInvoice, invoiceData.provider));
 
   return invoiceData;

@@ -914,7 +914,8 @@ describe('InvoicesController', () => {
 
     describe('Usuario autenticado', () => {
       let token;
-      before(done => {
+
+      beforeAll(done => {
         requestLogin()
           .then(res => {
             token = res;
@@ -1076,6 +1077,48 @@ describe('InvoicesController', () => {
         test('Se ha asignado un número de order', () => {
           expect(JSON.parse(response.text).nOrder)
             .toBe(1);
+        });
+      });
+
+      describe('Asigna el número de orden y contiene albaranes', () => {
+        let response;
+        let invoice;
+        let deliveryOrder;
+
+        before(() => DeliveryOrderModel.create(deliveryOrderMock)
+          .then(created => {
+            deliveryOrder = created;
+          }));
+
+        before(() => InvoiceModel.create({
+          dateInvoice: Date.now(),
+          deliveryOrders: [deliveryOrder],
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(`/invoices/${invoice._id}/confirm`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ type: 'Efectivo' })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Se ha asignado un número de order', () => {
+          expect(response.body.nOrder)
+            .toBe(2);
         });
       });
     });

@@ -1,7 +1,4 @@
 const { InvoiceModel } = require('arroyo-erp-models');
-const {
-  InvoiceParamsMissing,
-} = require('../../../../errors/invoice.errors');
 
 /**
  * Get all data for update
@@ -46,8 +43,6 @@ const _getDataForUpdate = (data, totals) => {
  * @returns {*}
  */
 const invoiceEdit = ({ params: { id }, body: { data, totals } }) => {
-  if (!data && !totals) throw new InvoiceParamsMissing();
-
   const newData = _getDataForUpdate(data, totals);
 
   return InvoiceModel

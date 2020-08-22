@@ -1,8 +1,21 @@
 const { InvoiceModel } = require('arroyo-erp-models');
 
 const {
-  calcNewShopping, addInvoiceToDeliveryOrder,
+  calcNewShopping,
 } = require('../utils');
+
+/**
+ * Añade el id de factura a los albaranes dados
+ * @param {Object} invoiceData
+ * @param {DeliveryOrderModel} deliveryOrders
+ * @returns {Promise<void>}
+ */
+const _addInvoiceToDeliveryOrder = async (invoiceData, deliveryOrders) => {
+  for (const deliveryOrder of deliveryOrders) {
+    deliveryOrder.invoice = invoiceData._id;
+    await deliveryOrder.save();
+  }
+};
 
 /**
  * Create invoice
@@ -14,7 +27,7 @@ const create = async data => {
 
   const newInvoice = await new InvoiceModel(invoice).save();
 
-  if (data.deliveryOrders) await addInvoiceToDeliveryOrder(newInvoice, invoice.deliveryOrders);
+  if (data.deliveryOrders) await _addInvoiceToDeliveryOrder(newInvoice, invoice.deliveryOrders);
 
   return newInvoice;
 };

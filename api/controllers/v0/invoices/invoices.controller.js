@@ -92,6 +92,8 @@ class InvoicesController {
   edit(req, res) {
     logService.logInfo('[invoices]  - Edit invoices');
     Promise.resolve(req)
+      .tap(this.invoiceValidator.validateIdParam)
+      .tap(this.invoiceValidator.editBody)
       .then(this.invoiceService.invoiceEdit)
       .then(this.invoiceAdapter.conditionalDataTotalsResponse)
       .then(data => res.send(data))

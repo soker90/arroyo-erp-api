@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase, nonblock-statement-body-position */
 const { InvoiceModel } = require('arroyo-erp-models');
 const { invoiceErrors, commonErrors } = require('../../../errors');
 const { CONCEPT } = require('../../../constants');
@@ -60,9 +60,13 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
  */
 const createParams = ({ concept, deliveryOrders }) => {
   if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
+
   if (concept === CONCEPT.COMPRAS && !deliveryOrders?.length)
-  // eslint-disable-next-line
     throw new invoiceErrors.InvoiceMissingDeliveryOrders();
+};
+
+const editBody = ({ body: { data, totals } }) => {
+  if (!data && !totals) throw new invoiceErrors.InvoiceParamsMissing();
 };
 
 module.exports = {
@@ -71,4 +75,5 @@ module.exports = {
   validateIdParam,
   isValidYear,
   createParams,
+  editBody,
 };
