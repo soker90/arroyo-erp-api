@@ -1,6 +1,6 @@
 const { InvoiceModel } = require('arroyo-erp-models');
-const { replaceArrayElement } = require('../../../utils');
-const { calcDeliveryOrdersData } = require('./utils/invoices');
+const { replaceArrayElement } = require('../../../../utils');
+const { calcDeliveryOrdersData } = require('../utils/invoices');
 
 /**
  * Genera una nueva lista de albaranes con el albarán con cambios actualizado

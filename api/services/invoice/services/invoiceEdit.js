@@ -1,7 +1,7 @@
 const { InvoiceModel } = require('arroyo-erp-models');
 const {
   InvoiceParamsMissing,
-} = require('../../../errors/invoice.errors');
+} = require('../../../../errors/invoice.errors');
 
 /**
  * Get all data for update

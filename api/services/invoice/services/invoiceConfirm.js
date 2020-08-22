@@ -1,7 +1,7 @@
 const { InvoiceModel, AutoIncrement, PaymentModel } = require('arroyo-erp-models');
 const {
   refreshBilling, addNOrderToDeliveryOrder,
-} = require('./utils');
+} = require('../utils');
 
 /**
  * Generate new order number for the year

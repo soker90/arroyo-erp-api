@@ -1,10 +1,12 @@
 const { InvoiceModel } = require('arroyo-erp-models');
 
 // Split services
-const invoiceConfirm = require('./invoiceConfirm');
-const create = require('./create');
-const invoiceEdit = require('./invoiceEdit');
-const refresh = require('./refresh');
+const invoiceConfirm = require('./services/invoiceConfirm');
+const create = require('./services/create');
+const invoiceEdit = require('./services/invoiceEdit');
+const refresh = require('./services/refresh');
+const invoices = require('./services/invoices');
+const invoicesShort = require('./services/invoicesShort');
 
 /**
  * Get invoice data
@@ -12,48 +14,6 @@ const refresh = require('./refresh');
  * @returns {Promise<*>}
  */
 const invoice = ({ id }) => InvoiceModel.findOne({ _id: id });
-
-/**
- *
- * @param {Object} params
- * @returns {Promise<*>}
- */
-const invoices = ({ offset, limit, year }) => {
-  const start = new Date(year);
-  const nextYear = Number(year) + 1;
-  const end = new Date(nextYear.toString());
-
-  return InvoiceModel.find({
-    dateRegister: {
-      $gte: start,
-      $lt: end,
-    },
-  }, '_id nameProvider nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
-    .sort({ nOrder: -1 })
-    .skip(offset || 0)
-    .limit(limit)
-    .lean();
-};
-
-/**
- * Devuelve las facturas del proveedor
- * @param {Object} params
- * @returns {Promise<*>}
- */
-const invoicesShort = ({
-  concept, provider, offset, limit,
-}) => {
-  const filter = {
-    ...(concept && { concept }),
-    ...(provider && { provider }),
-  };
-
-  return InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid')
-    .sort({ nOrder: -1 })
-    .skip(offset || 0)
-    .limit(limit)
-    .lean();
-};
 
 module.exports = {
   create,

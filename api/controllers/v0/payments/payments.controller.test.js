@@ -632,6 +632,8 @@ describe('PaymentsController', () => {
 
         before(async () => {
           await testDB.clean();
+          token = await requestLogin();
+
           payment = await PaymentModel.create({
             ...paymentMock,
             merged: true,

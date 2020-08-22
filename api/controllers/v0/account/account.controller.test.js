@@ -1,9 +1,10 @@
 const supertest = require('supertest');
 const { mongoose, AccountModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
-const { verifyToken } = require('../../../../components/auth/auth.service');
+const { verifyToken, signToken } = require('../../../../components/auth/auth.service');
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
+const { userErrors } = require('../../../../errors');
 
 const user1 = {
   username: 'test',
@@ -174,6 +175,31 @@ describe('AccountController', () => {
       });
     });
 
+    describe('El usuario del token no existe', () => {
+      let response;
+
+      beforeAll(done => {
+        const invalidToken = signToken('invalid');
+        supertest(app)
+          .get('/account/me')
+          .set('Authorization', `Bearer ${invalidToken}`)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Dvuelve el mensaje "El token ha expirado"', () => {
+        expect(response.body.message)
+          .toBe(new userErrors.InvalidToken().message);
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
     describe('Se envía un token correcto', () => {
       let response;
 
@@ -199,7 +225,8 @@ describe('AccountController', () => {
       });
 
       test('Devuelve un token', () => {
-        expect(response.headers.token).toBeTruthy();
+        expect(response.headers.token)
+          .toBeTruthy();
       });
 
       test('Debería dar un 204', () => {
@@ -234,14 +261,16 @@ describe('AccountController', () => {
     describe('Usuario autenticado', () => {
       let token;
       before(done => {
-        requestLogin().then(res => {
-          token = res;
-          done();
-        });
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
       });
 
       test('Se ha autenticado el usuario', () => {
-        expect(token).toBeTruthy();
+        expect(token)
+          .toBeTruthy();
       });
 
       describe('Crea un usuario correctamente', () => {
@@ -262,8 +291,10 @@ describe('AccountController', () => {
         });
 
         test('Debería dar un 201', async () => {
-          expect(token).toBeTruthy();
-          expect(response.statusCode).toBe(201);
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(201);
         });
       });
 
@@ -282,7 +313,8 @@ describe('AccountController', () => {
         });
 
         test('Debería dar un 422', () => {
-          expect(response.statusCode).toBe(422);
+          expect(response.statusCode)
+            .toBe(422);
         });
       });
 

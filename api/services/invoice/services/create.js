@@ -2,7 +2,7 @@ const { InvoiceModel } = require('arroyo-erp-models');
 
 const {
   calcNewShopping, addInvoiceToDeliveryOrder,
-} = require('./utils');
+} = require('../utils');
 
 /**
  * Create invoice

@@ -1,3 +1,4 @@
+const { AccountModel } = require('arroyo-erp-models');
 const errorHandlers = require('../error-handlers');
 const { verifyToken, signToken } = require('./auth.service');
 const { ExpiredToken, InvalidToken } = require('../../errors/user.errors');
@@ -14,7 +15,7 @@ const refreshToken = (res, { user }) => {
   res.set('Access-Control-Expose-Headers', '*, Token');
 };
 
-const handleVerifyTokenError = res => (error) => {
+const handleVerifyTokenError = res => error => {
   switch (error.name) {
   case 'TokenExpiredError':
     errorHandlers.sendUnauthorizedError(res)(new ExpiredToken());
@@ -36,10 +37,12 @@ const handleVerifyTokenError = res => (error) => {
 const checkAuthorization = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split('Bearer ')?.[1];
-    if(!token) throw new InvalidToken();
+    if (!token) throw new InvalidToken();
     const dataToken = await verifyToken(token);
-    // Todo buscar usuario
-    if (dataToken?.user) refreshToken(res, dataToken);
+    const userExist = await AccountModel.exists({ username: dataToken?.user });
+
+    if (userExist) refreshToken(res, dataToken);
+    else throw new InvalidToken();
 
     next();
   } catch (error) {

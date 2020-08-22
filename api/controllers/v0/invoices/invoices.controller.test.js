@@ -324,6 +324,47 @@ describe('InvoicesController', () => {
               .toBe(invoice.dateInvoice);
           });
         });
+
+        describe('Filtrado por proveedor', () => {
+          let response;
+          const providerId = '5f2c421ae954416d614bd5e9';
+
+          before(() => InvoiceModel.create({
+            ...invoiceMock,
+            provider: providerId,
+            nOrder: 32,
+          }));
+
+          before(done => {
+            supertest(app)
+              .get(`/invoices/short?provider=${providerId}`)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('Devuelve un array con un elemento', () => {
+            expect(response.body.length)
+              .toBe(1);
+          });
+
+          test('Los datos son correctos', () => {
+            const json = response.body[0];
+            expect(json.nOrder)
+              .toBe(32);
+            expect(json.total)
+              .toBe(invoiceMock.total);
+            expect(json.dateInvoice)
+              .toBe(invoiceMock.dateInvoice);
+          });
+        });
       });
     });
   });

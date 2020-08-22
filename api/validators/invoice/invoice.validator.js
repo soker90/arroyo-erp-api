@@ -62,7 +62,6 @@ const createParams = ({ concept, deliveryOrders }) => {
   if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
   if (concept === CONCEPT.COMPRAS && !deliveryOrders?.length)
   // eslint-disable-next-line
-
     throw new invoiceErrors.InvoiceMissingDeliveryOrders();
 };
 
