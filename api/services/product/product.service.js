@@ -8,7 +8,7 @@ const { validateProductId } = require('./utils/index');
 const products = require('./services/products');
 const create = require('./services/create');
 const update = require('./services/update');
-const product = require('./services/products');
+const product = require('./services/product');
 
 /**
  * Update price of the product
