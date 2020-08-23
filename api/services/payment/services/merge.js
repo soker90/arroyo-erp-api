@@ -1,6 +1,6 @@
 /* eslint-disable nonblock-statement-body-position */
 const { PaymentModel } = require('arroyo-erp-models');
-const { roundNumber } = require('../../../utils');
+const { roundNumber } = require('../../../../utils');
 
 /**
  * Añade la variable merged al documento y lo devuelve

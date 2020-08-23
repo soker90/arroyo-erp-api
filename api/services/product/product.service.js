@@ -3,21 +3,12 @@ const { PriceModel } = require('arroyo-erp-models');
 const {
   ProductMissingUpdate,
 } = require('../../../errors/product.errors');
-const { getPricesOfProduct, validateProductId } = require('./utils/index');
+const { validateProductId } = require('./utils/index');
 
 const products = require('./services/products');
 const create = require('./services/create');
 const update = require('./services/update');
-
-/**
- * Return the product
- * @param {string} id
- * @returns {Object}
- */
-const product = async ({ id }) => ({
-  product: await validateProductId(id),
-  prices: await getPricesOfProduct(id),
-});
+const product = require('./services/products');
 
 /**
  * Update price of the product

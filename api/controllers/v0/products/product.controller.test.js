@@ -469,6 +469,11 @@ describe('ProductController', () => {
           expect(response.statusCode)
             .toBe(404);
         });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductNotFound().message);
+        });
       });
 
       describe('Devuelve el producto correctamente', () => {

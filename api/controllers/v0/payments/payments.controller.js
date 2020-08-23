@@ -8,11 +8,12 @@ const logService = new LogService(TYPE);
 
 class PaymentsController {
   constructor({
-    paymentService, errorHandler, paymentValidator,
+    paymentService, errorHandler, paymentValidator, productValidator,
   }) {
     this.errorHandler = errorHandler;
     this.paymentService = paymentService;
     this.paymentValidator = paymentValidator;
+    this.productValidator = productValidator;
   }
 
   _handleError(res, error) {

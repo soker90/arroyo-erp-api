@@ -2,8 +2,8 @@
 const { PaymentModel } = require('arroyo-erp-models');
 const Promise = require('bluebird');
 
-const merge = require('./merge');
-const confirm = require('./confirm');
+const merge = require('./services/merge');
+const confirm = require('./services/confirm');
 
 /**
  * Create payment

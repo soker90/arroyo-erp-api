@@ -78,6 +78,7 @@ class ProductController {
   product(req, res) {
     logService.logInfo('[products] - Get product');
     Promise.resolve(req.params)
+      .tap(this.productValidator.validateId)
       .then(this.productService.product)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

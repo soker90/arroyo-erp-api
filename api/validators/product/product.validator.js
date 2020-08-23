@@ -44,4 +44,5 @@ module.exports = {
   validateProductBody,
   validateFields,
   validateIdParam,
+  validateId,
 };
