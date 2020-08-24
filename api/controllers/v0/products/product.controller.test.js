@@ -248,7 +248,7 @@ describe('ProductController', () => {
 
         before(done => {
           const product = { ...productMock };
-          delete product.iva;
+          delete product.nameProvider;
           supertest(app)
             .post('/products')
             .set('Authorization', `Bearer ${token}`)
@@ -270,8 +270,7 @@ describe('ProductController', () => {
         });
       });
 
-      describe('Se añade un producto correctamente', () => {
-        let response;
+      describe('Existe el proveedor', () => {
         let provider;
 
         before(async () => {
@@ -280,23 +279,120 @@ describe('ProductController', () => {
           });
         });
 
-        beforeAll(done => {
-          supertest(app)
-            .post('/products')
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-              ...productMock,
-              provider: provider._id,
-            })
-            .end((err, res) => {
-              response = res;
-              done();
-            });
+        describe('No se envía iva', () => {
+          let response;
+
+          before(done => {
+            const product = { ...productMock };
+            delete product.nameProvider;
+            delete product.iva;
+            supertest(app)
+              .post('/products')
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                ...product,
+                provider: provider._id,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.statusCode)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new productErrors.ProductMissingParams().message);
+          });
         });
 
-        test('Debería dar un 201', () => {
-          expect(response.statusCode)
-            .toBe(201);
+        describe('No se envía nombre', () => {
+          let response;
+
+          before(done => {
+            const product = { ...productMock };
+            delete product.nameProvider;
+            delete product.re;
+            supertest(app)
+              .post('/products')
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                ...product,
+                provider: provider._id,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.statusCode)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new productErrors.ProductMissingParams().message);
+          });
+        });
+
+        describe('No se envía recargo', () => {
+          let response;
+
+          before(done => {
+            const product = { ...productMock };
+            delete product.nameProvider;
+            delete product.name;
+            supertest(app)
+              .post('/products')
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                ...product,
+                provider: provider._id,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.statusCode)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new productErrors.ProductMissingParams().message);
+          });
+        });
+
+        describe('Se añade un producto correctamente', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .post('/products')
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                ...productMock,
+                provider: provider._id,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 201', () => {
+            expect(response.statusCode)
+              .toBe(201);
+          });
         });
       });
     });
