@@ -54,8 +54,8 @@ class ProductController {
   create(req, res) {
     logService.logInfo('[products] - Create product');
     Promise.resolve(req.body)
-      .tap(this.providerValidator.validateFields)
       .tap(this.providerValidator.validateProvider)
+      .tap(this.productValidator.validateFields)
       .then(this.productService.create)
       .then(() => res.status(201)
         .send())
@@ -69,7 +69,7 @@ class ProductController {
     logService.logInfo('[products] - Edit product');
     Promise.resolve(req)
       .tap(this.productValidator.validateIdParam)
-      .tap(this.providerValidator.validateFields)
+      .tap(this.productValidator.validateFieldsBody)
       .then(this.productService.update)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

@@ -243,7 +243,7 @@ describe('ProductController', () => {
           .toBeTruthy();
       });
 
-      describe('Falta iva', () => {
+      describe('No existe el proveedor', () => {
         let response;
 
         before(done => {

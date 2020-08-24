@@ -40,9 +40,12 @@ const validateFields = ({
   if (!name || !iva || !re) throw new productErrors.ProductMissingParams();
 };
 
+const validateFieldsBody = ({ body }) => validateFields(body);
+
 module.exports = {
   validateProductBody,
   validateFields,
   validateIdParam,
   validateId,
+  validateFieldsBody,
 };
