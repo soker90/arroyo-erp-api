@@ -1,3 +1,4 @@
+/* eslint-disable nonblock-statement-body-position  */
 const { ProductModel } = require('arroyo-erp-models');
 const { productErrors } = require('../../../errors');
 
@@ -42,10 +43,21 @@ const validateFields = ({
 
 const validateFieldsBody = ({ body }) => validateFields(body);
 
+/**
+ * Valida el body de la llamada para ctualizar el precio
+ * @param {number} price
+ * @param {number} date
+ */
+const updatePriceBody = ({ body: { price, date } }) => {
+  if (!price || typeof price !== 'number' || !date || typeof date !== 'number')
+    throw new productErrors.ProductMissingUpdate();
+};
+
 module.exports = {
   validateProductBody,
   validateFields,
   validateIdParam,
   validateId,
   validateFieldsBody,
+  updatePriceBody,
 };

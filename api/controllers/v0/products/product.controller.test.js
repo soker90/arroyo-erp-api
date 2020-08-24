@@ -684,7 +684,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/ss/prices')
+            .post('/products/5f3ac9a70d4c2e9ef671c032/prices')
             .set('Authorization', `Bearer ${token}`)
             .send({ price: 11.2 })
             .end((err, res) => {
@@ -704,7 +704,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/ss/prices')
+            .post('/products/5f3ac9a70d4c2e9ef671c032/prices')
             .set('Authorization', `Bearer ${token}`)
             .send({ price: '88' })
             .end((err, res) => {
@@ -724,7 +724,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/ss/prices')
+            .post('/products/5f3ac9a70d4c2e9ef671c032/prices')
             .set('Authorization', `Bearer ${token}`)
             .send()
             .end((err, res) => {
@@ -736,6 +736,11 @@ describe('ProductController', () => {
         test('Debería dar un 400', () => {
           expect(response.statusCode)
             .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductMissingUpdate().message);
         });
       });
     });
