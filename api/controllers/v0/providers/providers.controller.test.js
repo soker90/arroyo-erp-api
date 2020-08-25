@@ -1,9 +1,9 @@
 const supertest = require('supertest');
-const { mongoose, ProviderModel } = require('arroyo-erp-models');
+const { mongoose, ProviderModel, BillingModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
-const { providerErrors } = require('../../../../errors');
+const { providerErrors, commonErrors } = require('../../../../errors');
 
 const providerMock = {
   name: 'Auuu',
@@ -130,6 +130,38 @@ describe('ProvidersController', () => {
               .toBe(provider.name);
           });
         });
+
+        describe('Devuelve los proveedores filtrados', () => {
+          let response;
+
+          const nameProviderTest = 'Un test de prueba';
+
+          before(() => ProviderModel.create({
+            name: nameProviderTest,
+          }));
+
+          before(done => {
+            supertest(app)
+              .get('/providers?name=prueb')
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('Devuelve un array con el proveedor correcto', () => {
+            expect(response.body.length)
+              .toBe(1);
+            expect(response.body[0].name)
+              .toBe(nameProviderTest);
+          });
+        });
       });
     });
   });
@@ -211,6 +243,35 @@ describe('ProvidersController', () => {
         test('Debería dar un 201', () => {
           expect(response.status)
             .toBe(201);
+        });
+      });
+
+      describe('Se mandan campos no válidos', () => {
+        let response;
+        const name = 'Test';
+
+        before(done => {
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              name,
+              invalid: 'invalid',
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.status)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.ParamNotValidError().message);
         });
       });
 
@@ -442,6 +503,72 @@ describe('ProvidersController', () => {
               .toEqual('0,0,0,0');
             expect(response.body.billing.year)
               .toEqual(new Date().getFullYear());
+
+            expect(response.body.provider._id)
+              .toEqual(provider._id.toString());
+            expect(response.body.provider.address)
+              .toEqual(provider.address);
+            expect(response.body.provider.businessName)
+              .toEqual(provider.businessName);
+            expect(response.body.provider.cif)
+              .toEqual(provider.cif);
+            expect(response.body.provider.city)
+              .toEqual(provider.city);
+            expect(response.body.provider.email)
+              .toEqual(provider.email);
+            expect(response.body.provider.phone)
+              .toEqual(provider.phone);
+            expect(response.body.provider.postalCode)
+              .toEqual(provider.postalCode);
+            expect(response.body.provider.province)
+              .toEqual(provider.province);
+          });
+        });
+
+        describe('Se devuelven los datos y tiene facturación', () => {
+          let response;
+          const billing = {
+            trimesters: [
+              4,
+              2.4,
+              7.62,
+              6.5,
+            ],
+            year: 2020,
+          };
+
+          before(() => BillingModel.create({
+            ...billing,
+            provider: provider._id,
+          }));
+
+          before(done => {
+            supertest(app)
+              .get(PATH(provider._id))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('Devuelve los datos correctos', () => {
+            expect(response.body.billing.trimesters.toString())
+              .toEqual(billing.trimesters.toString());
+            expect(response.body.billing.year)
+              .toEqual(billing.year);
+
+            const annual = response.body.billing.trimesters.reduce(
+              (prev, current) => prev + current,
+            );
+
+            expect(response.body.billing.annual)
+              .toEqual(annual);
 
             expect(response.body.provider._id)
               .toEqual(provider._id.toString());

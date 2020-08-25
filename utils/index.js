@@ -23,7 +23,15 @@ const replaceArrayElement = ({ array, element, index }) => {
   return newArray;
 };
 
+/**
+ * Devulve si el objecto está vacío
+ * @param {Object} obj
+ * @returns {boolean}
+ */
+const isEmptyObject = obj => !Object.keys(obj).length;
+
 module.exports = {
   roundNumber,
   replaceArrayElement,
+  isEmptyObject,
 };

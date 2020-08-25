@@ -1,5 +1,6 @@
 const { ProviderModel } = require('arroyo-erp-models');
-const { providerErrors } = require('../../../errors');
+const { providerErrors, commonErrors } = require('../../../errors');
+const { isEmptyObject } = require('../../../utils');
 
 /**
  * Check if exist id
@@ -21,9 +22,25 @@ const validateIdParam = ({ params }) => validateId(params);
 const validateProviderIfExist = data => data?.provider && _checkId(data.provider);
 const validateProvider = ({ provider }) => provider && _checkId(provider);
 
+/**
+ * Compruba que solo reciba campos válidos y que reciba nombre
+ * @param {string} name
+ * @param {Object} others
+ */
+const fieldsValid = ({
+  name, address, city, postalCode, province, phone, email, businessName, cif,
+  ...others
+}) => {
+  if (!name) throw new providerErrors.ProviderMissingName();
+  if (!isEmptyObject(others)) throw new commonErrors.ParamNotValidError();
+};
+const fieldsValidBody = ({ body }) => fieldsValid(body);
+
 module.exports = {
   validateIdParam,
   validateId,
   validateProviderIfExist,
   validateProvider,
+  fieldsValid,
+  fieldsValidBody,
 };

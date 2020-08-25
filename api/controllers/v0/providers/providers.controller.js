@@ -49,6 +49,7 @@ class ProvidersController {
   create(req, res) {
     logService.logInfo('[providers] - Create provider');
     Promise.resolve(req.body)
+      .tap(this.providerValidator.fieldsValid)
       .then(this.providerService.create)
       .then(() => res.status(201)
         .send())
@@ -62,6 +63,7 @@ class ProvidersController {
     logService.logInfo('[providers] - Edit provider');
     Promise.resolve(req)
       .tap(this.providerValidator.validateIdParam)
+      .tap(this.providerValidator.fieldsValidBody)
       .then(this.providerService.update)
       .then(() => res.status(204)
         .send())
