@@ -1,5 +1,7 @@
 const supertest = require('supertest');
-const { mongoose, ProductModel, ProviderModel } = require('arroyo-erp-models');
+const {
+  mongoose, ProductModel, ProviderModel, PriceModel,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
@@ -596,7 +598,7 @@ describe('ProductController', () => {
         });
 
         test('La información es correcta', () => {
-          const json = JSON.parse(response.text).product;
+          const json = response.body.product;
           expect(JSON.stringify(json._id))
             .toEqual(JSON.stringify(product._id));
           expect(json.code)
@@ -613,6 +615,65 @@ describe('ProductController', () => {
             .toBe(product.re);
           expect(json.rate)
             .toBe(product.rate);
+          expect(response.body.prices)
+            .toEqual([]);
+        });
+      });
+
+      describe('Devuelve un producto con precios', () => {
+        let response;
+        let product;
+        const price1 = {
+          date: Date.now(),
+          price: 3,
+        };
+
+        const price2 = {
+          date: Date.now(),
+          price: 4.1,
+        };
+
+        before(async () => {
+          product = await ProductModel.create(productMock);
+          await PriceModel.create({
+            ...price1,
+            product: product._id,
+          });
+
+          await PriceModel.create({
+            ...price2,
+            product: product._id,
+          });
+        });
+
+        beforeAll(done => {
+          supertest(app)
+            .get(`/products/${product._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('La información es correcta', () => {
+          expect(response.body.prices)
+            .toBeInstanceOf(Array);
+
+          const reviewPrice = (price, mock) => {
+            expect(price.date)
+              .toBe(mock.date);
+            expect(price.price)
+              .toBe(mock.price);
+          };
+
+          reviewPrice(response.body.prices[0], price1);
+          reviewPrice(response.body.prices[1], price2);
         });
       });
     });
@@ -693,9 +754,14 @@ describe('ProductController', () => {
             });
         });
 
-        test('Debería dar un 400', () => {
+        test('Debería dar un 404', () => {
           expect(response.statusCode)
-            .toBe(400);
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductNotFound().message);
         });
       });
 
@@ -704,7 +770,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/5f3ac9a70d4c2e9ef671c032/prices')
+            .post(`/products/${product._id}/prices`)
             .set('Authorization', `Bearer ${token}`)
             .send({ price: '88' })
             .end((err, res) => {
@@ -724,7 +790,7 @@ describe('ProductController', () => {
 
         beforeAll(done => {
           supertest(app)
-            .post('/products/5f3ac9a70d4c2e9ef671c032/prices')
+            .post(`/products/${product._id}/prices`)
             .set('Authorization', `Bearer ${token}`)
             .send()
             .end((err, res) => {
