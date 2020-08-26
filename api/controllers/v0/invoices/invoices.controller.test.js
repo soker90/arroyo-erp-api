@@ -4,7 +4,8 @@ const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const { commonErrors, invoiceErrors } = require('../../../../errors');
-const { CONCEPT } = require('../../../../constants');
+const { CONCEPT, TYPE_PAYMENT } = require('../../../../constants/index');
+const con = require('../../../../constants');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {
@@ -509,7 +510,7 @@ describe('InvoicesController', () => {
             });
         });
 
-        test('Debería dar un 400', async () => {
+        test('Debería dar un 400', () => {
           expect(token)
             .toBeTruthy();
 
@@ -532,7 +533,7 @@ describe('InvoicesController', () => {
             });
         });
 
-        test('Debería dar un 400', async () => {
+        test('Debería dar un 400', () => {
           expect(token)
             .toBeTruthy();
 
@@ -558,7 +559,7 @@ describe('InvoicesController', () => {
             });
         });
 
-        test('Debería dar un 404', async () => {
+        test('Debería dar un 404', () => {
           expect(token)
             .toBeTruthy();
 
@@ -750,7 +751,7 @@ describe('InvoicesController', () => {
             });
         });
 
-        test('Debería dar un 400', async () => {
+        test('Debería dar un 400', () => {
           expect(token)
             .toBeTruthy();
 
@@ -960,14 +961,14 @@ describe('InvoicesController', () => {
           supertest(app)
             .patch(`/invoices/${invoice._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)
-            .send({ type: 'Efectivo' })
+            .send({ type: 'Tarjeta' })
             .end((err, res) => {
               response = res;
               done();
             });
         });
 
-        test('Debería dar un 422', async () => {
+        test('Debería dar un 422', () => {
           expect(token)
             .toBeTruthy();
 
@@ -997,7 +998,7 @@ describe('InvoicesController', () => {
             });
         });
 
-        test('Debería dar un 400', async () => {
+        test('Debería dar un 400', () => {
           expect(token)
             .toBeTruthy();
 
@@ -1022,8 +1023,46 @@ describe('InvoicesController', () => {
             .patch(`/invoices/${invoice._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)
             .send({
-              type: 'Efectivo',
+              type: 'Tarjeta',
               paymentDate: 'test',
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 422', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(422);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.DateNotValid().message);
+        });
+      });
+
+      describe('El pago es en efectivo y no tiene fecha', () => {
+        let response;
+        let invoice;
+
+        before(() => InvoiceModel.create({
+          dateInvoice: Date.now(),
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(`/invoices/${invoice._id}/confirm`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              type: TYPE_PAYMENT.CASH,
             })
             .end((err, res) => {
               response = res;
@@ -1061,7 +1100,7 @@ describe('InvoicesController', () => {
           supertest(app)
             .patch(`/invoices/${invoice._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)
-            .send({ type: 'Efectivo' })
+            .send({ type: 'Tarjeta' })
             .end((err, res) => {
               response = res;
               done();
@@ -1096,12 +1135,14 @@ describe('InvoicesController', () => {
           supertest(app)
             .patch(`/invoices/${invoice._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)
-            .send({ type: 'Efectivo' })
+            .send({ type: 'Tarjeta' })
             .end((err, res) => {
               response = res;
               done();
             });
         });
+
+        afterAll(() => testDB.clean('AutoIncrement'));
 
         test('Debería dar un 200', () => {
           expect(token)
@@ -1138,7 +1179,47 @@ describe('InvoicesController', () => {
           supertest(app)
             .patch(`/invoices/${invoice._id}/confirm`)
             .set('Authorization', `Bearer ${token}`)
-            .send({ type: 'Efectivo' })
+            .send({ type: 'Tarjeta' })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        afterAll(() => testDB.clean('AutoIncrement'));
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Se ha asignado un número de order', () => {
+          expect(response.body.nOrder)
+            .toBe(1);
+        });
+      });
+
+      describe('Asigna el número de orden con pago en efectivo', () => {
+        let response;
+        let invoice;
+
+        before(() => InvoiceModel.create({
+          dateInvoice: Date.now(),
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(`/invoices/${invoice._id}/confirm`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              type: TYPE_PAYMENT.CASH,
+              paymentDate: Date.now(),
+            })
             .end((err, res) => {
               response = res;
               done();
@@ -1154,7 +1235,8 @@ describe('InvoicesController', () => {
 
         test('Se ha asignado un número de order', () => {
           expect(response.body.nOrder)
-            .toBe(2);
+            .toBe(1);
+          // TODO responder con los datos de pago y comprobar que está pagado
         });
       });
     });

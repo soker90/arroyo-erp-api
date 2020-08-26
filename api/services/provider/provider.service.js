@@ -12,6 +12,7 @@ const providers = ({ name }) => {
   };
 
   return ProviderModel.find(filter, 'name _id')
+    .sort({ name: 1 })
     .lean();
 };
 

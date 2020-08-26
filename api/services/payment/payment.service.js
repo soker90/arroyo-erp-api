@@ -2,6 +2,12 @@
 const { PaymentModel } = require('arroyo-erp-models');
 const Promise = require('bluebird');
 
+const LogService = require('../log.service');
+
+const TYPE = 'PaymentService';
+
+const logService = new LogService(TYPE);
+
 const merge = require('./services/merge');
 const confirm = require('./services/confirm');
 
@@ -10,16 +16,20 @@ const confirm = require('./services/confirm');
  * @return {Promise<string>}
  */
 const create = async invoice => {
-  const paymentData = await new PaymentModel({
-    provider: invoice.nameProvider,
-    paymentDate: invoice.payment.paymentDate,
-    type: invoice.payment.type,
-    invoices: [invoice._id],
-    nOrder: invoice.nOrder,
-    amount: invoice.total,
-  });
+  if (!invoice.payment.paid) {
+    logService.logInfo(`[create payment] - Creando pago para ${invoice._id}`);
+    const paymentData = await new PaymentModel({
+      provider: invoice.nameProvider,
+      paymentDate: invoice.payment.paymentDate,
+      type: invoice.payment.type,
+      invoices: [invoice._id],
+      nOrder: invoice.nOrder,
+      amount: invoice.total,
+    });
 
-  paymentData.save();
+    paymentData.save();
+  } else
+    logService.logInfo(`[create payment] - La factura ${invoice._id} ya está pagada`);
 };
 
 // TODO Ordenar conforme sea necesario

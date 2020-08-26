@@ -2,6 +2,7 @@ const { InvoiceModel, AutoIncrement, DeliveryOrderModel } = require('arroyo-erp-
 const {
   refreshBilling,
 } = require('../utils');
+const { TYPE_PAYMENT } = require('../../../../constants/payments');
 
 /**
  * Generate new order number for the year
@@ -29,6 +30,12 @@ const _addNOrderToDeliveryOrder = async invoice => {
 };
 
 /**
+ * Devuelve si el tipo de pago es efectivo
+ * @param {String} type
+ * @returns {boolean}
+ */
+const isTypeCash = type => type === TYPE_PAYMENT.CASH;
+/**
  * Genera el número de orden correspondiente a la factura
  * @param {String} id
  * @param {Number} datePayment
@@ -42,11 +49,12 @@ const invoiceConfirm = async ({ params: { id }, body: { paymentDate, type } }) =
   invoiceData.payment = {
     paymentDate,
     type,
+    ...(isTypeCash(type) && { paid: true }),
   };
 
-  await invoiceData.save()
-    .then(_addNOrderToDeliveryOrder)
-    .then(() => refreshBilling(invoiceData.dateInvoice, invoiceData.provider));
+  const invoice = await invoiceData.save();
+  await _addNOrderToDeliveryOrder(invoice);
+  await refreshBilling(invoiceData.dateInvoice, invoiceData.provider);
 
   return invoiceData;
 };
