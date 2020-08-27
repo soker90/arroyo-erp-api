@@ -1,16 +1,4 @@
-/**
- * Round number to 2 decimals
- * @param {number} num
- * @param {number} decimals
- * @returns {number}
- */
-const roundNumber = (num, decimals = 3) => {
-  // eslint-disable-next-line no-restricted-properties
-  const baseDecimals = Math.pow(10, decimals);
-  const absoluteNumber = Math.abs(num);
-  const roundedNum = Math.round(absoluteNumber * baseDecimals) / baseDecimals;
-  return num < 0 ? roundedNum * -1 : roundedNum;
-};
+const roundNumber = require('./roundNumber');
 
 /**
  * Genera un nuevo array con el elemento del índice dado reemplazado
