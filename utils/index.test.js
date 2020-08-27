@@ -25,6 +25,18 @@ describe('DeliveryOrderController', () => {
       expect(num)
         .toBe(3.456);
     });
+
+    test('Redondea a 2 teniendo en cuenta el 4', () => {
+      const num = roundNumber(4.0445, 2);
+      expect(num)
+        .toBe(4.05);
+    });
+
+    test('Redondea a 2 un número negativo', () => {
+      const num = roundNumber(-1.015, 2);
+      expect(num)
+        .toBe(-1.02);
+    });
   });
 
   describe('replaceArrayElement', () => {

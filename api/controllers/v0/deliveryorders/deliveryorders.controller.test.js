@@ -903,9 +903,9 @@ describe('DeliveryOrderController', () => {
           test('Los datos enviados son correctos', () => {
             const productReceived = response.body.products[1];
             const rate = body.quantity * productMock.rate;
-            const taxBase = roundNumber(rate + (body.price * body.quantity), 2);
-            const re = roundNumber(taxBase * productMock.re, 2);
-            const iva = roundNumber(taxBase * productMock.iva, 2);
+            const taxBase = rate + (body.price * body.quantity);
+            const re = taxBase * productMock.re;
+            const iva = taxBase * productMock.iva;
             expect(response.body.products.length)
               .toBe(2);
             expect(productReceived.code)
@@ -913,7 +913,7 @@ describe('DeliveryOrderController', () => {
             expect(productReceived.name)
               .toBe(productMock.name);
             expect(productReceived.rate)
-              .toBe(roundNumber(productMock.rate, 3));
+              .toBe(productMock.rate);
             expect(productReceived.iva)
               .toBe(iva);
             expect(productReceived.price)
@@ -1267,9 +1267,9 @@ describe('DeliveryOrderController', () => {
               test('Los datos enviados son correctos', () => {
                 const productReceived = response.body.products[0];
                 const rate = body.quantity * productMock.rate;
-                const taxBase = roundNumber(rate + (body.price * body.quantity), 2);
-                const re = roundNumber(taxBase * productMock.re, 2);
-                const iva = roundNumber(taxBase * productMock.iva, 2);
+                const taxBase = rate + (body.price * body.quantity);
+                const re = taxBase * productMock.re;
+                const iva = taxBase * productMock.iva;
                 const total = taxBase + re + iva;
                 expect(response.body.products.length)
                   .toBe(1);
@@ -1290,15 +1290,15 @@ describe('DeliveryOrderController', () => {
                 expect(productReceived.total)
                   .toBe(total);
                 expect(response.body.totals.iva)
-                  .toBe(iva);
+                  .toBe(roundNumber(iva, 2));
                 expect(response.body.totals.rate)
                   .toBe(productMock.rate);
                 expect(response.body.totals.re)
-                  .toBe(re);
+                  .toBe(roundNumber(re, 2));
                 expect(response.body.totals.taxBase)
-                  .toBe(taxBase);
+                  .toBe(roundNumber(taxBase, 2));
                 expect(response.body.totals.total)
-                  .toBe(total);
+                  .toBe(roundNumber(total, 2));
               });
             });
 

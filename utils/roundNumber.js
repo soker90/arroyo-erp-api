@@ -3,11 +3,10 @@ const _calcRound = (num, decimals) => {
   let countDecimals = `${num}`.split('.')?.[1]?.length || 0;
 
   let returnedNumber = num;
-
   if (countDecimals > decimals) {
     if (countDecimals > 10) countDecimals = 10;
     const baseDecimals = Math.pow(10, countDecimals - 1);
-    const roundedNum = Math.round(num * baseDecimals) / baseDecimals;
+    const roundedNum = Math.round((num + Number.EPSILON) * baseDecimals) / baseDecimals;
 
     returnedNumber = _calcRound(roundedNum, decimals);
   }
