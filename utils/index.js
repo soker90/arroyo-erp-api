@@ -7,7 +7,9 @@
 const roundNumber = (num, decimals = 3) => {
   // eslint-disable-next-line no-restricted-properties
   const baseDecimals = Math.pow(10, decimals);
-  return Math.round(num * baseDecimals) / baseDecimals;
+  const absoluteNumber = Math.abs(num);
+  const roundedNum = Math.round(absoluteNumber * baseDecimals) / baseDecimals;
+  return num < 0 ? roundedNum * -1 : roundedNum;
 };
 
 /**

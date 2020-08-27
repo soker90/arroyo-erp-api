@@ -64,7 +64,7 @@ const calcProduct = async (product, price, quantity, date) => {
   const rateCalc = rate ? roundNumber(rate * quantity) : 0;
   const taxBase = roundNumber(quantity * price + rateCalc, 2);
   const ivaTotal = roundNumber(taxBase * iva, 2);
-  const reTotal = roundNumber(taxBase * re, 2);
+  const reTotal = (quantity * price + rateCalc) * re;
 
   return {
     _id,
