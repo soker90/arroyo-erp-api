@@ -29,7 +29,7 @@ const calcData = deliveryOrder => {
   deliveryOrder.set('iva', roundNumber(ivaDO, 2));
   deliveryOrder.set('re', roundNumber(reDO, 2));
   deliveryOrder.set('total', roundNumber(totalDO, 2));
-  deliveryOrder.set('taxBase', taxBaseDO);
+  deliveryOrder.set('taxBase', roundNumber(taxBaseDO, 2));
   deliveryOrder.set('rate', roundNumber(rateDO, 3));
   deliveryOrder.save();
   return deliveryOrder;
@@ -61,10 +61,10 @@ const calcProduct = async (product, price, quantity, date) => {
     .sort({ date: -1 });
   const lastPrice = prices.length ? prices[0].price : null;
 
-  const rateCalc = rate ? roundNumber(rate * quantity) : 0;
-  const taxBase = roundNumber(quantity * price + rateCalc, 2);
-  const ivaTotal = roundNumber(taxBase * iva, 2);
-  const reTotal = (quantity * price + rateCalc) * re;
+  const rateCalc = rate ? (rate * quantity) : 0;
+  const taxBase = quantity * price + rateCalc;
+  const ivaTotal = taxBase * iva;
+  const reTotal = taxBase * re;
 
   return {
     _id,
