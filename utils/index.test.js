@@ -15,13 +15,13 @@ describe('DeliveryOrderController', () => {
     });
 
     test('Redondea a 3 decimales a la baja', () => {
-      const num = roundNumber(3.45254);
+      const num = roundNumber(3.45254, 3);
       expect(num)
         .toBe(3.453);
     });
 
-    test('Redondea a 2 decimales a la alta', () => {
-      const num = roundNumber(3.45556);
+    test('Redondea a 3 decimales a la alta', () => {
+      const num = roundNumber(3.45556, 3);
       expect(num)
         .toBe(3.456);
     });

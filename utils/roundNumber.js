@@ -20,7 +20,7 @@ const _calcRound = (num, decimals) => {
  * @param {number} decimals
  * @returns {number}
  */
-const roundNumber = (num, decimals = 3) => {
+const roundNumber = (num, decimals = 2) => {
   const absoluteNumber = Math.abs(num);
   const roundedNum = _calcRound(absoluteNumber, decimals);
   return num < 0 ? roundedNum * -1 : roundedNum;

@@ -12,23 +12,26 @@ const { roundNumber } = require('../../../utils');
 const calcData = deliveryOrder => {
   let ivaDO = 0;
   let reDO = 0;
-  let totalDO = 0;
   let taxBaseDO = 0;
   let rateDO = 0;
 
   deliveryOrder.products.forEach(({
-    iva, re, total, taxBase, rate,
+    iva, re, taxBase, rate,
   }) => {
     ivaDO += iva;
     reDO += re;
-    totalDO += total;
     taxBaseDO += taxBase;
     if (rate) rateDO += rate;
   });
 
+  ivaDO = roundNumber(ivaDO, 2);
+  reDO = roundNumber(reDO, 2);
+  taxBaseDO = roundNumber(taxBaseDO, 2);
+  const totalDO = ivaDO + reDO + taxBaseDO;
+
   deliveryOrder.set('iva', roundNumber(ivaDO, 2));
   deliveryOrder.set('re', roundNumber(reDO, 2));
-  deliveryOrder.set('total', roundNumber(totalDO, 2));
+  deliveryOrder.set('total', totalDO);
   deliveryOrder.set('taxBase', roundNumber(taxBaseDO, 2));
   deliveryOrder.set('rate', roundNumber(rateDO, 3));
   deliveryOrder.save();
