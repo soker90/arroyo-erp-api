@@ -1,6 +1,12 @@
 const { BillingModel, InvoiceModel } = require('arroyo-erp-models');
 const { roundNumber } = require('../../../../utils');
 
+const LogService = require('../../log.service');
+
+const TYPE = 'InvoiceUtilsBilling';
+
+const logService = new LogService(TYPE);
+
 /**
  * Suma todas las facturas del provedor entre las fechas dadas
  * @param {string} provider
@@ -79,6 +85,7 @@ const refreshBilling = async (dateTime, provider) => {
   const startDate = new Date(year, trimester * 3, 2).getTime();
   const endDate = new Date(year, (trimester * 3) + 3, 1).getTime();
 
+  logService.logInfo(`Refresh billing- ${provider} - ${startDate} - ${endDate}`);
   const [totals] = await _sumInvoices(provider, startDate, endDate);
 
   await _setBilling({
