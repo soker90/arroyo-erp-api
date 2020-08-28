@@ -9,7 +9,8 @@ const { DeliveryOrderModel } = require('arroyo-erp-models');
 const _getFree = ({ provider }) => DeliveryOrderModel.find({
   provider,
   invoice: { $exists: false },
-});
+})
+  .sort({ date: 1 });
 
 /**
  * Devulve los albaranes incluidos en una factura
@@ -24,6 +25,7 @@ const _getInInvoices = ({ provider, offset, limit }) => (
     provider,
     invoice: { $exists: true },
   })
+    .sort({ date: -1 })
     .skip(parseInt(offset, 10))
     .limit(parseInt(limit, 10))
 );
