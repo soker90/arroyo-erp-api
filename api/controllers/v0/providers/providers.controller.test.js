@@ -535,6 +535,7 @@ describe('ProvidersController', () => {
               6.5,
             ],
             year: 2020,
+            annual: 20.52,
           };
 
           before(() => BillingModel.create({

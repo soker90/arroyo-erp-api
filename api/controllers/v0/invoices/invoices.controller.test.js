@@ -1126,6 +1126,7 @@ describe('InvoicesController', () => {
 
         before(() => InvoiceModel.create({
           dateInvoice: Date.now(),
+          total: 10,
         })
           .then(invoiceCreated => {
             invoice = invoiceCreated;
@@ -1152,7 +1153,7 @@ describe('InvoicesController', () => {
         });
 
         test('Se ha asignado un número de order', () => {
-          expect(JSON.parse(response.text).nOrder)
+          expect(response.body.nOrder)
             .toBe(1);
         });
       });
@@ -1170,6 +1171,7 @@ describe('InvoicesController', () => {
         before(() => InvoiceModel.create({
           dateInvoice: Date.now(),
           deliveryOrders: [deliveryOrder],
+          total: 10,
         })
           .then(invoiceCreated => {
             invoice = invoiceCreated;
@@ -1207,6 +1209,7 @@ describe('InvoicesController', () => {
 
         before(() => InvoiceModel.create({
           dateInvoice: Date.now(),
+          total: 10,
         })
           .then(invoiceCreated => {
             invoice = invoiceCreated;
