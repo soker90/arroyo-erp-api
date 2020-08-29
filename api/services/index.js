@@ -4,6 +4,7 @@ const ProviderService = require('./provider');
 const DeliveryOrderService = require('./deliveryorder');
 const InvoiceService = require('./invoice');
 const PaymentService = require('./payment');
+const BillingService = require('./billing');
 
 module.exports = {
   accountService: AccountService,
@@ -12,4 +13,5 @@ module.exports = {
   deliveryOrderService: DeliveryOrderService,
   invoiceService: InvoiceService,
   paymentService: PaymentService,
+  billingService: BillingService,
 };

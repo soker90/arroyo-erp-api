@@ -1,7 +1,4 @@
 const { InvoiceModel, AutoIncrement, DeliveryOrderModel } = require('arroyo-erp-models');
-const {
-  refreshBilling,
-} = require('../utils');
 const { TYPE_PAYMENT } = require('../../../../constants/payments');
 
 /**
@@ -54,7 +51,6 @@ const invoiceConfirm = async ({ params: { id }, body: { paymentDate, type } }) =
 
   const invoice = await invoiceData.save();
   await _addNOrderToDeliveryOrder(invoice);
-  await refreshBilling(invoiceData.dateInvoice, invoiceData.provider);
 
   return invoiceData;
 };

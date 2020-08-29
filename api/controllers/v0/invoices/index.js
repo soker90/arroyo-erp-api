@@ -3,13 +3,18 @@ const errorHandler = require('../../../../components/error-handlers');
 
 const InvoiceController = require('./invoices.controller');
 
-module.exports = ({ invoiceService, paymentService }, { invoiceValidator }, { invoiceAdapter }) => {
+module.exports = (
+  { invoiceService, paymentService, billingService },
+  { invoiceValidator },
+  { invoiceAdapter },
+) => {
   const invoicesController = new InvoiceController({
     invoiceService,
     paymentService,
     errorHandler,
     invoiceValidator,
     invoiceAdapter,
+    billingService,
   });
 
   return [{

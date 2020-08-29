@@ -9,12 +9,14 @@ const logService = new LogService(TYPE);
 class InvoicesController {
   constructor({
     invoiceService, paymentService, errorHandler, invoiceAdapter, invoiceValidator,
+    billingService,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
     this.invoiceAdapter = invoiceAdapter;
     this.paymentService = paymentService;
     this.invoiceValidator = invoiceValidator;
+    this.billingService = billingService;
   }
 
   _handleError(res, error) {
@@ -110,6 +112,7 @@ class InvoicesController {
       .tap(this.invoiceValidator.confirmParams)
       .then(this.invoiceService.invoiceConfirm)
       .tap(this.paymentService.create)
+      .tap(this.billingService.add)
       .then(this.invoiceAdapter.dataResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
