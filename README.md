@@ -1,6 +1,7 @@
 # arroyo-erp-api
 
 ![GitHub](https://img.shields.io/github/license/soker90/arroyo-erp-api)
+![](https://github.com/soker90/arroyo-erp-api/workflows/Node.js%20CI/badge.svg)
 [![dependencies Status](https://david-dm.org/soker90/arroyo-erp-api/status.svg)](https://david-dm.org/soker90/arroyo-erp-api)
 [![devDependencies Status](https://david-dm.org/soker90/arroyo-erp-api/dev-status.svg)](https://david-dm.org/soker90/arroyo-erp-api?type=dev)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=soker90_arroyo-erp-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=soker90_arroyo-erp-api)
