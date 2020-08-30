@@ -113,7 +113,7 @@ class InvoicesController {
       .then(this.invoiceService.invoiceConfirm)
       .tap(this.paymentService.create)
       .tap(this.billingService.add)
-      .then(this.invoiceAdapter.dataResponse)
+      .then(this.invoiceAdapter.dataAndPaymentResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

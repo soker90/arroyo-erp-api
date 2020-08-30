@@ -23,6 +23,18 @@ const totalsResponse = invoice => ({
 });
 
 /**
+ * Devuelve la infomación del pago
+ * @param {Object} payment
+ * @returns {{[numCheque]: String, paid: Boolean, type: String, paymentDate: Number}}
+ */
+const paymentResponse = ({ payment }) => ({
+  type: payment.type,
+  paymentDate: payment.paymentDate,
+  ...(payment.numCheque && { numCheque: payment.numCheque }),
+  paid: payment.paid,
+});
+
+/**
  * devuelve un objecto con los dato y totales de la factura
  * @param {object} invoice
  * @returns {{data: {nOrder: *, dateRegister: (number|Requireable<number>),
@@ -32,6 +44,18 @@ const totalsResponse = invoice => ({
 const dataAndTotalsResponse = invoice => ({
   data: dataResponse(invoice),
   totals: totalsResponse(invoice),
+});
+
+/**
+ * devuelve un objecto con los dato y totales de la factura
+ * @param {object} invoice
+ * @returns {{data: {nOrder: *, dateRegister: (number|Requireable<number>),
+ * dateInvoice: number, nInvoice: (string|Requireable<string>|Requireable<number>|string)},
+ * totals: {total: *, re: *, iva: *, taxBase: *}}}
+ */
+const dataAndPaymentResponse = invoice => ({
+  data: dataResponse(invoice),
+  payment: paymentResponse(invoice),
 });
 
 /**
@@ -73,7 +97,7 @@ const fullResponse = invoice => ({
       taxBase: product.taxBase,
     })),
   })),
-  ...(invoice.payment && { payment: invoice.payment }),
+  ...(invoice.payment.type && { payment: paymentResponse(invoice) }),
 });
 
 module.exports = {
@@ -81,4 +105,5 @@ module.exports = {
   dataAndTotalsResponse,
   dataResponse,
   conditionalDataTotalsResponse,
+  dataAndPaymentResponse,
 };
