@@ -31,18 +31,21 @@ const _inInvoiceResponse = ({ inInvoices, inInvoiceCount }) => {
  * @private
  */
 const _freeResponse = ({ free }) => free.map(({
-  _id, date, taxBase, products,
+  _id, date, taxBase, products, iva, re, total,
 }) => ({
   _id,
   date,
   taxBase,
+  iva,
+  re,
+  total,
   products: products.map(({
-    name, price, quantity, taxBase: totalProduct,
+    name, price, quantity, taxBase: taxBaseProduct,
   }) => ({
     name,
     price,
     quantity,
-    taxBase: totalProduct,
+    taxBase: taxBaseProduct,
   })),
 }));
 

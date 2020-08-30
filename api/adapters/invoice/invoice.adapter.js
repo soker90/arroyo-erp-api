@@ -31,7 +31,7 @@ const paymentResponse = ({ payment }) => ({
   type: payment.type,
   paymentDate: payment.paymentDate,
   ...(payment.numCheque && { numCheque: payment.numCheque }),
-  paid: payment.paid,
+  paid: Boolean(payment.paid),
 });
 
 /**
@@ -90,6 +90,9 @@ const fullResponse = invoice => ({
     _id: deliveryOrder._id,
     date: deliveryOrder.date,
     taxBase: deliveryOrder.taxBase,
+    iva: deliveryOrder.iva,
+    re: deliveryOrder.re,
+    total: deliveryOrder.total,
     products: deliveryOrder.products.map(product => ({
       price: product.price,
       quantity: product.quantity,

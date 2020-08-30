@@ -795,7 +795,7 @@ describe('InvoicesController', () => {
         };
 
         const testTotals = () => {
-          const { totals } = JSON.parse(response.text);
+          const { totals } = response.body;
           expect(totals.total)
             .toBe(invoiceTotals.total);
           expect(totals.iva)
@@ -1153,8 +1153,17 @@ describe('InvoicesController', () => {
         });
 
         test('Se ha asignado un número de order', () => {
-          expect(response.body.nOrder)
+          expect(response.body.data.nOrder)
             .toBe(1);
+        });
+
+        test('Se establecen los datos de pago', () => {
+          expect(response.body.payment.type)
+            .toBe('Tarjeta');
+          expect(response.body.payment.paymentDate)
+            .toBeUndefined();
+          expect(response.body.payment.paid)
+            .toBe(false);
         });
       });
 
@@ -1198,14 +1207,24 @@ describe('InvoicesController', () => {
         });
 
         test('Se ha asignado un número de order', () => {
-          expect(response.body.nOrder)
+          expect(response.body.data.nOrder)
             .toBe(1);
+        });
+
+        test('Se establecen los datos de pago', () => {
+          expect(response.body.payment.type)
+            .toBe('Tarjeta');
+          expect(response.body.payment.paymentDate)
+            .toBeUndefined();
+          expect(response.body.payment.paid)
+            .toBe(false);
         });
       });
 
       describe('Asigna el número de orden con pago en efectivo', () => {
         let response;
         let invoice;
+        const paymentDate = Date.now();
 
         before(() => InvoiceModel.create({
           dateInvoice: Date.now(),
@@ -1221,7 +1240,7 @@ describe('InvoicesController', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
               type: TYPE_PAYMENT.CASH,
-              paymentDate: Date.now(),
+              paymentDate,
             })
             .end((err, res) => {
               response = res;
@@ -1237,9 +1256,20 @@ describe('InvoicesController', () => {
         });
 
         test('Se ha asignado un número de order', () => {
-          expect(response.body.nOrder)
+          expect(response.body.data.nOrder)
             .toBe(1);
-          // TODO responder con los datos de pago y comprobar que está pagado
+        });
+
+        test('Se establecen los datos de pago', () => {
+          expect(response.body.payment.type)
+            .toBe('Efectivo');
+          expect(response.body.payment.paymentDate)
+            .toBe(paymentDate);
+        });
+
+        test('El pago se marca como pagado', () => {
+          expect(response.body.payment.paid)
+            .toBe(true);
         });
       });
     });
