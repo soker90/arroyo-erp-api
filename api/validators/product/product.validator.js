@@ -37,8 +37,9 @@ const validateFields = ({
   name,
   iva,
   re,
+  profit,
 }) => {
-  if (!name || !iva || !re) throw new productErrors.ProductMissingParams();
+  if (!name || !iva || !re || !profit) throw new productErrors.ProductMissingParams();
 };
 
 const validateFieldsBody = ({ body }) => validateFields(body);

@@ -16,6 +16,7 @@ const productMock = {
   iva: 11,
   re: 1.2,
   rate: 2,
+  profit: 12.3,
 };
 
 const product2Mock = {
@@ -27,6 +28,7 @@ const product2Mock = {
   iva: 3.445,
   re: 3.21,
   rate: 5,
+  profit: 20.2,
 };
 describe('ProductController', () => {
   beforeAll(() => testDB.connect());
@@ -312,6 +314,37 @@ describe('ProductController', () => {
           });
         });
 
+        describe('No se envía profit', () => {
+          let response;
+
+          before(done => {
+            const product = { ...productMock };
+            delete product.nameProvider;
+            delete product.profit;
+            supertest(app)
+              .post('/products')
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                ...product,
+                provider: provider._id,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.statusCode)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new productErrors.ProductMissingParams().message);
+          });
+        });
+
         describe('No se envía nombre', () => {
           let response;
 
@@ -480,6 +513,7 @@ describe('ProductController', () => {
                 iva: product2Mock.iva,
                 re: product2Mock.re,
                 rate: product2Mock.rate,
+                profit: product2Mock.profit,
               })
               .end((err, res) => {
                 response = res;
@@ -509,6 +543,8 @@ describe('ProductController', () => {
               .toBe(product2Mock.rate);
             expect(response.body.re)
               .toBe(product2Mock.re);
+            expect(response.body.profit)
+              .toBe(product2Mock.profit);
           });
         });
       });
@@ -615,6 +651,8 @@ describe('ProductController', () => {
             .toBe(product.re);
           expect(json.rate)
             .toBe(product.rate);
+          expect(json.profit)
+            .toBe(product.profit);
           expect(response.body.prices)
             .toEqual([]);
         });
