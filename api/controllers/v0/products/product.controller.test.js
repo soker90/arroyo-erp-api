@@ -665,12 +665,14 @@ describe('ProductController', () => {
           date: Date.now(),
           price: 3,
           cost: 4,
+          sale: 4.5,
         };
 
         const price2 = {
           date: Date.now(),
           price: 4.1,
           cost: 4.6,
+          sale: 5.1,
         };
 
         before(async () => {
@@ -710,6 +712,10 @@ describe('ProductController', () => {
               .toBe(mock.date);
             expect(price.price)
               .toBe(mock.price);
+            expect(price.cost)
+              .toBe(mock.cost);
+            expect(price.sale)
+              .toBe(mock.sale);
           };
 
           reviewPrice(response.body.prices[0], price1);

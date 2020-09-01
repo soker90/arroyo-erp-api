@@ -9,7 +9,7 @@ const { roundNumber } = require('../../../../utils');
  */
 const updatePrice = async ({ params, body }) => {
   const product = await ProductModel.findOne({ _id: params.id });
-  const sale = roundNumber(body.cost * product.profit);
+  const sale = roundNumber((body.cost * product.profit + body.cost));
 
   await new PriceModel({
     date: body.date,
