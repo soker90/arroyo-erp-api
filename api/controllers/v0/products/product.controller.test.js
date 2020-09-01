@@ -664,11 +664,13 @@ describe('ProductController', () => {
         const price1 = {
           date: Date.now(),
           price: 3,
+          cost: 4,
         };
 
         const price2 = {
           date: Date.now(),
           price: 4.1,
+          cost: 4.6,
         };
 
         before(async () => {
@@ -765,6 +767,7 @@ describe('ProductController', () => {
             .send({
               price: 11.2,
               date: 1589752920000,
+              cost: 13.2,
             })
             .end((err, res) => {
               response = res;
@@ -772,7 +775,7 @@ describe('ProductController', () => {
             });
         });
 
-        test('Debería dar un 201', async () => {
+        test('Debería dar un 201', () => {
           expect(response.statusCode)
             .toBe(201);
         });
@@ -820,6 +823,56 @@ describe('ProductController', () => {
         test('Debería dar un 400', () => {
           expect(response.statusCode)
             .toBe(400);
+        });
+      });
+
+      describe('El coste no es válido', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post(`/products/${product._id}/prices`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ cost: '88' })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductMissingUpdate().message);
+        });
+      });
+
+      describe('No se envía coste', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post(`/products/${product._id}/prices`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ price: 12 })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductMissingUpdate().message);
         });
       });
 

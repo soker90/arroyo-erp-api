@@ -28,7 +28,7 @@ describe('ProductErrors', () => {
 
     test('should define a default message', () => {
       const err = new ProductErrors.ProductMissingUpdate();
-      expect(err.message).toEqual('Falta el precio del producto');
+      expect(err.message).toEqual('Falta el precio o el coste del producto');
     });
 
     test('should allow passing a custom message', () => {

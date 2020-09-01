@@ -45,12 +45,13 @@ const validateFields = ({
 const validateFieldsBody = ({ body }) => validateFields(body);
 
 /**
- * Valida el body de la llamada para ctualizar el precio
+ * Valida el body de la llamada para actualizar el precio
  * @param {number} price
  * @param {number} date
+ * @param {number} cost
  */
-const updatePriceBody = ({ body: { price, date } }) => {
-  if (!price || typeof price !== 'number' || !date || typeof date !== 'number')
+const updatePriceBody = ({ body: { price, date, cost } }) => {
+  if (typeof price !== 'number' || typeof date !== 'number' || typeof cost !== 'number')
     throw new productErrors.ProductMissingUpdate();
 };
 

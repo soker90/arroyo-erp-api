@@ -18,7 +18,7 @@ class ProductMissingUpdate extends Error {
    *
    * @param {string} [msg=user invalid login] Message for the error
    */
-  constructor(msg = 'Falta el precio del producto') {
+  constructor(msg = 'Falta el precio o el coste del producto') {
     super(msg);
     this.name = this.constructor.name;
   }
