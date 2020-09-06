@@ -28,8 +28,15 @@ const product2Mock = {
   iva: 3.445,
   re: 3.21,
   rate: 5,
-  profit: 20.2,
 };
+
+const priceMock = {
+  date: Date.now(),
+  price: 3,
+  cost: 3.33,
+  sale: 3.73,
+};
+
 describe('ProductController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());
@@ -208,6 +215,44 @@ describe('ProductController', () => {
               .toBe(product2.name);
           });
         });
+
+        describe('Se obtienen los productos con el precio', () => {
+          beforeAll(() => PriceModel.create({
+            ...priceMock,
+            product: product._id,
+          }));
+
+          beforeAll(done => {
+            supertest(app)
+              .get(PATH)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('La información es correcta', () => {
+            const productResponse = response.body[0];
+            expect(productResponse._id)
+              .toEqual(product._id.toString());
+            expect(productResponse.code)
+              .toBe(product.code);
+            expect(productResponse.name)
+              .toBe(product.name);
+            expect(productResponse.cost)
+              .toBe(priceMock.cost);
+            expect(productResponse.price)
+              .toBe(priceMock.price);
+            expect(productResponse.sale)
+              .toBe(priceMock.sale);
+          });
+        });
       });
     });
   });
@@ -334,14 +379,9 @@ describe('ProductController', () => {
               });
           });
 
-          test('Debería dar un 400', () => {
+          test('Debería dar un 201', () => {
             expect(response.statusCode)
-              .toBe(400);
-          });
-
-          test('El mensaje de error es correcto', () => {
-            expect(response.body.message)
-              .toBe(new productErrors.ProductMissingParams().message);
+              .toBe(201);
           });
         });
 
@@ -513,7 +553,6 @@ describe('ProductController', () => {
                 iva: product2Mock.iva,
                 re: product2Mock.re,
                 rate: product2Mock.rate,
-                profit: product2Mock.profit,
               })
               .end((err, res) => {
                 response = res;
@@ -544,7 +583,7 @@ describe('ProductController', () => {
             expect(response.body.re)
               .toBe(product2Mock.re);
             expect(response.body.profit)
-              .toBe(product2Mock.profit);
+              .toBeFalsy();
           });
         });
       });
@@ -769,6 +808,36 @@ describe('ProductController', () => {
         beforeAll(done => {
           supertest(app)
             .post(`/products/${product._id}/prices`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              price: 11.2,
+              date: 1589752920000,
+              cost: 13.2,
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 201', () => {
+          expect(response.statusCode)
+            .toBe(201);
+        });
+      });
+
+      describe('Añade un precio correctamente a un producto sin beneficio', () => {
+        let response;
+        let product2;
+
+        beforeAll(() => ProductModel.create(product2Mock)
+          .then(productCreated => {
+            product2 = productCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .post(`/products/${product2._id}/prices`)
             .set('Authorization', `Bearer ${token}`)
             .send({
               price: 11.2,

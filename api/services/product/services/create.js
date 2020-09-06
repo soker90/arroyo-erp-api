@@ -16,7 +16,7 @@ const create = async ({
     ...(rate && { rate }),
     iva,
     re,
-    profit,
+    ...(profit && { profit }),
     ...(provider && { provider }),
     nameProvider: providerData.name,
   }).save();

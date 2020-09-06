@@ -12,11 +12,13 @@ class ProductController {
     errorHandler,
     providerValidator,
     productValidator,
+    productAdapter,
   }) {
     this.productService = productService;
     this.errorHandler = errorHandler;
     this.providerValidator = providerValidator;
     this.productValidator = productValidator;
+    this.productAdapter = productAdapter;
   }
 
   _handleError(res, error) {
@@ -44,6 +46,7 @@ class ProductController {
     Promise.resolve(req.query)
       .tap(this.providerValidator.validateProviderIfExist)
       .then(this.productService.products)
+      .then(this.productAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
