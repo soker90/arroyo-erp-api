@@ -1,17 +1,19 @@
 const AccountService = require('./account.service');
-const ProductService = require('./product');
-const ProviderService = require('./provider');
+const BillingService = require('./billing');
 const DeliveryOrderService = require('./deliveryorder');
 const InvoiceService = require('./invoice');
+const NoteService = require('./note');
 const PaymentService = require('./payment');
-const BillingService = require('./billing');
+const ProductService = require('./product');
+const ProviderService = require('./provider');
 
 module.exports = {
   accountService: AccountService,
-  productService: ProductService,
-  providerService: ProviderService,
+  billingService: BillingService,
   deliveryOrderService: DeliveryOrderService,
   invoiceService: InvoiceService,
+  noteService: NoteService,
   paymentService: PaymentService,
-  billingService: BillingService,
+  productService: ProductService,
+  providerService: ProviderService,
 };
