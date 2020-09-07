@@ -8,13 +8,14 @@
 const _inInvoiceResponse = ({ inInvoices, inInvoiceCount }) => {
   const data = inInvoices.map(
     ({
-      _id, date, total, nOrder, nInvoice,
+      _id, date, total, nOrder, nInvoice, note,
     }) => ({
       _id,
       date,
       total,
       nOrder,
       nInvoice,
+      note,
     }),
   );
 
@@ -31,7 +32,7 @@ const _inInvoiceResponse = ({ inInvoices, inInvoiceCount }) => {
  * @private
  */
 const _freeResponse = ({ free }) => free.map(({
-  _id, date, taxBase, products, iva, re, total,
+  _id, date, taxBase, products, iva, re, total, note,
 }) => ({
   _id,
   date,
@@ -39,6 +40,7 @@ const _freeResponse = ({ free }) => free.map(({
   iva,
   re,
   total,
+  note,
   products: products.map(({
     name, price, quantity, taxBase: taxBaseProduct,
   }) => ({
@@ -82,7 +84,7 @@ const _generateTotals = ({
  * nameProvider: *, products: *}}
  */
 const standardResponse = ({
-  _id, provider, nameProvider, products, date, nOrder, invoice, iva, re, total, taxBase, rate,
+  _id, provider, nameProvider, products, date, nOrder, invoice, iva, re, total, taxBase, rate, note,
 }) => ({
   _id,
   provider,
@@ -91,6 +93,7 @@ const standardResponse = ({
   products,
   nOrder,
   invoice,
+  note,
   totals: _generateTotals({
     iva,
     re,

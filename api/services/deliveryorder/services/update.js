@@ -5,9 +5,10 @@ const { DeliveryOrderModel } = require('arroyo-erp-models');
  * @param {Object} params
  * @param {Object} body
  */
-const update = ({ params, body: { date } }) => {
+const update = ({ params, body: { date, note } }) => {
   const set = {
     ...(date && { date }),
+    ...(note && { note }),
   };
 
   return DeliveryOrderModel.findOneAndUpdate(
@@ -17,6 +18,7 @@ const update = ({ params, body: { date } }) => {
       new: true,
       fields: {
         ...(date && { date: 1 }),
+        ...(note && { note: 1 }),
       },
     },
   );
