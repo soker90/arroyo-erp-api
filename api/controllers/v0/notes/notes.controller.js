@@ -56,6 +56,7 @@ class NotesController {
   create(req, res) {
     logService.logInfo('[create]  - Crea una nota');
     Promise.resolve(req.body)
+      .tap(this.noteValidator.validateNote)
       .then(this.noteService.create)
       .then(this.noteService.notes)
       .then(data => res.send(data))
@@ -66,6 +67,7 @@ class NotesController {
     logService.logInfo('[edit]  - Edita una nota');
     Promise.resolve(req)
       .tap(this.noteValidator.validateIdParam)
+      .tap(this.noteValidator.validateNoteBody)
       .then(this.noteService.edit)
       .then(this.noteService.notes)
       .then(data => res.send(data))
