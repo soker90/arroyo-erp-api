@@ -14,6 +14,11 @@ describe('NoteController', () => {
     message: 'Esto es un mensaje',
   };
 
+  const note2Mock = {
+    date: 1591215980000,
+    message: 'Este mensaje',
+  };
+
   describe('GET /notes', () => {
     describe('Usuario no autenticado', () => {
       let response;
@@ -356,6 +361,189 @@ describe('NoteController', () => {
             .toBe(noteMock.date);
           expect(response.body[0].message)
             .toBe(noteMock.message);
+        });
+      });
+    });
+  });
+
+  describe('PUT /notes/:id', () => {
+    const PATH = id => `/notes/${id}`;
+
+    before(() => testDB.clean());
+
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .put(PATH('5f567000685de0559bf930f8'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No existe la nota', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .put(PATH('5f567000685de0559bf930f8'))
+            .set('Authorization', `Bearer ${token}`)
+            .send(note2Mock)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.status)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new noteErrors.NoteIdNotFound().message);
+        });
+      });
+
+      describe('La nota existe', () => {
+        let note;
+
+        beforeAll(() => NoteModel.create(noteMock)
+          .then(noteCreated => {
+            note = noteCreated;
+          }));
+
+        describe('La fecha enviada es incorrecta', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .put(PATH(note._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                date: 'invalid',
+                message: 'messs',
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.status)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new commonErrors.DateNotValid().message);
+          });
+        });
+
+        describe('No se envía fecha', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .put(PATH(note._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                message: 'mensaje',
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.status)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new commonErrors.DateNotValid().message);
+          });
+        });
+
+        describe('No se envía mensaje', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .put(PATH(note._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                date: 1591213980000,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.status)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new commonErrors.MissingParamsError().message);
+          });
+        });
+
+        describe('Se crea la nota correctamente', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .put(PATH(note._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send(note2Mock)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('La nota se ha guardado', () => {
+            expect(response.body[0].date)
+              .toBe(note2Mock.date);
+            expect(response.body[0].message)
+              .toBe(note2Mock.message);
+          });
         });
       });
     });
