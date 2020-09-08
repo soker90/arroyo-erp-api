@@ -531,7 +531,7 @@ describe('PaymentsController', () => {
             .toBe(1);
         });
 
-        test('', () => {
+        test('Devuelve un pago fusionado', () => {
           const paymentReceived = response.body[0];
           expect(paymentReceived.amount)
             .toBe(paymentMock.amount + payment2Mock.amount);
@@ -547,7 +547,7 @@ describe('PaymentsController', () => {
           expect(paymentReceived.type)
             .toBe(paymentMock.type);
           expect(paymentReceived.nInvoice)
-            .toBe(paymentMock.nInvoice);
+            .toBe(`${paymentMock.nInvoice} ${payment2Mock.nInvoice} `);
         });
       });
     });

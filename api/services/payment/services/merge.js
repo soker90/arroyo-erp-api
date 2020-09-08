@@ -22,11 +22,13 @@ const _addMergeParam = payment => PaymentModel.findOneAndUpdate({ _id: payment }
  * @returns {Promise<void>}
  * @private
  */
-const _createPayment = (
-  amount, nOrder, invoices, payments, {
+const _createPayment = ({
+  amount, nOrder, invoices, payments, nInvoice,
+  firstPayment: {
     provider, paymentDate, type,
-  },
-) => (
+  }
+  ,
+}) => (
   new PaymentModel({
     provider,
     ...(paymentDate && { paymentDate }),
@@ -35,6 +37,7 @@ const _createPayment = (
     invoices,
     amount: roundNumber(amount),
     nOrder,
+    nInvoice,
   }).save()
 );
 
@@ -48,6 +51,7 @@ const merge = async ({ payments }) => {
   let amount = 0;
   let nOrder = '';
   let invoices = [];
+  let nInvoice = '';
 
   // eslint-disable-next-line no-restricted-syntax
   for (const payment of payments) {
@@ -55,11 +59,19 @@ const merge = async ({ payments }) => {
     const paymentData = await _addMergeParam(payment);
     amount += paymentData.amount;
     nOrder += `${paymentData.nOrder} `;
+    nInvoice += `${paymentData.nInvoice} `;
     invoices = invoices.concat(paymentData.invoices);
     if (!firstPayment) firstPayment = paymentData;
   }
 
-  await _createPayment(amount, nOrder, invoices, payments, firstPayment);
+  await _createPayment({
+    amount,
+    nOrder,
+    invoices,
+    payments,
+    nInvoice,
+    firstPayment,
+  });
 };
 
 module.exports = merge;
