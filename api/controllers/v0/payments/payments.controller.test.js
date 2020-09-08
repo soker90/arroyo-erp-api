@@ -21,6 +21,7 @@ describe('PaymentsController', () => {
     paymentDate: 1591213980000,
     amount: 23,
     type: 'Efectivo',
+    nInvoice: '22/283',
   };
 
   const payment2Mock = {
@@ -36,6 +37,7 @@ describe('PaymentsController', () => {
     type: 'Talón',
     numCheque: '8766B',
     paid: true,
+    nInvoice: '22/183',
   };
 
   describe('GET /payments', () => {
@@ -145,6 +147,8 @@ describe('PaymentsController', () => {
               .toBe(payment.amount);
             expect(json.type)
               .toBe(payment.type);
+            expect(json.nInvoice)
+              .toBe(payment.nInvoice);
           });
         });
       });
@@ -542,6 +546,8 @@ describe('PaymentsController', () => {
             .toBe(paymentMock.provider);
           expect(paymentReceived.type)
             .toBe(paymentMock.type);
+          expect(paymentReceived.nInvoice)
+            .toBe(paymentMock.nInvoice);
         });
       });
     });
@@ -691,6 +697,8 @@ describe('PaymentsController', () => {
             .toBe(paymentMock.provider);
           expect(paymentReceived.type)
             .toBe(paymentMock.type);
+          expect(paymentReceived.nInvoice)
+            .toBe(paymentMock.nInvoice);
         });
       });
     });
