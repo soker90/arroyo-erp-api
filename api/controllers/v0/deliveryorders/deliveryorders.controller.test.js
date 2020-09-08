@@ -470,6 +470,40 @@ describe('DeliveryOrderController', () => {
         });
       });
 
+      describe('Se actualiza la nota del albarán', () => {
+        let response;
+        const note = 'Esto es una nota';
+        let deliveryOrder;
+
+        before(() => DeliveryOrderModel.create(deliveryOrderMock)
+          .then(deliveryOrderCreated => {
+            deliveryOrder = deliveryOrderCreated;
+          }));
+
+        before(done => {
+          supertest(app)
+            .patch(`${PATH}/${deliveryOrder._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ note })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body._id)
+            .toBe(deliveryOrder._id.toString());
+          expect(response.body.note)
+            .toBe(note);
+        });
+      });
+
       describe('El proveedor no existe', () => {
         let response;
 

@@ -24,6 +24,7 @@ class NotesController {
     case 'DateNotValid':
       this.errorHandler.sendBadRequest(res)(error);
       break;
+      /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;

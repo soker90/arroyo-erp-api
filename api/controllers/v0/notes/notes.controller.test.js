@@ -548,4 +548,101 @@ describe('NoteController', () => {
       });
     });
   });
+
+  describe('DELETE /notes/:id', () => {
+    const PATH = id => `/notes/${id}`;
+
+    before(() => testDB.clean());
+
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .delete(PATH('5f567000685de0559bf930f8'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No existe la nota', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH('5f567000685de0559bf930f8'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.status)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new noteErrors.NoteIdNotFound().message);
+        });
+      });
+
+      describe('La nota existe', () => {
+        let note;
+
+        beforeAll(() => NoteModel.create(noteMock)
+          .then(noteCreated => {
+            note = noteCreated;
+          }));
+
+        describe('Se elimina la nota correctamente', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .delete(PATH(note._id))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('La nota se ha guardado', () => {
+            expect(response.body.length)
+              .toBe(0);
+          });
+        });
+      });
+    });
+  });
 });

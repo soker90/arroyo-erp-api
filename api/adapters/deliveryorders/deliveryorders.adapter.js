@@ -107,9 +107,10 @@ const standardResponse = ({
  * Create JSON for response for basic data
  * @return {{date: *, nameProvider: *}}
  */
-const basicResponse = ({ _id, date }) => ({
+const basicResponse = ({ _id, date, note }) => ({
   _id,
   date,
+  note,
 });
 
 /**
