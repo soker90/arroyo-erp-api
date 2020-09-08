@@ -10,13 +10,21 @@ describe('NoteController', () => {
   afterAll(() => testDB.disconnect());
 
   const noteMock = {
-    date: 1591213980000,
-    message: 'Esto es un mensaje',
+    date: 1589407320000,
+    concept: 'This is the note',
+    quantity: '33',
+    price: '2€',
+    amount: '22.3',
+    clarification: 'una aclaracion',
   };
 
   const note2Mock = {
-    date: 1591215980000,
-    message: 'Este mensaje',
+    date: 1591213980000,
+    concept: 'Un mensaje de prueba para la nota',
+    quantity: '31,3',
+    price: '1,24€',
+    amount: '1.23',
+    clarification: 'Unas aclaraciones',
   };
 
   describe('GET /notes', () => {
@@ -112,10 +120,18 @@ describe('NoteController', () => {
             const json = response.body[0];
             expect(JSON.stringify(json._id))
               .toEqual(JSON.stringify(note._id));
-            expect(json.message)
-              .toBe(note.message);
+            expect(json.concept)
+              .toBe(note.concept);
             expect(json.date)
               .toBe(note.date);
+            expect(json.quantity)
+              .toBe(note.quantity);
+            expect(json.price)
+              .toBe(note.price);
+            expect(json.amount)
+              .toBe(note.amount);
+            expect(json.clarification)
+              .toBe(note.clarification);
           });
         });
       });
@@ -208,10 +224,18 @@ describe('NoteController', () => {
           const json = response.body;
           expect(JSON.stringify(json._id))
             .toEqual(JSON.stringify(note._id));
-          expect(json.message)
-            .toBe(note.message);
+          expect(json.concept)
+            .toBe(note.concept);
           expect(json.date)
             .toBe(note.date);
+          expect(json.quantity)
+            .toBe(note.quantity);
+          expect(json.price)
+            .toBe(note.price);
+          expect(json.amount)
+            .toBe(note.amount);
+          expect(json.clarification)
+            .toBe(note.clarification);
         });
       });
     });
@@ -264,7 +288,7 @@ describe('NoteController', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
               date: 'incorrecto',
-              message: 'mensaje',
+              concept: 'mensaje',
             })
             .end((err, res) => {
               response = res;
@@ -291,7 +315,7 @@ describe('NoteController', () => {
             .post(PATH)
             .set('Authorization', `Bearer ${token}`)
             .send({
-              message: 'mensaje',
+              concept: 'mensaje',
             })
             .end((err, res) => {
               response = res;
@@ -357,10 +381,19 @@ describe('NoteController', () => {
         });
 
         test('La nota se ha guardado', () => {
-          expect(response.body[0].date)
+          const json = response.body[0];
+          expect(json.date)
             .toBe(noteMock.date);
-          expect(response.body[0].message)
-            .toBe(noteMock.message);
+          expect(json.concept)
+            .toBe(noteMock.concept);
+          expect(json.quantity)
+            .toBe(noteMock.quantity);
+          expect(json.price)
+            .toBe(noteMock.price);
+          expect(json.amount)
+            .toBe(noteMock.amount);
+          expect(json.clarification)
+            .toBe(noteMock.clarification);
         });
       });
     });
@@ -446,7 +479,7 @@ describe('NoteController', () => {
               .set('Authorization', `Bearer ${token}`)
               .send({
                 date: 'invalid',
-                message: 'messs',
+                concept: 'messs',
               })
               .end((err, res) => {
                 response = res;
@@ -473,7 +506,7 @@ describe('NoteController', () => {
               .put(PATH(note._id))
               .set('Authorization', `Bearer ${token}`)
               .send({
-                message: 'mensaje',
+                concept: 'mensaje',
               })
               .end((err, res) => {
                 response = res;
@@ -539,10 +572,19 @@ describe('NoteController', () => {
           });
 
           test('La nota se ha guardado', () => {
-            expect(response.body[0].date)
+            const json = response.body[0];
+            expect(json.concept)
+              .toBe(note2Mock.concept);
+            expect(json.date)
               .toBe(note2Mock.date);
-            expect(response.body[0].message)
-              .toBe(note2Mock.message);
+            expect(json.quantity)
+              .toBe(note2Mock.quantity);
+            expect(json.price)
+              .toBe(note2Mock.price);
+            expect(json.amount)
+              .toBe(note2Mock.amount);
+            expect(json.clarification)
+              .toBe(note2Mock.clarification);
           });
         });
       });

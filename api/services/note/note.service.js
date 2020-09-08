@@ -9,15 +9,25 @@ const logService = new LogService(TYPE);
 /**
  * Create note
  * @param {number} date
- * @param {string} message
+ * @param {string} concept
+ * @param {string} quantity
+ * @param {string} price
+ * @param {string} amount
+ * @param {string} clarification
  * @return {Promise<string>}
  */
-const create = async ({ date, message }) => {
+const create = async ({
+  date, concept, quantity, price, amount, clarification,
+}) => {
   logService.logInfo('[create note] - Creando note');
 
   const noteData = await new NoteModel({
     date,
-    message,
+    concept,
+    quantity,
+    price,
+    amount,
+    clarification,
   });
 
   logService.logInfo('[create note] - Nota creada', noteData);
@@ -47,17 +57,29 @@ const deleteNote = ({ id }) => NoteModel.deleteOne({ _id: id });
  * Edita un nota
  * @param {string} id
  * @param {number} date
- * @param {string} message
+ * @param {string} concept
+ * @param {string} quantity
+ * @param {string} price
+ * @param {string} amount
+ * @param {string} clarification
  * @return {Promise<string>}
  */
-const edit = async ({ params: { id }, body: { date, message } }) => {
+const edit = async ({
+  params: { id }, body: {
+    date, concept, quantity, price, amount, clarification,
+  },
+}) => {
   logService.logInfo('[edit note] - Editando nota ', id);
 
   return NoteModel.findOneAndUpdate(
     { _id: id },
     {
       date,
-      message,
+      concept,
+      quantity,
+      price,
+      amount,
+      clarification,
     },
   );
 };

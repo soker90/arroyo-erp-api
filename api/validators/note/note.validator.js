@@ -33,8 +33,8 @@ const _isInvalidDate = date => !date || typeof date !== 'number';
  * @param {String} id
  * @returns {Promise<void>}
  */
-const validateNote = async ({ message, date }) => {
-  if (!message) throw new commonErrors.MissingParamsError();
+const validateNote = async ({ concept, date }) => {
+  if (!concept) throw new commonErrors.MissingParamsError();
   if (_isInvalidDate(date)) throw new commonErrors.DateNotValid();
 };
 const validateNoteBody = ({ body }) => validateNote(body);
