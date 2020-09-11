@@ -25,11 +25,13 @@ const validateProvider = ({ provider }) => provider && _checkId(provider);
 /**
  * Compruba que solo reciba campos válidos y que reciba nombre
  * @param {string} name
+ * @param {string} address
+ * @param {string} city
  * @param {Object} others
  */
 const fieldsValid = ({
   name, address, city, postalCode, province, phone, email, businessName, cif,
-  ...others
+  _id, ...others
 }) => {
   if (!name) throw new providerErrors.ProviderMissingName();
   if (!isEmptyObject(others)) throw new commonErrors.ParamNotValidError();
