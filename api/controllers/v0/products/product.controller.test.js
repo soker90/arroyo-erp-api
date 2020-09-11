@@ -17,6 +17,9 @@ const productMock = {
   re: 1.2,
   rate: 2,
   profit: 12.3,
+  price: 4,
+  cost: 4.23,
+  sale: 1.13,
 };
 
 const product2Mock = {
@@ -28,6 +31,9 @@ const product2Mock = {
   iva: 3.445,
   re: 3.21,
   rate: 5,
+  price: 3,
+  cost: 3.33,
+  sale: 3.73,
 };
 
 const priceMock = {
@@ -217,11 +223,6 @@ describe('ProductController', () => {
         });
 
         describe('Se obtienen los productos con el precio', () => {
-          beforeAll(() => PriceModel.create({
-            ...priceMock,
-            product: product._id,
-          }));
-
           beforeAll(done => {
             supertest(app)
               .get(PATH)
@@ -246,11 +247,11 @@ describe('ProductController', () => {
             expect(productResponse.name)
               .toBe(product.name);
             expect(productResponse.cost)
-              .toBe(priceMock.cost);
+              .toBe(product.cost);
             expect(productResponse.price)
-              .toBe(priceMock.price);
+              .toBe(product.price);
             expect(productResponse.sale)
-              .toBe(priceMock.sale);
+              .toBe(product.sale);
           });
         });
       });

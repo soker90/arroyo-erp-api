@@ -6,14 +6,12 @@ const ProductController = require('./product.controller');
 module.exports = (
   { productService },
   { providerValidator, productValidator },
-  { productAdapter },
 ) => {
   const productController = new ProductController({
     errorHandler,
     productService,
     providerValidator,
     productValidator,
-    productAdapter,
   });
 
   return [{

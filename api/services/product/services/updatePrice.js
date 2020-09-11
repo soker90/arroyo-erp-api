@@ -20,6 +20,12 @@ const updatePrice = async ({ params, body }) => {
     cost: body.cost,
     ...(sale && { sale }),
   }).save();
+
+  await ProductModel.updateOne({ _id: params.id }, {
+    price: body.price,
+    cost: body.cost,
+    ...(sale && { sale }),
+  });
 };
 
 module.exports = updatePrice;
