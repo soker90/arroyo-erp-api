@@ -38,7 +38,7 @@ const validateProvider = async ({ provider }) => {
  * @returns {Promise<void>}
  */
 const validateProductParams = async ({ body: { quantity, product, price } }) => {
-  if (!quantity || !product || !price) throw new deliveryOrderErrors.DeliveryOrderMissing();
+  if (!quantity || !product || typeof price !== 'number') throw new deliveryOrderErrors.DeliveryOrderMissing();
 };
 
 /**
