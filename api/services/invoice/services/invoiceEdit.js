@@ -10,11 +10,14 @@ const { InvoiceModel } = require('arroyo-erp-models');
 const _getDataForUpdate = (data, totals) => {
   let newData = {};
   if (data) {
-    const { dateRegister, dateInvoice, nInvoice } = data;
+    const {
+      dateRegister, dateInvoice, nInvoice, concept,
+    } = data;
     newData = {
       dateRegister,
       dateInvoice,
       nInvoice,
+      concept,
     };
   }
 

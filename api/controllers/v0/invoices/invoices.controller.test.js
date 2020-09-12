@@ -5,7 +5,6 @@ const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const { commonErrors, invoiceErrors } = require('../../../../errors');
 const { CONCEPT, TYPE_PAYMENT } = require('../../../../constants/index');
-const con = require('../../../../constants');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {

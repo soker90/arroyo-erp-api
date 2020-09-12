@@ -8,6 +8,7 @@ const dataResponse = invoice => ({
   dateInvoice: invoice.dateInvoice,
   nOrder: invoice.nOrder,
   nInvoice: invoice.nInvoice,
+  concept: invoice.concept,
 });
 
 /**
