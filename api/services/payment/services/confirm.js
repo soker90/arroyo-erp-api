@@ -14,11 +14,15 @@ const _updatePayment = (id, data) => PaymentModel
 /**
  * Actualiza las facturas con la información del pago
  * @param {Array<string>} invoices
- * @param {Object} payment
+ * @param {Object} paymentData
  * @returns {Promise<void>}
  * @private
  */
-const _updateInvoices = async ({ invoices }, payment) => {
+const _updateInvoices = async ({ invoices, nOrder }, paymentData) => {
+  const payment = {
+    ...paymentData,
+    ...(invoices.length > 1 && { invoicesOrder: nOrder }),
+  };
   for (const invoiceId of invoices)
     await InvoiceModel.findOneAndUpdate({ _id: invoiceId }, { payment });
 };
