@@ -58,10 +58,16 @@ const merge = async ({ payments }) => {
     // eslint-disable-next-line no-await-in-loop
     const paymentData = await _addMergeParam(payment);
     amount += paymentData.amount;
-    nOrder += `${paymentData.nOrder}, `;
-    nInvoice += `${paymentData.nInvoice}, `;
     invoices = invoices.concat(paymentData.invoices);
-    if (!firstPayment) firstPayment = paymentData;
+
+    if (!firstPayment) {
+      firstPayment = paymentData;
+      nOrder += `${paymentData.nOrder}`;
+      nInvoice += `${paymentData.nInvoice}`;
+    } else {
+      nOrder += ` -- ${paymentData.nOrder}`;
+      nInvoice += ` -- ${paymentData.nInvoice}`;
+    }
   }
 
   await _createPayment({

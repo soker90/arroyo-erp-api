@@ -31,7 +31,7 @@ const validateProvider = ({ provider }) => provider && _checkId(provider);
  */
 const fieldsValid = ({
   name, address, city, postalCode, province, phone, email, businessName, cif,
-  _id, ...others
+  _id, note, ...others
 }) => {
   if (!name) throw new providerErrors.ProviderMissingName();
   if (!isEmptyObject(others)) throw new commonErrors.ParamNotValidError();
