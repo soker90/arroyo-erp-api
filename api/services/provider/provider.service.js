@@ -11,7 +11,7 @@ const providers = ({ name }) => {
     ...(name && { name: { $regex: name } }),
   };
 
-  return ProviderModel.find(filter, 'name _id')
+  return ProviderModel.find(filter, 'name _id note')
     .collation({ locale: 'es' })
     .sort({ name: 1 })
     .lean();
