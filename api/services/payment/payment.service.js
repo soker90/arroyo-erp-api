@@ -26,7 +26,7 @@ const create = async invoice => {
       nOrder: invoice.nOrder,
       amount: invoice.total,
       invoiceDate: invoice.dateInvoice,
-      nInvoice: invoice.nInoice,
+      nInvoice: invoice.nInvoice,
     });
 
     paymentData.save();

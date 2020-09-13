@@ -34,7 +34,11 @@ const _updateInvoices = async ({ invoices, nOrder }, paymentData) => {
  * @param {string} numCheque
  * @returns {Promise<void>}
  */
-const confirm = async ({ params: { id }, body: { paymentDate, type, numCheque } }) => {
+const confirm = async ({
+  params: { id }, body: {
+    paymentDate, type, numCheque,
+  },
+}) => {
   const paymentData = {
     paymentDate,
     type,

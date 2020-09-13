@@ -33,6 +33,7 @@ const paymentResponse = ({ payment }) => ({
   paymentDate: payment.paymentDate,
   ...(payment.numCheque && { numCheque: payment.numCheque }),
   paid: Boolean(payment.paid),
+  ...(payment.invoicesOrder && { invoicesOrder: payment.invoicesOrder }),
 });
 
 /**
