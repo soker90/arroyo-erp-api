@@ -31,10 +31,10 @@ const validateProvider = ({ provider }) => provider && _checkId(provider);
  */
 const fieldsValid = ({
   name, address, city, postalCode, province, phone, email, businessName, cif,
-  _id, note, ...others
+  _id, note, type, ...others
 }) => {
   if (!name) throw new providerErrors.ProviderMissingName();
-  if (!isEmptyObject(others)) throw new commonErrors.ParamNotValidError();
+  if (!isEmptyObject(others) || (typeof type !== 'string')) throw new commonErrors.ParamNotValidError();
 };
 const fieldsValidBody = ({ body }) => fieldsValid(body);
 

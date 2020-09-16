@@ -17,7 +17,7 @@ describe('PaymentsController', () => {
       '5f18724d869c550017e9adf6',
       '5f1872ca869c550017e9adf8',
     ],
-    nOrder: '3, 34',
+    nOrder: '3 -- 34',
     paymentDate: 1591213980000,
     amount: 23,
     type: 'Efectivo',
@@ -539,7 +539,7 @@ describe('PaymentsController', () => {
             .toBe(paymentMock.invoices.concat(payment2Mock.invoices)
               .toString());
           expect(paymentReceived.nOrder)
-            .toBe('3, 34 23 ');
+            .toBe('3 -- 34 -- 23');
           expect(paymentReceived.paymentDate)
             .toBe(paymentMock.paymentDate);
           expect(paymentReceived.provider)
@@ -547,7 +547,7 @@ describe('PaymentsController', () => {
           expect(paymentReceived.type)
             .toBe(paymentMock.type);
           expect(paymentReceived.nInvoice)
-            .toBe(`${paymentMock.nInvoice} ${payment2Mock.nInvoice} `);
+            .toBe(`${paymentMock.nInvoice} -- ${payment2Mock.nInvoice}`);
         });
       });
     });

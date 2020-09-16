@@ -15,6 +15,7 @@ const providerMock = {
   email: 'eem@mail.com',
   businessName: 'Auu JS',
   cif: '444U',
+  type: 'General',
 };
 
 describe('ProvidersController', () => {
@@ -225,15 +226,16 @@ describe('ProvidersController', () => {
         });
       });
 
-      describe('Se crea un proveedor con un nombre', () => {
+      describe('Se crea un proveedor con un nombre y tipo', () => {
         let response;
         const name = 'Test';
+        const type = 'General';
 
         before(done => {
           supertest(app)
             .post(PATH)
             .set('Authorization', `Bearer ${token}`)
-            .send({ name })
+            .send({ name, type })
             .end((err, res) => {
               response = res;
               done();
@@ -241,7 +243,7 @@ describe('ProvidersController', () => {
         });
 
         test('Debería dar un 201', () => {
-          expect(response.status)
+          expect(response.statusCode)
             .toBe(201);
         });
       });
@@ -290,7 +292,7 @@ describe('ProvidersController', () => {
         });
 
         test('Debería dar un 201', () => {
-          expect(response.status)
+          expect(response.statusCode)
             .toBe(201);
         });
       });
