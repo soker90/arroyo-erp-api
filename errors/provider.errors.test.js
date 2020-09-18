@@ -36,4 +36,20 @@ describe('ProviderErrors', () => {
       expect(err.message).toEqual('CustomMessage');
     });
   });
+
+  describe('ProviderTypeNotValid', () => {
+    test('should exist and extend from Error', () => {
+      expect(new ProviderErrors.ProviderTypeNotValid()).toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new ProviderErrors.ProviderTypeNotValid();
+      expect(err.message).toEqual('El tipo del proveedor no es válido');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new ProviderErrors.ProviderTypeNotValid('CustomMessage');
+      expect(err.message).toEqual('CustomMessage');
+    });
+  });
 });

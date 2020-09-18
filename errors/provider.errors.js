@@ -23,7 +23,20 @@ class ProviderIdNotFound extends Error {
   }
 }
 
+class ProviderTypeNotValid extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'El tipo del proveedor no es válido') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   ProviderMissingName,
   ProviderIdNotFound,
+  ProviderTypeNotValid,
 };

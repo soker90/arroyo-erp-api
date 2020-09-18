@@ -1,6 +1,7 @@
 const { ProviderModel } = require('arroyo-erp-models');
 const { providerErrors, commonErrors } = require('../../../errors');
 const { isEmptyObject } = require('../../../utils');
+const { TYPE_PROVIDER_LIST } = require('../../../constants');
 
 /**
  * Check if exist id
@@ -27,6 +28,7 @@ const validateProvider = ({ provider }) => provider && _checkId(provider);
  * @param {string} name
  * @param {string} address
  * @param {string} city
+ * @param {string} type
  * @param {Object} others
  */
 const fieldsValid = ({
@@ -34,7 +36,8 @@ const fieldsValid = ({
   _id, note, type, ...others
 }) => {
   if (!name) throw new providerErrors.ProviderMissingName();
-  if (!isEmptyObject(others) || (typeof type !== 'string')) throw new commonErrors.ParamNotValidError();
+  if (!TYPE_PROVIDER_LIST.includes(type)) throw new providerErrors.ProviderTypeNotValid();
+  if (!isEmptyObject(others)) throw new commonErrors.ParamNotValidError();
 };
 const fieldsValidBody = ({ body }) => fieldsValid(body);
 

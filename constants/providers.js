@@ -1,0 +1,11 @@
+const TYPE_PROVIDER = {
+  GENERAL: 'General',
+  EXPENSES: 'Gastos',
+};
+
+const TYPE_PROVIDER_LIST = Object.values(TYPE_PROVIDER);
+
+module.exports = {
+  TYPE_PROVIDER,
+  TYPE_PROVIDER_LIST,
+};

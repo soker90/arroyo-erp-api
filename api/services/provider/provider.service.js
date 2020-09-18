@@ -6,9 +6,10 @@ const provider = require('./services/provider');
  * Return all providers
  * @return {Promise<{data: any}>}
  */
-const providers = ({ name }) => {
+const providers = ({ name, type }) => {
   const filter = {
     ...(name && { name: { $regex: name } }),
+    type,
   };
 
   return ProviderModel.find(filter, 'name _id note')
