@@ -30,16 +30,24 @@ const validateProvider = ({ provider }) => provider && _checkId(provider);
  * @param {string} city
  * @param {string} type
  * @param {Object} others
+ * @param {Boolean} noHaveType - Indica si puede incluir type
  */
 const fieldsValid = ({
   name, address, city, postalCode, province, phone, email, businessName, cif,
   _id, note, type, ...others
-}) => {
+}, noHaveType) => {
   if (!name) throw new providerErrors.ProviderMissingName();
-  if (!TYPE_PROVIDER_LIST.includes(type)) throw new providerErrors.ProviderTypeNotValid();
-  if (!isEmptyObject(others)) throw new commonErrors.ParamNotValidError();
+  if (!isEmptyObject(others) || (noHaveType && type)) throw new commonErrors.ParamNotValidError();
 };
-const fieldsValidBody = ({ body }) => fieldsValid(body);
+const fieldsValidBody = ({ body }) => fieldsValid(body, true);
+
+/**
+ * Valida el tipo de proveedor
+ * @param {string} type
+ */
+const validateType = ({ type }) => {
+  if (!TYPE_PROVIDER_LIST.includes(type)) throw new providerErrors.ProviderTypeNotValid();
+};
 
 module.exports = {
   validateIdParam,
@@ -48,4 +56,5 @@ module.exports = {
   validateProvider,
   fieldsValid,
   fieldsValidBody,
+  validateType,
 };

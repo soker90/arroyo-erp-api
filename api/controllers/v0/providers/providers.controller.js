@@ -50,6 +50,7 @@ class ProvidersController {
     logService.logInfo('[providers] - Create provider');
     Promise.resolve(req.body)
       .tap(this.providerValidator.fieldsValid)
+      .tap(this.providerValidator.validateType)
       .then(this.providerService.create)
       .then(() => res.status(201)
         .send())
