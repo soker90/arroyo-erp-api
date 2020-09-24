@@ -77,7 +77,7 @@ const calcProduct = async (product, price, quantity, date) => {
     quantity: Number(quantity),
     name,
     taxBase,
-    ...(rate && { rate }),
+    ...(rate && { rate: rateCalc }),
     ...(lastPrice !== null && { diff: price - lastPrice }),
     iva: ivaTotal,
     re: reTotal,
