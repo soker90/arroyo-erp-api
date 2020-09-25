@@ -8,7 +8,7 @@ const { DeliveryOrderModel } = require('arroyo-erp-models');
 const update = ({ params, body: { date, note, totals } }) => {
   const set = {
     ...(date && { date }),
-    ...(note && { note }),
+    ...(note !== undefined && { note }),
     ...(totals && {
       total: totals.total,
       iva: totals.iva,
