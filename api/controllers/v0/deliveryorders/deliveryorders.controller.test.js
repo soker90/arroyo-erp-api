@@ -65,7 +65,7 @@ const deliveryOrder2Mock = {
 const productMock = {
   code: '12',
   name: 'prueba',
-  rate: 0.201,
+  rate: 0.804,
   iva: 0.04,
   re: 0.02,
   provider: '5f14857d3ae0d32b417e8d0c',
@@ -947,7 +947,7 @@ describe('DeliveryOrderController', () => {
             expect(productReceived.name)
               .toBe(productMock.name);
             expect(productReceived.rate)
-              .toBe(productMock.rate);
+              .toBe(rate);
             expect(productReceived.iva)
               .toBe(iva);
             expect(productReceived.price)
@@ -963,15 +963,15 @@ describe('DeliveryOrderController', () => {
             expect(productReceived.total)
               .toBe(taxBase + re + iva);
             expect(response.body.totals.iva)
-              .toBe(8.75);
+              .toBe(8.85);
             expect(response.body.totals.rate)
-              .toBe(0.701);
+              .toBe(3.716);
             expect(response.body.totals.re)
-              .toBe(1.66);
+              .toBe(1.7);
             expect(response.body.totals.taxBase)
-              .toBe(116.8);
+              .toBe(119.22);
             expect(response.body.totals.total)
-              .toBe(127.21);
+              .toBe(129.77);
           });
         });
 
@@ -1308,7 +1308,7 @@ describe('DeliveryOrderController', () => {
                 expect(response.body.products.length)
                   .toBe(1);
                 expect(productReceived.rate)
-                  .toBe(roundNumber(productMock.rate, 3));
+                  .toBe(roundNumber(rate, 3));
                 expect(productReceived.iva)
                   .toBe(iva);
                 expect(productReceived.price)
@@ -1326,7 +1326,7 @@ describe('DeliveryOrderController', () => {
                 expect(response.body.totals.iva)
                   .toBe(roundNumber(iva, 2));
                 expect(response.body.totals.rate)
-                  .toBe(productMock.rate);
+                  .toBe(rate);
                 expect(response.body.totals.re)
                   .toBe(roundNumber(re, 2));
                 expect(response.body.totals.taxBase)

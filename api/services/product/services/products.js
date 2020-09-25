@@ -14,6 +14,7 @@ const products = ({ provider }) => {
   return ProductModel
     .find(filter)
     .select('_id name code price cost sale')
+    .sort({ code: 1, name: 1 })
     .lean();
 };
 
