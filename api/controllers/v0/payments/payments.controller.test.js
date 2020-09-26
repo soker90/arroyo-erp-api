@@ -391,6 +391,60 @@ describe('PaymentsController', () => {
             .toBe(true);
         });
       });
+
+      describe('Pago correcto con varias facturas', () => {
+        let response;
+        let payment;
+        let payment2;
+        let paymentMerged;
+
+        before(async () => {
+          await testDB.clean();
+          token = await requestLogin();
+
+          payment = await PaymentModel.create({
+            ...paymentMock,
+            merged: true,
+          });
+
+          payment2 = await PaymentModel.create({
+            ...paymentMock,
+            merged: true,
+          });
+
+          paymentMerged = await PaymentModel.create({
+            ...paymentMock,
+            payments: [payment._id, payment2._id],
+          });
+        });
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(`/payments/${paymentMerged._id}/confirm`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+              paymentDate: 1591213980000,
+              type: TYPE_PAYMENT.TRANSFER,
+            })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Debería devolver un array', () => {
+          expect(Array.isArray(response.body))
+            .toBe(true);
+        });
+      });
     });
   });
 

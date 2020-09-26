@@ -277,6 +277,31 @@ describe('ProvidersController', () => {
         });
       });
 
+      describe('Se manda un tipo no válido', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ ...providerMock, type: 'bad' })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('Debería dar un 201', () => {
+          expect(response.body.message)
+            .toBe(new providerErrors.ProviderTypeNotValid().message);
+        });
+      });
+
       describe('Se crea un proveedor completo', () => {
         let response;
 
@@ -397,7 +422,7 @@ describe('ProvidersController', () => {
             supertest(app)
               .put(PATH(provider._id))
               .set('Authorization', `Bearer ${token}`)
-              .send(providerMock)
+              .send({ ...providerMock, type: undefined })
               .end((err, res) => {
                 response = res;
                 done();

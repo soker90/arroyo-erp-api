@@ -470,6 +470,47 @@ describe('DeliveryOrderController', () => {
         });
       });
 
+      describe('Se actualiza los totales del albarán', () => {
+        let response;
+        const date = Date.now();
+        let deliveryOrder;
+        const totals = {
+          total: 10,
+          iva: 20,
+          rate: 11,
+          re: 2,
+          taxBase: 32,
+        };
+
+        before(() => DeliveryOrderModel.create(deliveryOrderMock)
+          .then(deliveryOrderCreated => {
+            deliveryOrder = deliveryOrderCreated;
+          }));
+
+        before(done => {
+          supertest(app)
+            .patch(`${PATH}/${deliveryOrder._id}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ totals })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body._id)
+            .toBe(deliveryOrder._id.toString());
+          expect(response.body.totals.toString())
+            .toBe(totals.toString());
+        });
+      });
+
       describe('Se actualiza la nota del albarán', () => {
         let response;
         const note = 'Esto es una nota';
@@ -533,7 +574,7 @@ describe('DeliveryOrderController', () => {
         });
       });
 
-      describe('Se crea el proveedor', () => {
+      describe('El proveedor existe', () => {
         let response;
         let provider;
 

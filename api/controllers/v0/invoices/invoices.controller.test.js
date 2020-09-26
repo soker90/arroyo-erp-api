@@ -80,6 +80,7 @@ const invoiceMock = {
     type: 'Talón',
     numCheque: '888',
     paid: true,
+    invoicesOrder: '47',
   },
 };
 
