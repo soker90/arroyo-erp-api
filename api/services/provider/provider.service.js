@@ -1,6 +1,7 @@
 const { ProviderModel } = require('arroyo-erp-models');
 
 const provider = require('./services/provider');
+const { TYPES_STANDARD_PROVIDER } = require('../../../constants');
 
 /**
  * Return all providers
@@ -9,7 +10,7 @@ const provider = require('./services/provider');
 const providers = ({ name, type }) => {
   const filter = {
     ...(name && { name: { $regex: name } }),
-    type,
+    type: type === 'standard' ? TYPES_STANDARD_PROVIDER : type,
   };
 
   return ProviderModel.find(filter, 'name _id note')
