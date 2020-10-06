@@ -29,6 +29,17 @@ module.exports = (
     ],
   },
   {
+    method: 'post',
+    domain: 'invoices/expense',
+    path: '/',
+    handler: invoicesController.expenseCreate,
+    bindTo: invoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
+  {
     method: 'get',
     domain: 'invoices',
     path: '/',

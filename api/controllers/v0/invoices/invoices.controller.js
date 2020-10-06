@@ -89,6 +89,18 @@ class InvoicesController {
   }
 
   /**
+   * Create the invoice
+   */
+  expenseCreate(req, res) {
+    logService.logInfo('[invoices] - Create invoice for expense');
+    Promise.resolve(req.body)
+      // .tap(this.invoiceValidator.createParams)
+      .then(this.invoiceService.expenseCreate)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
    * Edit the invoice
    */
   edit(req, res) {
