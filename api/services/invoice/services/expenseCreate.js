@@ -1,4 +1,4 @@
-const { InvoiceModel } = require('arroyo-erp-models');
+const { InvoiceModel, ProviderModel } = require('arroyo-erp-models');
 
 const {
   roundNumber,
@@ -8,14 +8,17 @@ const {
  * Create invoice
  * @param {Object} data
  */
-const create = ({
+const create = async ({
   nInvoice, dateInvoice, dateRegister, taxBase, provider, concept, iva, re,
 }) => {
   const ivaCalc = roundNumber(taxBase * iva);
   const reCalc = re ? roundNumber(taxBase * re) : 0;
   const total = taxBase + ivaCalc + reCalc;
 
+  const { name } = await ProviderModel.findOne({ _id: provider });
+
   const invoice = {
+    nameProvider: name,
     nInvoice,
     dateInvoice,
     dateRegister,
