@@ -1,9 +1,11 @@
 const supertest = require('supertest');
-const { mongoose, InvoiceModel, DeliveryOrderModel } = require('arroyo-erp-models');
+const {
+  mongoose, InvoiceModel, DeliveryOrderModel, ProviderModel,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
-const { commonErrors, invoiceErrors } = require('../../../../errors');
+const { commonErrors, invoiceErrors, providerErrors } = require('../../../../errors');
 const { CONCEPT, TYPE_PAYMENT } = require('../../../../constants/index');
 const { roundNumber } = require('../../../../utils');
 
@@ -82,6 +84,16 @@ const invoiceMock = {
     paid: true,
     invoicesOrder: '47',
   },
+};
+
+const invoiceExpenseCreate = {
+  concept: CONCEPT.ALQUILER,
+  nInvoice: '2019/22',
+  dateInvoice: 1596891780000,
+  dateRegister: 1597410180000,
+  taxBase: 12.5,
+  provider: '5f14857d3ae0d32b417e8d0c',
+  iva: 0.1,
 };
 
 describe('InvoicesController', () => {
@@ -673,26 +685,199 @@ describe('InvoicesController', () => {
         });
       });
 
-      describe('Se crea una factura sin albaranes', () => {
+    });
+  });
+
+  describe('POST /invoices/expense', () => {
+    const PATH = '/invoices/expense';
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('Faltan parámetros', () => {
         let response;
+
         beforeAll(done => {
           supertest(app)
-            .post('/invoices/')
-            .send({
-              concept: CONCEPT.ALQUILER,
-            })
+            .post(PATH)
             .set('Authorization', `Bearer ${token}`)
+            .send({ concept: CONCEPT.ALQUILER })
             .end((err, res) => {
               response = res;
               done();
             });
         });
 
-        test('Debería dar un 200', () => {
+        test('Debería dar un 400', () => {
           expect(token)
             .toBeTruthy();
+
           expect(response.statusCode)
-            .toBe(200);
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new invoiceErrors.InvoiceParamsMissing().message);
+        });
+      });
+
+      describe('El proveedor no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          const invoiceData = { ...invoiceExpenseCreate };
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send(invoiceData)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new providerErrors.ProviderIdNotFound().message);
+        });
+      });
+
+      describe('El proveedor existe', () => {
+        let provider;
+        const nameProvider = 'Nombre';
+        let invoiceWithProvider;
+
+        beforeAll(() => ProviderModel.create({ name: nameProvider })
+          .then(providerCreated => {
+            provider = providerCreated;
+            invoiceWithProvider = {
+              ...invoiceExpenseCreate,
+              provider: provider._id,
+              nameProvider,
+            };
+          }));
+
+        describe.each([
+          'concept', 'dateInvoice', 'nInvoice', 'dateRegister', 'taxBase', 'provider', 'iva',
+        ])('No se envía %s', (item => {
+          let response;
+
+          beforeAll(done => {
+            const invoiceData = { ...invoiceWithProvider };
+            delete invoiceData[item];
+            supertest(app)
+              .post(PATH)
+              .set('Authorization', `Bearer ${token}`)
+              .send(invoiceData)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(token)
+              .toBeTruthy();
+
+            expect(response.statusCode)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new invoiceErrors.InvoiceParamsMissing().message);
+          });
+        }));
+
+        describe.each([
+          'sin re',
+          'con re',
+        ])('Se crea la factura correctamente %s', type => {
+          let response;
+          let invoice;
+
+          beforeAll(done => {
+            invoice = type === 'sin re'
+              ? invoiceWithProvider
+              : {
+                ...invoiceWithProvider,
+                re: 2,
+              };
+
+            supertest(app)
+              .post(PATH)
+              .send(invoice)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(token)
+              .toBeTruthy();
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('Devuelve los datos correctos', () => {
+            const ivaCalc = invoice.iva * invoice.taxBase;
+            const reCalc = invoice.re ? invoice.taxBase * invoice.re : undefined;
+            const total = invoice.taxBase + ivaCalc + (reCalc || 0);
+            expect(response.body.concept)
+              .toBe(invoiceExpenseCreate.concept);
+            expect(response.body.iva)
+              .toBe(ivaCalc);
+            expect(response.body.nameProvider)
+              .toBe(nameProvider);
+            expect(response.body.provider)
+              .toBe(provider._id.toString());
+            expect(response.body.re)
+              .toBe(reCalc);
+            expect(response.body.taxBase)
+              .toBe(invoiceExpenseCreate.taxBase);
+            expect(response.body.total)
+              .toBe(total);
+          });
         });
       });
     });

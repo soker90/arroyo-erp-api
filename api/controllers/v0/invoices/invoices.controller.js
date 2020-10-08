@@ -9,7 +9,7 @@ const logService = new LogService(TYPE);
 class InvoicesController {
   constructor({
     invoiceService, paymentService, errorHandler, invoiceAdapter, invoiceValidator,
-    billingService,
+    billingService, providerValidator,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -17,6 +17,7 @@ class InvoicesController {
     this.paymentService = paymentService;
     this.invoiceValidator = invoiceValidator;
     this.billingService = billingService;
+    this.providerValidator = providerValidator;
   }
 
   _handleError(res, error) {
@@ -94,7 +95,8 @@ class InvoicesController {
   expenseCreate(req, res) {
     logService.logInfo('[invoices] - Create invoice for expense');
     Promise.resolve(req.body)
-      // .tap(this.invoiceValidator.createParams)
+      .tap(this.providerValidator.validateProvider)
+      .tap(this.invoiceValidator.createParams)
       .then(this.invoiceService.expenseCreate)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

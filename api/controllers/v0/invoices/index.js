@@ -5,7 +5,7 @@ const InvoiceController = require('./invoices.controller');
 
 module.exports = (
   { invoiceService, paymentService, billingService },
-  { invoiceValidator },
+  { invoiceValidator, providerValidator },
   { invoiceAdapter },
 ) => {
   const invoicesController = new InvoiceController({
@@ -15,6 +15,7 @@ module.exports = (
     invoiceValidator,
     invoiceAdapter,
     billingService,
+    providerValidator,
   });
 
   return [{

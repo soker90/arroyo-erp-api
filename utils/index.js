@@ -20,8 +20,11 @@ const replaceArrayElement = ({ array, element, index }) => {
  */
 const isEmptyObject = obj => !Object.keys(obj).length;
 
+const isNumber = num => typeof num === 'number';
+
 module.exports = {
   roundNumber,
   replaceArrayElement,
   isEmptyObject,
+  isNumber,
 };

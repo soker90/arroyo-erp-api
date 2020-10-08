@@ -2,6 +2,7 @@
 const { InvoiceModel } = require('arroyo-erp-models');
 const { invoiceErrors, commonErrors } = require('../../../errors');
 const { CONCEPT, TYPE_PAYMENT } = require('../../../constants');
+const { isNumber } = require('../../../utils');
 
 /**
  * Check if exist id
@@ -59,11 +60,19 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
  * @param concept
  * @param deliveryOrders
  */
-const createParams = ({ concept, deliveryOrders }) => {
+const createParams = ({
+  concept, deliveryOrders, nInvoice, dateInvoice, dateRegister, taxBase, provider, iva,
+}) => {
   if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
 
   if (concept === CONCEPT.COMPRAS && !deliveryOrders?.length)
     throw new invoiceErrors.InvoiceMissingDeliveryOrders();
+
+  if (![CONCEPT.COMPRAS].includes(concept)) {
+    if (!nInvoice || !isNumber(dateInvoice) || !isNumber(dateRegister) || !isNumber(taxBase)
+      || !provider || !isNumber(iva))
+      throw new invoiceErrors.InvoiceParamsMissing();
+  }
 };
 
 const editBody = ({ body: { data, totals } }) => {
