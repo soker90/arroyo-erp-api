@@ -69,7 +69,7 @@ const createParams = ({
     throw new invoiceErrors.InvoiceMissingDeliveryOrders();
 
   if (![CONCEPT.COMPRAS].includes(concept)) {
-    if (!nInvoice || !isNumber(dateInvoice) || !isNumber(dateRegister) || !isNumber(taxBase)
+    if (!isNumber(dateInvoice) || !isNumber(dateRegister) || !isNumber(taxBase)
       || !provider || !isNumber(iva))
       throw new invoiceErrors.InvoiceParamsMissing();
   }
