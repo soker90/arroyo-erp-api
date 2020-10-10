@@ -22,12 +22,11 @@ const _addInvoiceToDeliveryOrder = async (invoiceData, deliveryOrders) => {
  * @param {Object} data
  */
 const create = async data => {
-  let invoice = {};
-  if (data.deliveryOrders) invoice = await calcNewShopping(data);
+  const invoice = await calcNewShopping(data);
 
   const newInvoice = await new InvoiceModel(invoice).save();
 
-  if (data.deliveryOrders) await _addInvoiceToDeliveryOrder(newInvoice, invoice.deliveryOrders);
+  await _addInvoiceToDeliveryOrder(newInvoice, invoice.deliveryOrders);
 
   return newInvoice;
 };

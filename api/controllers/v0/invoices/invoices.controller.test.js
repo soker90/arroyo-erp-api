@@ -684,7 +684,6 @@ describe('InvoicesController', () => {
           });
         });
       });
-
     });
   });
 
