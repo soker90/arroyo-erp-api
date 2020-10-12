@@ -98,6 +98,8 @@ class InvoicesController {
       .tap(this.providerValidator.validateProvider)
       .tap(this.invoiceValidator.createParams)
       .then(this.invoiceService.expenseCreate)
+      .tap(this.paymentService.create)
+      .tap(this.billingService.add)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

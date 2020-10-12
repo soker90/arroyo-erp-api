@@ -9,7 +9,7 @@ const {
  * @param {Object} data
  */
 const create = async ({
-  nInvoice, dateInvoice, dateRegister, taxBase, provider, concept, iva, re,
+  nInvoice, dateInvoice, dateRegister, taxBase, provider, concept, iva, re, type, paymentDate
 }) => {
   const ivaCalc = roundNumber(taxBase * iva);
   const reCalc = re ? roundNumber(taxBase * re) : 0;
@@ -28,6 +28,10 @@ const create = async ({
     iva: ivaCalc,
     ...(re && { re: reCalc }),
     total,
+    payment: {
+      ...(paymentDate && {paymentDate}),
+      type
+    }
   };
 
   return new InvoiceModel(invoice).save();

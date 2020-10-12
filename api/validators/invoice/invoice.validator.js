@@ -61,7 +61,7 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
  * @param deliveryOrders
  */
 const createParams = ({
-  concept, deliveryOrders, nInvoice, dateInvoice, dateRegister, taxBase, provider, iva,
+  concept, deliveryOrders, dateInvoice, dateRegister, taxBase, provider, iva, type
 }) => {
   if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
 
@@ -70,7 +70,7 @@ const createParams = ({
 
   if (![CONCEPT.COMPRAS].includes(concept)) {
     if (!isNumber(dateInvoice) || !isNumber(dateRegister) || !isNumber(taxBase)
-      || !provider || !isNumber(iva))
+      || !provider || !isNumber(iva) || !type)
       throw new invoiceErrors.InvoiceParamsMissing();
   }
 };
