@@ -97,6 +97,18 @@ const invoiceExpenseCreate = {
   type: 'Talón',
 };
 
+const invoiceExpenseCreate2 = {
+  concept: CONCEPT.ALQUILER,
+  nInvoice: '2019/22',
+  dateInvoice: 1596891780000,
+  dateRegister: 1597410180000,
+  taxBase: 12.5,
+  provider: '5f14857d3ae0d32b417e8d0c',
+  iva: 0.1,
+  type: 'Talón',
+  paymentDate: 1597410180000
+};
+
 describe('InvoicesController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());
@@ -690,6 +702,8 @@ describe('InvoicesController', () => {
 
   describe('POST /invoices/expense', () => {
     const PATH = '/invoices/expense';
+
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -796,7 +810,7 @@ describe('InvoicesController', () => {
           }));
 
         describe.each([
-          'concept', 'dateInvoice', 'nInvoice', 'dateRegister', 'taxBase', 'provider', 'iva',
+          'concept', 'dateInvoice', 'type', 'dateRegister', 'taxBase', 'provider', 'iva',
         ])('No se envía %s', (item => {
           let response;
 
@@ -830,17 +844,20 @@ describe('InvoicesController', () => {
         describe.each([
           'sin re',
           'con re',
+          'con paymentDate'
         ])('Se crea la factura correctamente %s', type => {
           let response;
           let invoice;
 
           beforeAll(done => {
-            invoice = type === 'sin re'
-              ? invoiceWithProvider
-              : {
-                ...invoiceWithProvider,
-                re: 2,
-              };
+              invoice = type.includes('re') type === 'sin re'
+                ? invoiceWithProvider
+                : {
+                  ...invoiceWithProvider,
+                  re: 2,
+                };
+
+            }
 
             supertest(app)
               .post(PATH)
