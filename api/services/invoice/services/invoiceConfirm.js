@@ -1,16 +1,6 @@
-const { InvoiceModel, AutoIncrement, DeliveryOrderModel } = require('arroyo-erp-models');
+const { InvoiceModel, DeliveryOrderModel } = require('arroyo-erp-models');
 const { TYPE_PAYMENT } = require('../../../../constants/payments');
-
-/**
- * Generate new order number for the year
- * @param {Number} date
- * @returns {Promise<number>}
- * @private
- */
-const _generateOrderNumber = date => {
-  const dateInvoice = new Date(date);
-  return AutoIncrement.increment(`invoice${dateInvoice.getFullYear()}`);
-};
+const generateOrderNumber = require('../../../../components/generate-num-order');
 
 /**
  * Añade el numero de orden de la factura a los albaranes
@@ -41,7 +31,7 @@ const isTypeCash = type => type === TYPE_PAYMENT.CASH;
  */
 const invoiceConfirm = async ({ params: { id }, body: { paymentDate, type } }) => {
   const invoiceData = await InvoiceModel.findOne({ _id: id });
-  invoiceData.nOrder = await _generateOrderNumber(invoiceData.dateInvoice);
+  invoiceData.nOrder = await generateOrderNumber(invoiceData.dateInvoice);
 
   invoiceData.payment = {
     paymentDate,

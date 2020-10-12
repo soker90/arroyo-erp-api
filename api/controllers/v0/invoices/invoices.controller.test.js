@@ -94,6 +94,7 @@ const invoiceExpenseCreate = {
   taxBase: 12.5,
   provider: '5f14857d3ae0d32b417e8d0c',
   iva: 0.1,
+  type: 'Talón',
 };
 
 describe('InvoicesController', () => {

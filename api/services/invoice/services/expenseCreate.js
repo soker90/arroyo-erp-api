@@ -4,12 +4,14 @@ const {
   roundNumber,
 } = require('../../../../utils');
 
+const generateOrderNumber = require('../../../../components/generate-num-order');
+
 /**
  * Create invoice
  * @param {Object} data
  */
 const create = async ({
-  nInvoice, dateInvoice, dateRegister, taxBase, provider, concept, iva, re, type, paymentDate
+  nInvoice, dateInvoice, dateRegister, taxBase, provider, concept, iva, re, type, paymentDate,
 }) => {
   const ivaCalc = roundNumber(taxBase * iva);
   const reCalc = re ? roundNumber(taxBase * re) : 0;
@@ -17,7 +19,10 @@ const create = async ({
 
   const { name } = await ProviderModel.findOne({ _id: provider });
 
+  const nOrder = await generateOrderNumber(dateInvoice);
+
   const invoice = {
+    nOrder,
     nameProvider: name,
     nInvoice,
     dateInvoice,
@@ -29,9 +34,9 @@ const create = async ({
     ...(re && { re: reCalc }),
     total,
     payment: {
-      ...(paymentDate && {paymentDate}),
-      type
-    }
+      ...(paymentDate && { paymentDate }),
+      type,
+    },
   };
 
   return new InvoiceModel(invoice).save();
