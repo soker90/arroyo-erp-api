@@ -106,7 +106,7 @@ const invoiceExpenseCreate2 = {
   provider: '5f14857d3ae0d32b417e8d0c',
   iva: 0.1,
   type: 'Talón',
-  paymentDate: 1597410180000
+  paymentDate: 1597410180000,
 };
 
 describe('InvoicesController', () => {
@@ -844,20 +844,23 @@ describe('InvoicesController', () => {
         describe.each([
           'sin re',
           'con re',
-          'con paymentDate'
+          'con paymentDate',
         ])('Se crea la factura correctamente %s', type => {
           let response;
           let invoice;
 
           beforeAll(done => {
-              invoice = type.includes('re') type === 'sin re'
+            invoice = type.includes('re')
+              ? type === 'sin re'
                 ? invoiceWithProvider
                 : {
                   ...invoiceWithProvider,
                   re: 2,
-                };
-
-            }
+                }
+              : {
+                ...invoiceWithProvider,
+                paymentDate: 1596632580000,
+              };
 
             supertest(app)
               .post(PATH)

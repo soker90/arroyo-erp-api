@@ -61,7 +61,7 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
  * @param deliveryOrders
  */
 const createParams = ({
-  concept, deliveryOrders, dateInvoice, dateRegister, taxBase, provider, iva, type
+  concept, deliveryOrders, dateInvoice, dateRegister, taxBase, provider, iva, type,
 }) => {
   if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
 
