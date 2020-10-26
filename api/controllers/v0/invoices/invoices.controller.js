@@ -1,4 +1,5 @@
 const Promise = require('bluebird');
+const XLSX = require('xlsx');
 
 const LogService = require('../../../services/log.service');
 
@@ -130,6 +131,24 @@ class InvoicesController {
       .tap(this.paymentService.create)
       .tap(this.billingService.add)
       .then(this.invoiceAdapter.dataAndPaymentResponse)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  test(req, res) {
+    Promise.resolve(req)
+      .then(() => {
+        const ws = XLSX.utils.aoa_to_sheet([['test', 'other']]);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
+
+        /* generate buffer */
+        const buf = XLSX.write(wb, {
+          type: 'buffer',
+          bookType: 'ods',
+        });
+        return buf;
+      })
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

@@ -30,14 +30,14 @@
     "jsonwebtoken": "^8.5.1",
     "lodash.unionwith": "^4.6.0",
     "nodemon": "^2.0.6",
-    "npm": "^6.14.8"
+    "npm": "^6.14.8",
+    "xlsx": "^0.16.8"
   },
   "engines": {
     "node": "14.x"
   },
   "devDependencies": {
     "eslint": "^7.12.0",
-    "eslint-config-airbnb": "^18.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.1.0",
