@@ -135,20 +135,11 @@ class InvoicesController {
       .catch(this._handleError.bind(this, res));
   }
 
-  test(req, res) {
-    Promise.resolve(req)
-      .then(() => {
-        const ws = XLSX.utils.aoa_to_sheet([['test', 'other']]);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
-
-        /* generate buffer */
-        const buf = XLSX.write(wb, {
-          type: 'buffer',
-          bookType: 'ods',
-        });
-        return buf;
-      })
+  export(req, res) {
+    logService.logInfo('[inovice]  - Export invoices to book');
+    Promise.resolve(req.params)
+      .tap(this.invoiceValidator.isValidYear)
+      .then(this.invoiceService.exportOds)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
