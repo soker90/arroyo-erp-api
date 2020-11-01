@@ -1,5 +1,5 @@
 const CONCEPT = {
-  COMPRAS: 'COMPRAS',
+  COMPRAS: 'C. mercaderías',
   ALQUILER: 'ALQUILER',
 };
 

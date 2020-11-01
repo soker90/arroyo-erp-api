@@ -22,9 +22,12 @@ const isEmptyObject = obj => !Object.keys(obj).length;
 
 const isNumber = num => typeof num === 'number';
 
+const formatDate = date => new Date(date).toLocaleDateString();
+
 module.exports = {
   roundNumber,
   replaceArrayElement,
   isEmptyObject,
   isNumber,
+  formatDate,
 };
