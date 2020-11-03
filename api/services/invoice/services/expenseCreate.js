@@ -12,6 +12,7 @@ const generateOrderNumber = require('../../../../components/generate-num-order')
  */
 const create = async ({
   nInvoice, dateInvoice, dateRegister, taxBase, provider, concept, iva, re, type, paymentDate,
+  bookColumn,
 }) => {
   const ivaCalc = roundNumber(taxBase * iva);
   const reCalc = re ? roundNumber(taxBase * re) : 0;
@@ -30,6 +31,7 @@ const create = async ({
     taxBase,
     provider,
     concept,
+    bookColumn,
     iva: ivaCalc,
     ...(re && { re: reCalc }),
     total,

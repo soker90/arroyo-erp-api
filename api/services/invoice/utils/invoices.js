@@ -53,6 +53,7 @@ const calcNewShopping = async invoice => ({
   ...(await calcDeliveryOrdersData(invoice.deliveryOrders)),
   dateRegister: Date.now(),
   concept: invoice.concept,
+  bookColumn: invoice.bookColumn,
 });
 
 module.exports = {
