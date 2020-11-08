@@ -133,6 +133,15 @@ class InvoicesController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  export(req, res) {
+    logService.logInfo('[inovice]  - Export invoices to book');
+    Promise.resolve(req.params)
+      .tap(this.invoiceValidator.isValidYear)
+      .then(this.invoiceService.exportOds)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = InvoicesController;

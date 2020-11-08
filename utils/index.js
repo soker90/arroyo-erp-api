@@ -1,4 +1,5 @@
 const roundNumber = require('./roundNumber');
+const waitFor = require('./waitFor');
 
 /**
  * Genera un nuevo array con el elemento del índice dado reemplazado
@@ -22,9 +23,13 @@ const isEmptyObject = obj => !Object.keys(obj).length;
 
 const isNumber = num => typeof num === 'number';
 
+const formatDate = date => new Date(date).toLocaleDateString();
+
 module.exports = {
   roundNumber,
   replaceArrayElement,
   isEmptyObject,
   isNumber,
+  formatDate,
+  waitFor,
 };

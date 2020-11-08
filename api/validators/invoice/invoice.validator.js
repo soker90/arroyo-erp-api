@@ -61,16 +61,16 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
  * @param deliveryOrders
  */
 const createParams = ({
-  concept, deliveryOrders, dateInvoice, dateRegister, taxBase, provider, iva, type,
+  concept, deliveryOrders, dateInvoice, dateRegister, total, provider, type, bookColumn, re,
 }) => {
-  if (!concept) throw new invoiceErrors.InvoiceParamsMissing();
+  if (!concept || !bookColumn) throw new invoiceErrors.InvoiceParamsMissing();
 
   if (concept === CONCEPT.COMPRAS && !deliveryOrders?.length)
     throw new invoiceErrors.InvoiceMissingDeliveryOrders();
 
   if (![CONCEPT.COMPRAS].includes(concept)) {
-    if (!isNumber(dateInvoice) || !isNumber(dateRegister) || !isNumber(taxBase)
-      || !provider || !isNumber(iva) || !type)
+    if (!isNumber(dateInvoice) || !isNumber(dateRegister) || !isNumber(total)
+      || !provider || !type || (re && !isNumber(re)))
       throw new invoiceErrors.InvoiceParamsMissing();
   }
 };
