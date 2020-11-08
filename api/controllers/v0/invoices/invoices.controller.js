@@ -1,5 +1,4 @@
 const Promise = require('bluebird');
-const XLSX = require('xlsx');
 
 const LogService = require('../../../services/log.service');
 

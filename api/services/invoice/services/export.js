@@ -1,7 +1,8 @@
-const XLSX = require('xlsx');
+const carbone = require('carbone');
 const { InvoiceModel, ProviderModel } = require('arroyo-erp-models');
 const { formatDate } = require('../../../../utils');
 const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
+const { waitFor } = require('../../../../utils');
 
 const getCategoryTotal = (invoice, column) => (invoice.bookColumn === column ? invoice.total : '');
 
@@ -23,39 +24,45 @@ const exportOds = async ({ year }) => {
 
   const invoiceCells = invoices.map(invoice => {
     const provider = providers.find(p => p._id.toString() === invoice.provider) || {};
-    return [
-      invoice.nOrder, formatDate(invoice.dateRegister), formatDate(invoice.dateInvoice),
-      invoice.nInvoice, provider.businessName, provider.cif, invoice.concept,
-      getCategoryTotal(invoice, COLUMNS_INVOICES.COMPRAS),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.AUTONOMOS),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.SALARIO),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.ALQUILER),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.SUMINISTROS),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.COMISIONES),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.TRIBUTOS),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.REPARACION),
-      getCategoryTotal(invoice, COLUMNS_INVOICES.SEGUROS),
-      '', invoice.total,
-    ];
+    return {
+      nOrder: invoice.nOrder,
+      dateRegister: formatDate(invoice.dateRegister),
+      dateInvoice: formatDate(invoice.dateInvoice),
+      nInvoice: invoice.nInvoice,
+      nameProvider: provider.businessName,
+      cif: provider.cif,
+      concept: invoice.concept,
+      compras: getCategoryTotal(invoice, COLUMNS_INVOICES.COMPRAS),
+      autonomos: getCategoryTotal(invoice, COLUMNS_INVOICES.AUTONOMOS),
+      salario: getCategoryTotal(invoice, COLUMNS_INVOICES.SALARIO),
+      alquiler: getCategoryTotal(invoice, COLUMNS_INVOICES.ALQUILER),
+      suministros: getCategoryTotal(invoice, COLUMNS_INVOICES.SUMINISTROS),
+      comisiones: getCategoryTotal(invoice, COLUMNS_INVOICES.COMISIONES),
+      tributos: getCategoryTotal(invoice, COLUMNS_INVOICES.TRIBUTOS),
+      reparacion: getCategoryTotal(invoice, COLUMNS_INVOICES.REPARACION),
+      seguros: getCategoryTotal(invoice, COLUMNS_INVOICES.SEGUROS),
+      retencion: '',
+      total: invoice.total,
+    };
   });
 
-  const ws = XLSX.utils.aoa_to_sheet([
-    ['Nº Orden', 'Fecha registro', 'Fecha Factura', 'Nº Factura', 'Razón social', 'Cif', 'Concepto',
-      'Compras mercaderías', 'S. S. AUTÓNOMOS', 'SUELDOS Y SALARIOS', 'ALQUILER',
-      'SUMINISTROS agua, luz, tel. Basura, gasoil', 'COMISIONES Al año',
-      'TRIBUTOS NO ESTAT Ibi, circulac', 'REPARACIÓN Y CONSEVACIÓN',
-      'SEGUROS', 'OTROS G.', 'RETENC 19%', 'Importe total'],
-    ...invoiceCells,
-  ]);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, `Libro ${year}`);
+  let bookFile = null;
+  let error = null;
 
-  /* generate buffer */
-  const buf = XLSX.write(wb, {
-    type: 'buffer',
-    bookType: 'ods',
+  carbone.render('./templates/book.ods', invoiceCells, {}, (err, result) => {
+    if (err) {
+      error = err;
+      return;
+    }
+    bookFile = result;
   });
-  return buf;
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (error) reject(error);
+      if (bookFile) resolve(bookFile);
+    }, 1000);
+  });
 };
 
 module.exports = exportOds;

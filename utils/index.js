@@ -1,4 +1,5 @@
 const roundNumber = require('./roundNumber');
+const waitFor = require('./waitFor');
 
 /**
  * Genera un nuevo array con el elemento del índice dado reemplazado
@@ -30,4 +31,5 @@ module.exports = {
   isEmptyObject,
   isNumber,
   formatDate,
+  waitFor,
 };
