@@ -1,16 +1,15 @@
 const carbone = require('carbone');
 const { InvoiceModel, ProviderModel } = require('arroyo-erp-models');
-const { formatDate } = require('../../../../utils');
 const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
 
-const getCategoryTotal = (invoice, column) => (invoice.bookColumn === column ? invoice.total : '');
+const getCategoryTotal = (invoice, column) => (invoice.bookColumn === column ? invoice.total : null);
 
 const _invoicesAdapter = (invoices, providers) => invoices.map(invoice => {
   const provider = providers.find(p => p._id.toString() === invoice.provider) || {};
   return {
     nOrden: invoice.nOrder,
-    fechaRegistro: formatDate(invoice.dateRegister),
-    fechaFactura: formatDate(invoice.dateInvoice),
+    fechaRegistro: new Date(invoice.dateRegister),
+    fechaFactura: new Date(invoice.dateInvoice),
     nFactura: invoice.nInvoice,
     nombreProveedor: provider.businessName,
     cif: provider.cif,
@@ -55,7 +54,9 @@ const exportOds = async ({ year }) => {
   let bookFile = null;
   let error = null;
 
-  carbone.render('./templates/book.ods', invoices, {}, (err, result) => {
+  carbone.render('./templates/book.ods', invoices, {
+    lang: 'es-es',
+  }, (err, result) => {
     if (err) {
       error = err;
       return;
