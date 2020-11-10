@@ -1,6 +1,7 @@
 const carbone = require('carbone');
 const { InvoiceModel, ProviderModel } = require('arroyo-erp-models');
 const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
+const { formatDate } = require('../../../../utils');
 
 const getCategoryTotal = (invoice, column) => (invoice.bookColumn === column ? invoice.total : null);
 
@@ -8,8 +9,8 @@ const _invoicesAdapter = (invoices, providers) => invoices.map(invoice => {
   const provider = providers.find(p => p._id.toString() === invoice.provider) || {};
   return {
     nOrden: invoice.nOrder,
-    fechaRegistro: new Date(invoice.dateRegister),
-    fechaFactura: new Date(invoice.dateInvoice),
+    fechaRegistro: formatDate(invoice.dateRegister),
+    fechaFactura: formatDate(invoice.dateInvoice),
     nFactura: invoice.nInvoice,
     nombreProveedor: provider.businessName,
     cif: provider.cif,
