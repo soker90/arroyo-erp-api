@@ -1,6 +1,7 @@
 const { InvoiceModel, ProviderModel } = require('arroyo-erp-models');
 
 const generateOrderNumber = require('../../../../components/generate-num-order');
+const { isTypeCash } = require('../../../../utils');
 
 /**
  * Create invoice
@@ -30,6 +31,7 @@ const create = async ({
     payment: {
       ...(paymentDate && { paymentDate }),
       type,
+      ...(isTypeCash(type) && { paid: true }),
     },
   };
 

@@ -1,6 +1,6 @@
 const { InvoiceModel, DeliveryOrderModel } = require('arroyo-erp-models');
-const { TYPE_PAYMENT } = require('../../../../constants/payments');
 const generateOrderNumber = require('../../../../components/generate-num-order');
+const { isTypeCash } = require('../../../../utils');
 
 /**
  * Añade el numero de orden de la factura a los albaranes
@@ -16,12 +16,6 @@ const _addNOrderToDeliveryOrder = async invoice => {
   }
 };
 
-/**
- * Devuelve si el tipo de pago es efectivo
- * @param {String} type
- * @returns {boolean}
- */
-const isTypeCash = type => type === TYPE_PAYMENT.CASH;
 /**
  * Genera el número de orden correspondiente a la factura
  * @param {String} id
