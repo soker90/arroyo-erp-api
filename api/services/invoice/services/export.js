@@ -4,9 +4,11 @@ const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
 const { formatDate } = require('../../../../utils');
 
 const getCategoryTotal = (invoice, column) => (invoice.bookColumn === column ? invoice.total : null);
+const getRe = invoice => (invoice.bookColumn === COLUMNS_INVOICES.ALQUILER ? invoice.re : null);
 
 const _invoicesAdapter = (invoices, providers) => invoices.map(invoice => {
   const provider = providers.find(p => p._id.toString() === invoice.provider) || {};
+  const re = getRe(invoice);
   return {
     nOrden: invoice.nOrder,
     fechaRegistro: formatDate(invoice.dateRegister),
@@ -25,8 +27,8 @@ const _invoicesAdapter = (invoices, providers) => invoices.map(invoice => {
     reparacion: getCategoryTotal(invoice, COLUMNS_INVOICES.REPARACION),
     seguros: getCategoryTotal(invoice, COLUMNS_INVOICES.SEGUROS),
     otros: getCategoryTotal(invoice, COLUMNS_INVOICES.OTROS),
-    retencion: '',
-    total: invoice.total,
+    retencion: re,
+    total: invoice.total + re,
   };
 });
 
