@@ -18,6 +18,19 @@ const providerMock = {
   type: 'General',
 };
 
+const provider2Mock = {
+  name: 'Auuu',
+  city: 'Alcaza',
+  postalCode: '78349',
+  province: 'AB',
+  address: 'C/falsa, 999',
+  phone: '666667773',
+  email: 'eem@mail.com',
+  businessName: 'Auu JS',
+  cif: '444U',
+  type: 'Expense',
+};
+
 describe('ProvidersController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());
@@ -161,6 +174,38 @@ describe('ProvidersController', () => {
               .toBe(1);
             expect(response.body[0].name)
               .toBe(nameProviderTest);
+          });
+        });
+
+        describe('Devuelve los proveedores de compras', () => {
+          let response;
+
+          before(async () => {
+            await testDB.clean('providers');
+            await ProviderModel.create(providerMock);
+            await ProviderModel.create(provider2Mock);
+          });
+
+          before(done => {
+            supertest(app)
+              .get('/providers?type=standard')
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('Devuelve un array con el proveedor correcto', () => {
+            expect(response.body.length)
+              .toBe(1);
+            expect(response.body[0].name)
+              .toBe(providerMock.name);
           });
         });
       });

@@ -1,5 +1,4 @@
 const roundNumber = require('./roundNumber');
-const waitFor = require('./waitFor');
 const payments = require('./payment');
 
 /**
@@ -32,6 +31,5 @@ module.exports = {
   isEmptyObject,
   isNumber,
   formatDate,
-  waitFor,
   ...payments,
 };
