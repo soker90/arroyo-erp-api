@@ -91,10 +91,11 @@ const invoiceExpenseCreate = {
   nInvoice: '2019/22',
   dateInvoice: 1596891780000,
   dateRegister: 1597410180000,
-  taxBase: 12.5,
+  total: 12.5,
   provider: '5f14857d3ae0d32b417e8d0c',
-  iva: 0.1,
+  re: 0.1,
   type: 'Talón',
+  bookColumn: 'ALQUILER',
 };
 
 const invoiceExpenseCreate2 = {
@@ -577,6 +578,7 @@ describe('InvoicesController', () => {
             .send({
               concept: CONCEPT.COMPRAS,
               deliveryOrders: ['5f188ec1deae8d5c1b549336'],
+              bookColumn: 'COMPRAS',
             })
             .end((err, res) => {
               response = res;
@@ -609,6 +611,7 @@ describe('InvoicesController', () => {
               .send({
                 concept: CONCEPT.COMPRAS,
                 deliveryOrders: [deliveryOrder._id],
+                bookColumn: 'COMPRAS',
               })
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
@@ -658,6 +661,7 @@ describe('InvoicesController', () => {
               .send({
                 concept: CONCEPT.COMPRAS,
                 deliveryOrders: [deliveryOrder._id, deliveryOrder2._id],
+                bookColumn: 'COMPRAS',
               })
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
@@ -810,7 +814,7 @@ describe('InvoicesController', () => {
           }));
 
         describe.each([
-          'concept', 'dateInvoice', 'type', 'dateRegister', 'taxBase', 'provider', 'iva',
+          'concept', 'dateInvoice', 'type', 'dateRegister', 'total', 'provider', 'bookColumn'
         ])('No se envía %s', (item => {
           let response;
 
@@ -880,23 +884,18 @@ describe('InvoicesController', () => {
           });
 
           test('Devuelve los datos correctos', () => {
-            const ivaCalc = invoice.iva * invoice.taxBase;
-            const reCalc = invoice.re ? invoice.taxBase * invoice.re : undefined;
-            const total = invoice.taxBase + ivaCalc + (reCalc || 0);
             expect(response.body.concept)
               .toBe(invoiceExpenseCreate.concept);
-            expect(response.body.iva)
-              .toBe(ivaCalc);
             expect(response.body.nameProvider)
               .toBe(nameProvider);
             expect(response.body.provider)
               .toBe(provider._id.toString());
             expect(response.body.re)
-              .toBe(reCalc);
-            expect(response.body.taxBase)
-              .toBe(invoiceExpenseCreate.taxBase);
+              .toBe(invoice.re);
             expect(response.body.total)
-              .toBe(total);
+              .toBe(invoice.total);
+            expect(response.body.bookColumn)
+              .toBe(invoice.bookColumn);
           });
         });
       });

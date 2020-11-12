@@ -1,21 +1,20 @@
 const carbone = require('carbone');
-const { InvoiceModel, ProviderModel } = require('arroyo-erp-models');
+const { InvoiceModel } = require('arroyo-erp-models');
 const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
 const { formatDate } = require('../../../../utils');
 
 const getCategoryTotal = (invoice, column) => (invoice.bookColumn === column ? invoice.total : null);
 const getRe = invoice => (invoice.bookColumn === COLUMNS_INVOICES.ALQUILER ? invoice.re : null);
 
-const _invoicesAdapter = (invoices, providers) => invoices.map(invoice => {
-  const provider = providers.find(p => p._id.toString() === invoice.provider) || {};
+const _invoicesAdapter = invoices => invoices.map(invoice => {
   const re = getRe(invoice);
   return {
     nOrden: invoice.nOrder,
     fechaRegistro: formatDate(invoice.dateRegister),
     fechaFactura: formatDate(invoice.dateInvoice),
     nFactura: invoice.nInvoice,
-    nombreProveedor: provider.businessName,
-    cif: provider.cif,
+    nombreProveedor: invoice.businessName,
+    cif: invoice.cif,
     concepto: invoice.concept,
     compras: getCategoryTotal(invoice, COLUMNS_INVOICES.COMPRAS),
     autonomos: getCategoryTotal(invoice, COLUMNS_INVOICES.AUTONOMOS),
@@ -46,9 +45,7 @@ const _getInvoices = async year => {
     .sort({ nOrder: 1 })
     .lean();
 
-  const providers = await ProviderModel.find({});
-
-  return _invoicesAdapter(invoices, providers);
+  return _invoicesAdapter(invoices);
 };
 
 const exportOds = async ({ year }) => {

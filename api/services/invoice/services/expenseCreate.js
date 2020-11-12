@@ -18,7 +18,7 @@ const create = async ({
   const invoice = {
     nOrder,
     nameProvider: name,
-    businessNameProvider: businessName,
+    businessName,
     cif,
     nInvoice,
     dateInvoice,

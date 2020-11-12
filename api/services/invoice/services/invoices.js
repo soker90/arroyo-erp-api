@@ -15,7 +15,7 @@ const invoices = ({ offset, limit, year }) => {
       $gte: start,
       $lt: end,
     },
-  }, '_id nameProvider nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
+  }, '_id businessName nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
     .sort({ nOrder: -1 })
     .skip(offset || 0)
     .limit(limit)

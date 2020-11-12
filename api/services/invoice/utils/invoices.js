@@ -1,4 +1,4 @@
-const { DeliveryOrderModel } = require('arroyo-erp-models');
+const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
 const {
   InvoiceNotFoundDeliveryOrder,
 } = require('../../../../errors/invoice.errors');
@@ -49,12 +49,18 @@ const calcDeliveryOrdersData = async deliveryOrdersData => {
  * Calcula los totales del albarán para compras
  * @param {Object} invoice
  */
-const calcNewShopping = async invoice => ({
-  ...(await calcDeliveryOrdersData(invoice.deliveryOrders)),
-  dateRegister: Date.now(),
-  concept: invoice.concept,
-  bookColumn: invoice.bookColumn,
-});
+const calcNewShopping = async invoice => {
+  const deliveryOrderData = await calcDeliveryOrdersData(invoice.deliveryOrders);
+  const provider = await ProviderModel.findOne({ _id: deliveryOrderData.provider });
+  return ({
+    ...deliveryOrderData,
+    dateRegister: Date.now(),
+    concept: invoice.concept,
+    bookColumn: invoice.bookColumn,
+    businessName: provider?.businessName,
+    cif: provider?.cif,
+  });
+};
 
 module.exports = {
   calcNewShopping,
