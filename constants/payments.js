@@ -5,6 +5,7 @@ const TYPE_PAYMENT = {
   MONEY_ORDER: 'Giro',
   TRANSFER: 'Transferencia',
   CARD: 'Tarjeta',
+  REMBOLSO: 'Contra rembolso',
 };
 
 module.exports = {
