@@ -27,7 +27,7 @@ const _invoicesAdapter = invoices => invoices.map(invoice => {
     seguros: getCategoryTotal(invoice, COLUMNS_INVOICES.SEGUROS),
     otros: getCategoryTotal(invoice, COLUMNS_INVOICES.OTROS),
     retencion: re,
-    total: invoice.total + re,
+    total: invoice.total - re,
   };
 });
 
