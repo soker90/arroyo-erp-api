@@ -21,5 +21,15 @@ module.exports = ({ billingService }, { billingValidator }, { billingAdapter }) 
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'get',
+    domain: 'billings',
+    path: '/export',
+    handler: billingController.export,
+    bindTo: billingController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };

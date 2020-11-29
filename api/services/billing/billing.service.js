@@ -6,6 +6,8 @@ const LogService = require('../log.service');
 const TYPE = 'BillingService';
 const logService = new LogService(TYPE);
 
+const exportOds = require('./services/export');
+
 /**
  * Create payment
  * @return {Promise<string>}
@@ -44,10 +46,11 @@ const billings = ({ year }) => {
   logService.logInfo(`[billings] - Facturación del año ${year}`);
 
   return BillingModel.find({ year }, 'trimesters provider annual')
-    .populate('provider', 'businessName cif postalCode city province', ProviderModel);
+    .populate('provider', 'businessName', ProviderModel);
 };
 
 module.exports = {
   add,
   billings,
+  exportOds,
 };
