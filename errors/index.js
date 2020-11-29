@@ -1,3 +1,4 @@
+const billingErrors = require('./billing.errors');
 const commonErrors = require('./common-errors');
 const clientErrors = require('./client.errors');
 const deliveryOrderErrors = require('./delivery-order.errors');
@@ -9,6 +10,7 @@ const providerErrors = require('./provider.errors');
 const userErrors = require('./user.errors');
 
 module.exports = {
+  billingErrors,
   commonErrors,
   clientErrors,
   deliveryOrderErrors,

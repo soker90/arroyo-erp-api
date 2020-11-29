@@ -1,5 +1,5 @@
 /* eslint-disable nonblock-statement-body-position */
-const { BillingModel } = require('arroyo-erp-models');
+const { BillingModel, ProviderModel } = require('arroyo-erp-models');
 
 const LogService = require('../log.service');
 
@@ -35,6 +35,19 @@ const add = invoice => {
   }, { upsert: true });
 };
 
+/**
+ * Get all invoices
+ * @param {Object} params
+ * @returns {Promise<*>}
+ */
+const billings = ({ year }) => {
+  logService.logInfo(`[billings] - Facturación del año ${year}`);
+
+  return BillingModel.find({ year }, 'trimesters provider annual')
+    .populate('provider', 'businessName cif postalCode city province', ProviderModel);
+};
+
 module.exports = {
   add,
+  billings,
 };

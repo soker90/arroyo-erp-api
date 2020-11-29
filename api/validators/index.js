@@ -1,3 +1,4 @@
+const billingValidator = require('./billing');
 const clientValidator = require('./client');
 const deliveryOrderValidator = require('./deliveryorder');
 const invoiceValidator = require('./invoice');
@@ -7,6 +8,7 @@ const productValidator = require('./product');
 const providerValidator = require('./provider');
 
 module.exports = {
+  billingValidator,
   clientValidator,
   deliveryOrderValidator,
   invoiceValidator,
