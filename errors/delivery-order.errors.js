@@ -75,6 +75,18 @@ class DeliveryOrderDateRequired extends Error {
   }
 }
 
+class DeliveryOrderDeleteWithInvoice extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'El albarán está incluido en una factura, no puede eliminarse') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   DeliveryOrderMissingId,
   DeliveryOrderMissing,
@@ -82,4 +94,5 @@ module.exports = {
   DeliveryOrderNotFound,
   DeliveryOrderProductIndexNotFound,
   DeliveryOrderDateRequired,
+  DeliveryOrderDeleteWithInvoice
 };

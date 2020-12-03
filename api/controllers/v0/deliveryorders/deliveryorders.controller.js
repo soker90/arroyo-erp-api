@@ -84,6 +84,19 @@ class DeliveryOrdersController {
   }
 
   /**
+   * Delete the delivery order
+   */
+  delete(req, res) {
+    logService.logInfo('[Albaranes]  - Elimina un albarán');
+    Promise.resolve(req.params)
+      .tap(this.deliveryOrderValidator.validateId)
+      .tap(this.deliveryOrderValidator.isRemovable)
+      .then(this.deliveryOrderService.delete)
+      .then(() => res.status(204).send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
    * Return all products with the filters
    */
   deliveryOrder(req, res) {

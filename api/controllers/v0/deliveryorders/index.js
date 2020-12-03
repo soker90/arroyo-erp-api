@@ -50,6 +50,16 @@ module.exports = (
       authMiddleware,
     ],
   }, {
+    method: 'delete',
+    domain: 'deliveryorders',
+    path: '/:id',
+    handler: deliveryOrderController.delete,
+    bindTo: deliveryOrderController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
     method: 'get',
     domain: 'deliveryorders',
     path: '/:id',

@@ -1,4 +1,7 @@
-const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
+const {
+  DeliveryOrderModel,
+  ProviderModel,
+} = require('arroyo-erp-models');
 const { deliveryOrderErrors } = require('../../../errors');
 
 /**
@@ -37,7 +40,13 @@ const validateProvider = async ({ provider }) => {
  * @param price
  * @returns {Promise<void>}
  */
-const validateProductParams = async ({ body: { quantity, product, price } }) => {
+const validateProductParams = async ({
+  body: {
+    quantity,
+    product,
+    price,
+  },
+}) => {
   if (!quantity || !product || typeof price !== 'number') throw new deliveryOrderErrors.DeliveryOrderMissing();
 };
 
@@ -47,7 +56,10 @@ const validateProductParams = async ({ body: { quantity, product, price } }) => 
  * @param {number} index
  * @returns {Promise<void>}
  */
-const validateProductIndex = async ({ id, index }) => {
+const validateProductIndex = async ({
+  id,
+  index,
+}) => {
   if (index < 0) throw new deliveryOrderErrors.DeliveryOrderProductIndexNotFound();
   const { products } = await DeliveryOrderModel.findOne({ _id: id });
 
@@ -66,6 +78,16 @@ const hasDate = async ({ params: { id } }) => {
   if (!deliveryOrder.date) throw new deliveryOrderErrors.DeliveryOrderDateRequired();
 };
 
+/**
+ * Devuelve si el albarán tiene una factura asignada
+ * @param {string} id
+ * @return {Promise<void>}
+ */
+const isRemovable = async ({ id }) => {
+  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id });
+  if (deliveryOrder.invoice) throw new deliveryOrderErrors.DeliveryOrderDeleteWithInvoice();
+};
+
 module.exports = {
   validateId,
   validateIdParam,
@@ -74,4 +96,5 @@ module.exports = {
   validateProductIndex,
   validateProductIndexParams,
   hasDate,
+  isRemovable,
 };
