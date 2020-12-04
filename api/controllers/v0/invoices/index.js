@@ -4,8 +4,15 @@ const errorHandler = require('../../../../components/error-handlers');
 const InvoiceController = require('./invoices.controller');
 
 module.exports = (
-  { invoiceService, paymentService, billingService },
-  { invoiceValidator, providerValidator },
+  {
+    invoiceService,
+    paymentService,
+    billingService,
+  },
+  {
+    invoiceValidator,
+    providerValidator,
+  },
   { invoiceAdapter },
 ) => {
   const invoicesController = new InvoiceController({
@@ -55,6 +62,16 @@ module.exports = (
     domain: 'invoices',
     path: '/:id',
     handler: invoicesController.edit,
+    bindTo: invoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'delete',
+    domain: 'invoices',
+    path: '/:id',
+    handler: invoicesController.delete,
     bindTo: invoicesController,
     skipVersion: true,
     middlewares: [

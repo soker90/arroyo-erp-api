@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, nonblock-statement-body-position */
-const { InvoiceModel } = require('arroyo-erp-models');
+const { InvoiceModel, AutoIncrement } = require('arroyo-erp-models');
 const { invoiceErrors, commonErrors } = require('../../../errors');
 const { CONCEPT, TYPE_PAYMENT } = require('../../../constants');
 const { isNumber } = require('../../../utils');
@@ -79,6 +79,14 @@ const editBody = ({ body: { data, totals } }) => {
   if (!data && !totals) throw new invoiceErrors.InvoiceParamsMissing();
 };
 
+const isRemovable = async ({ id }) => {
+  const invoice = await InvoiceModel.findOne({ _id: id });
+  const year = new Date(invoice.dateInvoice).getFullYear();
+  const lastDocument = await AutoIncrement.findOne({ name: `invoice${year}` }).limit(1);
+  if (invoice.nOrder !== lastDocument.seq)
+    throw new Error('hhh');
+};
+
 module.exports = {
   confirmParams,
   validateId,
@@ -86,4 +94,5 @@ module.exports = {
   isValidYear,
   createParams,
   editBody,
+  isRemovable,
 };

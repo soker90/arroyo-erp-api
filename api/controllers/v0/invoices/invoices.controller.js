@@ -8,8 +8,13 @@ const logService = new LogService(TYPE);
 
 class InvoicesController {
   constructor({
-    invoiceService, paymentService, errorHandler, invoiceAdapter, invoiceValidator,
-    billingService, providerValidator,
+    invoiceService,
+    paymentService,
+    errorHandler,
+    invoiceAdapter,
+    invoiceValidator,
+    billingService,
+    providerValidator,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -86,6 +91,18 @@ class InvoicesController {
       .tap(this.invoiceValidator.createParams)
       .then(this.invoiceService.create)
       .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Delete invoice
+   */
+  delete(req, res) {
+    logService.logInfo('[invoices] - Eliminar factura');
+    Promise.resolve(req.params)
+      .tap(this.invoiceValidator.validateId)
+      .tap(this.invoiceValidator.isRemovable)
+      .then(() => res.status(204).send())
       .catch(this._handleError.bind(this, res));
   }
 
