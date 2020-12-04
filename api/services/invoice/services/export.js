@@ -57,6 +57,7 @@ const exportOds = async ({ year }) => {
   carbone.render('./templates/book.ods', invoices, {
     lang: 'es-es',
   }, (err, result) => {
+    /* istanbul ignore next */
     if (err) {
       error = err;
       return;
@@ -66,7 +67,9 @@ const exportOds = async ({ year }) => {
 
   return new Promise((resolve, reject) => {
     setTimeout(() => {
+      /* istanbul ignore next */
       if (error) reject(error);
+      /* istanbul ignore next */
       if (bookFile) resolve(bookFile);
     }, 1000);
   });

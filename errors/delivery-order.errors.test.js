@@ -119,4 +119,23 @@ describe('DeliveryOrderErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('DeliveryOrderDeleteWithInvoice', () => {
+    test('should exist and extend from Error', () => {
+      expect(new DeliveryOrderErrors.DeliveryOrderDeleteWithInvoice())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderDeleteWithInvoice();
+      expect(err.message)
+        .toEqual('El albarán está incluido en una factura, no puede eliminarse');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderDeleteWithInvoice('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });

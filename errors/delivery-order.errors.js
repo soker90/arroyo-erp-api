@@ -94,5 +94,5 @@ module.exports = {
   DeliveryOrderNotFound,
   DeliveryOrderProductIndexNotFound,
   DeliveryOrderDateRequired,
-  DeliveryOrderDeleteWithInvoice
+  DeliveryOrderDeleteWithInvoice,
 };

@@ -1,12 +1,23 @@
 const supertest = require('supertest');
 const {
-  mongoose, InvoiceModel, DeliveryOrderModel, ProviderModel,
+  mongoose,
+  InvoiceModel,
+  DeliveryOrderModel,
+  ProviderModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
-const { commonErrors, invoiceErrors, providerErrors } = require('../../../../errors');
-const { CONCEPT, TYPE_PAYMENT, COLUMNS_INVOICES } = require('../../../../constants/index');
+const {
+  commonErrors,
+  invoiceErrors,
+  providerErrors,
+} = require('../../../../errors');
+const {
+  CONCEPT,
+  TYPE_PAYMENT,
+  COLUMNS_INVOICES,
+} = require('../../../../constants/index');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {
@@ -73,7 +84,6 @@ const invoiceMock = {
   provider: '5f14857d3ae0d32b417e8d0c',
   dateRegister: 1596891828425.0,
   concept: 'Compras',
-  __v: 0,
   dateInvoice: 1597410180000.0,
   nInvoice: '33',
   nOrder: 47,
@@ -95,19 +105,19 @@ const invoiceExpenseCreate = {
   provider: '5f14857d3ae0d32b417e8d0c',
   re: 0.1,
   type: 'Talón',
-  bookColumn: 'ALQUILER',
+  bookColumn: COLUMNS_INVOICES.ALQUILER,
 };
 
 const invoiceExpenseCreate2 = {
-  concept: CONCEPT.ALQUILER,
+  concept: 'Luz',
   nInvoice: '2019/22',
   dateInvoice: 1596891780000,
   dateRegister: 1597410180000,
-  taxBase: 12.5,
+  total: 12.5,
   provider: '5f14857d3ae0d32b417e8d0c',
-  iva: 0.1,
-  type: 'Talón',
+  type: 'Efectivo',
   paymentDate: 1597410180000,
+  paid: true,
 };
 
 describe('InvoicesController', () => {
@@ -305,12 +315,13 @@ describe('InvoicesController', () => {
 
       describe('Dispone de facturas', () => {
         let invoice;
+        const nOrder = 2;
 
         before(() => InvoiceModel.create({
           total: 295.74,
           dateInvoice: 1594474393373.0,
           nInoice: '22/2020',
-          nOrder: 2,
+          nOrder,
         })
           .then(invoiceCreated => {
             invoice = invoiceCreated;
@@ -390,6 +401,54 @@ describe('InvoicesController', () => {
               .toBe(invoiceMock.total);
             expect(json.dateInvoice)
               .toBe(invoiceMock.dateInvoice);
+          });
+        });
+
+        describe('Ordenación de facturas', () => {
+          let response;
+          const provider = '5ed2cff6506bb0733669bbdd';
+
+          before(async () => {
+            const invoiceNoOrder = {
+              ...invoiceMock,
+              provider,
+            };
+            delete invoiceNoOrder.nOrder;
+            await InvoiceModel.create(invoiceNoOrder);
+          });
+
+          before(() => InvoiceModel.create({
+            ...invoiceMock,
+            provider,
+          }));
+          before(() => InvoiceModel.create({
+            ...invoiceMock,
+            provider,
+            nOrder,
+          }));
+
+          before(done => {
+            supertest(app)
+              .get(`/invoices/short?provider=${provider}`)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.status)
+              .toBe(200);
+          });
+
+          test('Las facturas están ordenadas correctamente', () => {
+            expect(response.body[0].nOrder)
+              .toBeUndefined();
+            expect(response.body[1].nOrder)
+              .toBe(invoiceMock.nOrder);
+            expect(response.body[2].nOrder)
+              .toBe(nOrder);
           });
         });
       });
@@ -871,7 +930,9 @@ describe('InvoicesController', () => {
                 }
               : {
                 ...invoiceWithProvider,
+                type: 'Efectivo',
                 paymentDate: 1596632580000,
+                paid: true,
               };
 
             supertest(app)
@@ -1549,12 +1610,12 @@ describe('InvoicesController', () => {
 
       describe('La petición se procesa correctamente', () => {
         let response;
-        let invoice;
-        const paymentDate = Date.now();
+
+        before(() => InvoiceModel.create(invoiceExpenseCreate));
 
         beforeAll(done => {
           supertest(app)
-            .get(PATH.replace(':year', 2020))
+            .get(PATH.replace(':year', '2020'))
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
               response = res;

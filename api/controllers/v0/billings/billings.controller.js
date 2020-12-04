@@ -24,6 +24,7 @@ class BillingsController {
     case 'BillingYearMissing':
       this.errorHandler.sendBadRequest(res)(error);
       break;
+      /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;
