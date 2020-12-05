@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, nonblock-statement-body-position */
-const { InvoiceModel, AutoIncrement } = require('arroyo-erp-models');
+const { InvoiceModel, AutoIncrement, PaymentModel } = require('arroyo-erp-models');
 const { invoiceErrors, commonErrors } = require('../../../errors');
 const { CONCEPT, TYPE_PAYMENT } = require('../../../constants');
 const { isNumber } = require('../../../utils');
@@ -83,8 +83,16 @@ const isRemovable = async ({ id }) => {
   const invoice = await InvoiceModel.findOne({ _id: id });
   const year = new Date(invoice.dateInvoice).getFullYear();
   const lastDocument = await AutoIncrement.findOne({ name: `invoice${year}` }).limit(1);
-  if (invoice.nOrder !== lastDocument.seq)
-    throw new Error('hhh');
+
+  // Si está confirmada y no es la última factura del año no se puede borrar
+  if (invoice.nOrder && lastDocument.seq && invoice.nOrder !== lastDocument.seq)
+    throw new invoiceErrors.InvoiceNoRemovable();
+
+  // TODO comprobar
+  // Comprueba que no exista ningún pago fusionado con esta factura
+  const payments = await PaymentModel.find({ invoices: id });
+  if (payments.length > 1)
+    throw new invoiceErrors.PaymentMerged();
 };
 
 module.exports = {

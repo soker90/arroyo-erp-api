@@ -118,4 +118,42 @@ describe('InvoiceErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('InvoiceNoRemovable', () => {
+    test('should exist and extend from Error', () => {
+      expect(new InvoiceErrors.InvoiceNoRemovable())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new InvoiceErrors.InvoiceNoRemovable();
+      expect(err.message)
+        .toEqual('La factura no puede ser eliminada');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new InvoiceErrors.InvoiceNoRemovable('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
+
+  describe('PaymentMerged', () => {
+    test('should exist and extend from Error', () => {
+      expect(new InvoiceErrors.PaymentMerged())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new InvoiceErrors.PaymentMerged();
+      expect(err.message)
+        .toEqual('El pago está fusionado con otra factura');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new InvoiceErrors.PaymentMerged('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });

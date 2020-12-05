@@ -83,6 +83,30 @@ class InvoiceWithOrderNumber extends Error {
   }
 }
 
+class InvoiceNoRemovable extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'La factura no puede ser eliminada') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
+class PaymentMerged extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'El pago está fusionado con otra factura') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvoiceMissingDeliveryOrders,
   InvoiceNotFoundDeliveryOrder,
@@ -91,4 +115,6 @@ module.exports = {
   InvoiceInvalidDateInvoice,
   InvoiceParamsMissing,
   InvoiceWithOrderNumber,
+  InvoiceNoRemovable,
+  PaymentMerged
 };

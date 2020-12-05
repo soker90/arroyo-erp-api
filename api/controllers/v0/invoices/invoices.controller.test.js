@@ -4,6 +4,7 @@ const {
   InvoiceModel,
   DeliveryOrderModel,
   ProviderModel,
+  AutoIncrement,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
@@ -1162,6 +1163,133 @@ describe('InvoicesController', () => {
           test('Se ha actualizado los totales', () => {
             testTotals();
           });
+        });
+      });
+    });
+  });
+
+  describe('DELETE /invoices/:id', () => {
+    const PATH = id => `/invoices/${id}`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .delete(PATH('5ef26172ccfd9d1541b870be'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El id de la factura no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH('5ef26172ccfd9d1541b870be'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.status)
+            .toBe(404);
+        });
+      });
+
+      describe('El id de la factura existe y está confirmada', () => {
+        let response;
+        let invoice;
+
+        beforeAll(() => InvoiceModel.create(invoiceMock)
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        describe('No es la ultima factura', () => {
+          beforeAll(() => AutoIncrement.create({
+            name: 'invoice2020',
+            seq: invoiceMock.nOrder + 1,
+          }));
+
+          afterAll(() => testDB.clean('AutoIncrement'));
+
+          beforeAll(done => {
+            supertest(app)
+              .delete(PATH(invoice._id))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.status)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new invoiceErrors.InvoiceNoRemovable().message);
+          });
+        });
+      });
+
+      describe('La factura no está confirmada', () => {
+        let response;
+        let invoice;
+
+        beforeAll(async () => {
+          const invoiceData = {
+            ...invoiceMock,
+          };
+          delete invoiceData.nOrder;
+
+          await InvoiceModel.create(invoiceData)
+            .then(invoiceCreated => {
+              invoice = invoiceCreated;
+            });
+        });
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH(invoice._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 204', () => {
+          expect(response.status)
+            .toBe(204);
         });
       });
     });
