@@ -7,6 +7,7 @@ const deleteDeliveryOrder = require('./services/delete');
 const addProduct = require('./services/addProduct');
 const updateProduct = require('./services/updateProduct');
 const deleteProduct = require('./services/deleteProduct');
+const refreshInvoice = require('./services/refreshInvoice');
 
 /**
  * Get data from id
@@ -24,4 +25,5 @@ module.exports = {
   addProduct,
   updateProduct,
   deleteProduct,
+  refreshInvoice,
 };

@@ -5,6 +5,8 @@ const {
   DeliveryOrderModel,
   ProviderModel,
   AutoIncrement,
+  PaymentModel,
+  BillingModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
@@ -1257,6 +1259,81 @@ describe('InvoicesController', () => {
           test('El mensaje de error es correcto', () => {
             expect(response.body.message)
               .toBe(new invoiceErrors.InvoiceNoRemovable().message);
+          });
+        });
+
+        describe('El pago está fusionado', () => {
+          beforeAll(() => PaymentModel.create({
+            invoices: [invoice._id],
+            invoiceDate: invoice.invoiceDate,
+            merged: true,
+          }));
+
+          beforeAll(() => PaymentModel.create({
+            invoices: [invoice._id, '5fad85b6f8f8014e6c448103'],
+            invoiceDate: invoice.invoiceDate,
+          }));
+
+          afterAll(() => testDB.clean('payments'));
+
+
+          beforeAll(done => {
+            supertest(app)
+              .delete(PATH(invoice._id))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.status)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new invoiceErrors.PaymentMerged().message);
+          });
+        });
+
+        describe('Es la última factura', () => {
+          beforeAll(() => AutoIncrement.create({
+            name: 'invoice2020',
+            seq: invoiceMock.nOrder,
+          }));
+
+          beforeAll(() => BillingModel.create({
+            provider: invoiceMock.provider,
+            year: '2020',
+            annual: invoiceMock.total,
+            invoicesTrimester3: [
+              { invoice: invoice._id },
+            ],
+            trimesters: [0, 0, invoiceMock.total, 0],
+          }));
+
+          beforeAll(() => PaymentModel.create({
+            invoices: [invoice._id],
+            invoiceDate: invoice.invoiceDate,
+          }));
+
+          afterAll(() => testDB.clean('AutoIncrement'));
+
+          beforeAll(done => {
+            supertest(app)
+              .delete(PATH(invoice._id))
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 204', () => {
+            expect(response.body)
+              .toBe(204);
           });
         });
       });

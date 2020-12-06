@@ -5,25 +5,12 @@ const {
   PaymentModel,
 } = require('arroyo-erp-models');
 
+// const deleteA = await PaymentModel.deleteOne({ invoices: id });
 /**
  * Get all invoices
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoiceDelete = async ({ id }) => {
-// await PaymentModel.deleteOne()
-  console.log('dd');
-
-  return InvoiceModel.find({
-    dateRegister: {
-      $gte: start,
-      $lt: end,
-    },
-  }, '_id businessName nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
-    .sort({ nOrder: -1 })
-    .skip(offset || 0)
-    .limit(limit)
-    .lean();
-};
+const invoiceDelete = ({ id }) => InvoiceModel.findOneAndDelete({ _id: id });
 
 module.exports = invoiceDelete;

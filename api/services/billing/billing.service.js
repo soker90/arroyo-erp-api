@@ -37,6 +37,29 @@ const add = invoice => {
   }, { upsert: true });
 };
 
+const remove = invoice => {
+  logService.logInfo(`[remove] - Eliminando la factura ${invoice._id}`);
+  const date = new Date(invoice.dateInvoice);
+
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  const trimester = Math.trunc(month / 3);
+  logService.logInfo(`[remove] - Fecha ${date.toLocaleDateString()}`);
+
+  logService.logInfo(`[remove] - Se eliminará del ${trimester + 1} trimestre del año ${year}`);
+
+  return BillingModel.updateOne({
+    provider: invoice.provider,
+    year,
+  }, {
+    $pull: {
+      [`invoicesTrimester${trimester}`]: {
+        invoice: invoice._id,
+      },
+    },
+  });
+};
+
 /**
  * Get all invoices
  * @param {Object} params
@@ -52,6 +75,7 @@ const billings = ({ year }) => {
 
 module.exports = {
   add,
+  remove,
   billings,
   exportOds,
 };

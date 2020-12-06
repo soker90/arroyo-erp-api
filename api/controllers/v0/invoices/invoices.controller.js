@@ -15,6 +15,7 @@ class InvoicesController {
     invoiceValidator,
     billingService,
     providerValidator,
+    deliveryOrderService,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -23,6 +24,7 @@ class InvoicesController {
     this.invoiceValidator = invoiceValidator;
     this.billingService = billingService;
     this.providerValidator = providerValidator;
+    this.deliveryOrderService = deliveryOrderService;
   }
 
   _handleError(res, error) {
@@ -38,6 +40,8 @@ class InvoicesController {
     case 'InvoiceMissingDeliveryOrders':
     case 'InvoiceParamsMissing':
     case 'InvoiceWithoutDeliveryOrders':
+    case 'InvoiceNoRemovable':
+    case 'PaymentMerged':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -102,6 +106,10 @@ class InvoicesController {
     Promise.resolve(req.params)
       .tap(this.invoiceValidator.validateId)
       .tap(this.invoiceValidator.isRemovable)
+      .then(this.invoiceService.invoiceDelete)
+      .tap(this.deliveryOrderService.refreshInvoice)
+      .tap(this.billingService.remove)
+      .tap(this.paymentService.remove)
       .then(() => res.status(204).send())
       .catch(this._handleError.bind(this, res));
   }

@@ -82,13 +82,12 @@ const editBody = ({ body: { data, totals } }) => {
 const isRemovable = async ({ id }) => {
   const invoice = await InvoiceModel.findOne({ _id: id });
   const year = new Date(invoice.dateInvoice).getFullYear();
-  const lastDocument = await AutoIncrement.findOne({ name: `invoice${year}` }).limit(1);
+  const lastDocument = await AutoIncrement.findOne({ name: `invoice${year}` });
 
   // Si está confirmada y no es la última factura del año no se puede borrar
-  if (invoice.nOrder && lastDocument.seq && invoice.nOrder !== lastDocument.seq)
+  if (invoice.nOrder && lastDocument?.seq && invoice.nOrder !== lastDocument?.seq)
     throw new invoiceErrors.InvoiceNoRemovable();
 
-  // TODO comprobar
   // Comprueba que no exista ningún pago fusionado con esta factura
   const payments = await PaymentModel.find({ invoices: id });
   if (payments.length > 1)

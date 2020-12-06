@@ -62,10 +62,20 @@ const divide = async ({ id }) => {
   await PaymentModel.deleteOne({ _id: id });
 };
 
+/**
+ * Delete payment
+ * @return {Promise<void>}
+ */
+const remove = invoice => {
+  logService.logInfo(`[create payment] - Creando pago para ${invoice._id}`);
+  return PaymentModel.deleteOne({ invoices: invoice._id });
+};
+
 module.exports = {
   create,
   payments,
   confirm,
   merge,
   divide,
+  remove
 };
