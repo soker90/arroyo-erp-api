@@ -1332,7 +1332,7 @@ describe('InvoicesController', () => {
           });
 
           test('Debería dar un 204', () => {
-            expect(response.body)
+            expect(response.status)
               .toBe(204);
           });
         });

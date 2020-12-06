@@ -1,5 +1,8 @@
 /* eslint-disable nonblock-statement-body-position */
-const { BillingModel, ProviderModel } = require('arroyo-erp-models');
+const {
+  BillingModel,
+  ProviderModel,
+} = require('arroyo-erp-models');
 
 const LogService = require('../log.service');
 
@@ -48,7 +51,7 @@ const remove = invoice => {
 
   logService.logInfo(`[remove] - Se eliminará del ${trimester + 1} trimestre del año ${year}`);
 
-  return BillingModel.updateOne({
+  return BillingModel.updateMany({
     provider: invoice.provider,
     year,
   }, {
