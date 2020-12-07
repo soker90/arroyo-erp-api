@@ -10,6 +10,7 @@ const TYPE = 'BillingService';
 const logService = new LogService(TYPE);
 
 const exportOds = require('./services/export');
+const refresh = require('./services/refresh');
 
 /**
  * Create payment
@@ -41,26 +42,29 @@ const add = invoice => {
 };
 
 const remove = invoice => {
-  logService.logInfo(`[remove] - Eliminando la factura ${invoice._id}`);
-  const date = new Date(invoice.dateInvoice);
+  if (invoice.nOrder) {
+    const date = new Date(invoice.dateInvoice);
 
-  const month = date.getMonth();
-  const year = date.getFullYear();
-  const trimester = Math.trunc(month / 3);
-  logService.logInfo(`[remove] - Fecha ${date.toLocaleDateString()}`);
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const trimester = Math.trunc(month / 3);
+    logService.logInfo(`[remove] - Fecha ${date.toLocaleDateString()}`);
 
-  logService.logInfo(`[remove] - Se eliminará del ${trimester + 1} trimestre del año ${year}`);
+    logService.logInfo(`[remove] - Se eliminará del ${trimester + 1} trimestre del año ${year}`);
 
-  return BillingModel.updateMany({
-    provider: invoice.provider,
-    year,
-  }, {
-    $pull: {
-      [`invoicesTrimester${trimester}`]: {
-        invoice: invoice._id,
+    return BillingModel.updateOne({
+      provider: invoice.provider,
+      year,
+    }, {
+      $pull: {
+        [`invoicesTrimester${trimester}`]: {
+          invoice: invoice._id,
+        },
       },
-    },
-  });
+    });
+  }
+  logService.logInfo('[remove] - No es necesario eliminar la factura de la facturación');
+  return undefined;
 };
 
 /**
@@ -81,4 +85,5 @@ module.exports = {
   remove,
   billings,
   exportOds,
+  refresh,
 };

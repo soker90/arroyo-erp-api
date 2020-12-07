@@ -77,5 +77,5 @@ module.exports = {
   confirm,
   merge,
   divide,
-  remove
+  remove,
 };

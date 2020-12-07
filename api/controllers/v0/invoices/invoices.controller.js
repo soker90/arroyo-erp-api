@@ -16,6 +16,7 @@ class InvoicesController {
     billingService,
     providerValidator,
     deliveryOrderService,
+    autoIncrementService,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -25,6 +26,7 @@ class InvoicesController {
     this.billingService = billingService;
     this.providerValidator = providerValidator;
     this.deliveryOrderService = deliveryOrderService;
+    this.autoIncrementService = autoIncrementService;
   }
 
   _handleError(res, error) {
@@ -108,9 +110,12 @@ class InvoicesController {
       .tap(this.invoiceValidator.isRemovable)
       .then(this.invoiceService.invoiceDelete)
       .tap(this.deliveryOrderService.refreshInvoice)
-      .tap(this.billingService.remove)
+      .tap(this.autoIncrementService.decrementInvoice)
       .tap(this.paymentService.remove)
-      .then(() => res.status(204).send())
+      .tap(this.billingService.remove)
+      .tap(this.billingService.refresh)
+      .then(() => res.status(204)
+        .send())
       .catch(this._handleError.bind(this, res));
   }
 
@@ -125,6 +130,7 @@ class InvoicesController {
       .then(this.invoiceService.expenseCreate)
       .tap(this.paymentService.create)
       .tap(this.billingService.add)
+      .tap(this.billingService.refresh)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -154,6 +160,7 @@ class InvoicesController {
       .then(this.invoiceService.invoiceConfirm)
       .tap(this.paymentService.create)
       .tap(this.billingService.add)
+      .tap(this.billingService.refresh)
       .then(this.invoiceAdapter.dataAndPaymentResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
