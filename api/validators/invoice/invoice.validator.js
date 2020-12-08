@@ -20,6 +20,7 @@ const _checkId = async id => {
  */
 const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
+const validateTwoIds = ({ a, b }) => _checkId(a) && _checkId(b);
 
 /**
  * Check if year if valid
@@ -102,4 +103,5 @@ module.exports = {
   createParams,
   editBody,
   isRemovable,
+  validateTwoIds,
 };

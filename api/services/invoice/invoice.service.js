@@ -10,6 +10,7 @@ const invoicesShort = require('./services/invoicesShort');
 const expenseCreate = require('./services/expenseCreate');
 const exportOds = require('./services/export');
 const invoiceDelete = require('./services/invoiceDelete');
+const swap = require('./services/swap');
 
 /**
  * Get invoice data
@@ -29,4 +30,5 @@ module.exports = {
   expenseCreate,
   exportOds,
   invoiceDelete,
+  swap,
 };

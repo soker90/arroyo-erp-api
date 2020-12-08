@@ -122,5 +122,15 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'patch',
+    domain: 'invoices',
+    path: '/swap/:a/:b',
+    handler: invoicesController.swap,
+    bindTo: invoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };
