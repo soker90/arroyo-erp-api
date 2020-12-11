@@ -6,8 +6,16 @@ const { authMiddleware } = require('../../../../components/auth');
 const errorHandler = require('../../../../components/error-handlers');
 
 module.exports = (
-  { deliveryOrderService, invoiceService },
-  { deliveryOrderValidator, productValidator, providerValidator }, { deliveryOrderAdapter }
+  {
+    deliveryOrderService,
+    invoiceService,
+    priceService,
+  },
+  {
+    deliveryOrderValidator,
+    productValidator,
+    providerValidator,
+  }, { deliveryOrderAdapter },
 ) => {
   const deliveryOrderController = new DeliveryOrderController({
     errorHandler,
@@ -17,6 +25,7 @@ module.exports = (
     providerValidator,
     deliveryOrderAdapter,
     invoiceService,
+    priceService,
   });
 
   return [{
@@ -70,35 +79,35 @@ module.exports = (
       authMiddleware,
     ],
   },
-  {
-    method: 'post',
-    domain: 'deliveryorders',
-    path: '/:id/product',
-    handler: deliveryOrderController.addProduct,
-    bindTo: deliveryOrderController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
-  }, {
-    method: 'put',
-    domain: 'deliveryorders',
-    path: '/:id/product/:index',
-    handler: deliveryOrderController.updateProduct,
-    bindTo: deliveryOrderController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
-  }, {
-    method: 'delete',
-    domain: 'deliveryorders',
-    path: '/:id/product/:index',
-    handler: deliveryOrderController.deleteProduct,
-    bindTo: deliveryOrderController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
-  }];
+    {
+      method: 'post',
+      domain: 'deliveryorders',
+      path: '/:id/product',
+      handler: deliveryOrderController.addProduct,
+      bindTo: deliveryOrderController,
+      skipVersion: true,
+      middlewares: [
+        authMiddleware,
+      ],
+    }, {
+      method: 'put',
+      domain: 'deliveryorders',
+      path: '/:id/product/:index',
+      handler: deliveryOrderController.updateProduct,
+      bindTo: deliveryOrderController,
+      skipVersion: true,
+      middlewares: [
+        authMiddleware,
+      ],
+    }, {
+      method: 'delete',
+      domain: 'deliveryorders',
+      path: '/:id/product/:index',
+      handler: deliveryOrderController.deleteProduct,
+      bindTo: deliveryOrderController,
+      skipVersion: true,
+      middlewares: [
+        authMiddleware,
+      ],
+    }];
 };

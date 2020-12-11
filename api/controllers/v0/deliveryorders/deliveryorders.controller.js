@@ -15,6 +15,7 @@ class DeliveryOrdersController {
     providerValidator,
     deliveryOrderAdapter,
     invoiceService,
+    priceService,
   }) {
     this.deliveryOrderService = deliveryOrderService;
     this.errorHandler = errorHandler;
@@ -23,6 +24,7 @@ class DeliveryOrdersController {
     this.providerValidator = providerValidator;
     this.deliveryOrderAdapter = deliveryOrderAdapter;
     this.invoiceService = invoiceService;
+    this.priceService = priceService;
   }
 
   _handleError(res, error) {
@@ -121,6 +123,7 @@ class DeliveryOrdersController {
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.addProduct)
       .tap(this.invoiceService.refresh)
+      .tap(this.priceService.updatePrice)
       .then(this.deliveryOrderAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
@@ -138,6 +141,7 @@ class DeliveryOrdersController {
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.updateProduct)
       .tap(this.invoiceService.refresh)
+      .tap(this.priceService.updatePrice)
       .then(this.deliveryOrderAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
