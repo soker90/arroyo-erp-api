@@ -2,6 +2,7 @@
 const {
   PriceModel,
   ProductModel,
+  DeliveryOrderModel,
 } = require('arroyo-erp-models');
 
 const LogService = require('../log.service');
@@ -17,7 +18,7 @@ const { roundNumber } = require('../../../utils');
  * @return {Promise<void>}
  */
 const updatePrice = async deliveryOrder => {
-  logService.logInfo('[create note] - Creando note');
+  logService.logInfo('[create note] - Actualizando precio');
   const doProduct = deliveryOrder.products.slice(-1)
     .pop();
   const productData = await ProductModel.findOne({ _id: doProduct.product });
@@ -49,6 +50,32 @@ const updatePrice = async deliveryOrder => {
   }
 };
 
+const deletePrice = async ({
+  id,
+  index,
+}) => {
+  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id });
+  const productId = deliveryOrder?.products?.[index]?.product;
+  const deleted = await PriceModel.deleteOne({
+    product: productId,
+    deliveryOrder: id,
+  });
+  if (deleted.deletedCount) {
+    const prices = await PriceModel.find({ product: productId })
+      .sort({ nOrder: -1 })
+      .limit(1);
+    const lastPrice = prices?.[0];
+    await ProductModel.updateOne({ _id: productId }, {
+      price: lastPrice?.price,
+      cost: lastPrice?.cost,
+      sale: lastPrice?.sale,
+    });
+  }
+};
+
+
+
 module.exports = {
   updatePrice,
+  deletePrice,
 };

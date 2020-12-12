@@ -54,15 +54,5 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
-  }, {
-    method: 'post',
-    domain: 'products',
-    path: '/:id/prices',
-    handler: productController.updatePrice,
-    bindTo: productController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
   }];
 };

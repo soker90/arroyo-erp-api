@@ -83,20 +83,6 @@ class ProductController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
-
-  /**
-   * Add new price to the product
-   */
-  updatePrice(req, res) {
-    logService.logInfo('[products] - Add new price');
-    Promise.resolve(req)
-      .tap(this.productValidator.validateIdParam)
-      .tap(this.productValidator.updatePriceBody)
-      .then(this.productService.updatePrice)
-      .then(() => res.status(201)
-        .send())
-      .catch(this._handleError.bind(this, res));
-  }
 }
 
 module.exports = ProductController;

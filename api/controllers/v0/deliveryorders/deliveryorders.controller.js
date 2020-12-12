@@ -155,6 +155,7 @@ class DeliveryOrdersController {
     Promise.resolve(req.params)
       .tap(this.deliveryOrderValidator.validateId)
       .tap(this.deliveryOrderValidator.validateProductIndex)
+      .tap(this.priceService.deletePrice)
       .then(this.deliveryOrderService.deleteProduct)
       .tap(this.invoiceService.refresh)
       .then(this.deliveryOrderAdapter.productsResponse)

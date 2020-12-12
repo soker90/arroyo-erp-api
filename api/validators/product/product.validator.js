@@ -43,22 +43,10 @@ const validateFields = ({
 
 const validateFieldsBody = ({ body }) => validateFields(body);
 
-/**
- * Valida el body de la llamada para actualizar el precio
- * @param {number} price
- * @param {number} date
- * @param {number} cost
- */
-const updatePriceBody = ({ body: { price, date, cost } }) => {
-  if (typeof price !== 'number' || typeof date !== 'number' || typeof cost !== 'number')
-    throw new productErrors.ProductMissingUpdate();
-};
-
 module.exports = {
   validateProductBody,
   validateFields,
   validateIdParam,
   validateId,
   validateFieldsBody,
-  updatePriceBody,
 };
