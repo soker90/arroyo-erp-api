@@ -25,12 +25,35 @@ class PriceChangeController {
   }
 
   /**
-   * Return all provider with the filters
+   * Return all prices changes
    */
   priceChanges(req, res) {
     logService.logInfo('[cambios de precio] - Lista con las notifiaciones de cambios de precio');
     Promise.resolve(req)
       .then(this.priceService.priceChanges)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Change to read/unread
+   */
+  changeRead(req, res) {
+    logService.logInfo('[cambios de precio] - Cambia a leido/no leido');
+    Promise.resolve(req)
+      .then(this.priceService.priceChangeRead)
+      .then(this.priceService.priceChanges)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Change to read/unread
+   */
+  unreadCount(req, res) {
+    logService.logInfo('[cambios de precio] - Notificaciones no leídas');
+    Promise.resolve(req)
+      .then(this.priceService.priceChangesUnreadCount)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

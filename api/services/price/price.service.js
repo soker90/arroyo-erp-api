@@ -20,7 +20,12 @@ const priceChangeRead = ({
 
 const priceChangeDelete = ({ id }) => PriceChangeModel.deleteOne({ _id: id });
 
-const priceChangesCount = () => PriceChangeModel.count();
+const priceChangesUnreadCount = async () => {
+  const count = await PriceChangeModel.countDocuments({
+    $or: [{ read: { $exists: false } }, { read: false }],
+  });
+  return { count };
+};
 
 module.exports = {
   updatePrice,
@@ -28,5 +33,5 @@ module.exports = {
   priceChanges,
   priceChangeRead,
   priceChangeDelete,
-  priceChangesCount,
+  priceChangesUnreadCount,
 };

@@ -19,5 +19,26 @@ module.exports = ({ priceService }) => {
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'patch',
+    domain: 'pricechanges',
+    path: '/:id',
+    handler: priceChangeController.changeRead,
+    bindTo: priceChangeController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
+  {
+    method: 'get',
+    domain: 'pricechanges',
+    path: '/unread/count',
+    handler: priceChangeController.unreadCount,
+    bindTo: priceChangeController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };
