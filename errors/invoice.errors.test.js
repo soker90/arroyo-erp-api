@@ -156,4 +156,23 @@ describe('InvoiceErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('InvoiceExist', () => {
+    test('should exist and extend from Error', () => {
+      expect(new InvoiceErrors.InvoiceExist())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new InvoiceErrors.InvoiceExist();
+      expect(err.message)
+        .toEqual('El número de factura ya existe');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new InvoiceErrors.InvoiceExist('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });
