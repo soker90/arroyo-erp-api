@@ -5,12 +5,6 @@ const {
 const updatePrice = require('./services/updatePrice');
 const deletePrice = require('./services/deletePrice');
 
-/**
- * Get changes of prices
- * @return {Promise<void>}
- */
-const priceChanges = () => PriceChangeModel.find({});
-
 const priceChangeRead = ({
   params: { id },
   body: {
@@ -26,6 +20,15 @@ const priceChangesUnreadCount = async () => {
   });
   return { count };
 };
+
+/**
+ * Get changes of prices
+ * @return {Promise<{count: {count: *}, priceChanges: *}>}
+ */
+const priceChanges = async () => ({
+  priceChanges: await PriceChangeModel.find({}),
+  ...await priceChangesUnreadCount(),
+});
 
 module.exports = {
   updatePrice,
