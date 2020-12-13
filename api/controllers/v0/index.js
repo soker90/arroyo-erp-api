@@ -9,6 +9,7 @@ const DeliveryOrderController = require('./deliveryorders');
 const InvoiceController = require('./invoices');
 const NoteController = require('./notes');
 const PaymentController = require('./payments');
+const PriceChangesController = require('./pricechange');
 const ProductController = require('./products');
 const ProviderController = require('./providers');
 
@@ -20,6 +21,7 @@ module.exports = [
   ...InvoiceController(services, validators, adapters),
   ...NoteController(services, validators),
   ...PaymentController(services, validators),
+  ...PriceChangesController(services),
   ...ProductController(services, validators),
   ...ProviderController(services, validators),
 ];

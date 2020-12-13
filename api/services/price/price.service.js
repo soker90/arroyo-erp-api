@@ -1,89 +1,32 @@
-/* eslint-disable nonblock-statement-body-position */
 const {
-  PriceModel,
-  ProductModel,
-  DeliveryOrderModel,
   PriceChangeModel,
 } = require('arroyo-erp-models');
 
-const LogService = require('../log.service');
-
-const TYPE = 'PriceService';
-
-const logService = new LogService(TYPE);
-const { roundNumber } = require('../../../utils');
+const updatePrice = require('./services/updatePrice');
+const deletePrice = require('./services/deletePrice');
 
 /**
- * Update price of the product
- * @param {Object} deliveryOrder
+ * Get changes of prices
  * @return {Promise<void>}
  */
-const updatePrice = async deliveryOrder => {
-  logService.logInfo('[create note] - Actualizando precio');
-  const doProduct = deliveryOrder.products.slice(-1)
-    .pop();
-  const productData = await ProductModel.findOne({ _id: doProduct.product });
+const priceChanges = () => PriceChangeModel.find({});
 
-  const cost = roundNumber(doProduct.total / doProduct.quantity);
+const priceChangeRead = ({
+  params: { id },
+  body: {
+    read,
+  },
+}) => PriceChangeModel.updateOne({ _id: id }, { read });
 
-  const sale = productData.profit
-    ? roundNumber(cost * productData.profit + cost)
-    : undefined;
+const priceChangeDelete = ({ id }) => PriceChangeModel.deleteOne({ _id: id });
 
-  if (doProduct.price !== productData.price) {
-    await PriceModel.updateOne({
-      product: doProduct.product,
-      deliveryOrder: deliveryOrder._id,
-    }, {
-      deliveryOrder: deliveryOrder._id,
-      date: deliveryOrder.date,
-      product: doProduct.product,
-      price: doProduct.price,
-      cost,
-      ...(sale && { sale }),
-    }, { upsert: true });
-
-    await ProductModel.updateOne({ _id: doProduct.product }, {
-      price: doProduct.price,
-      cost,
-      ...(sale && { sale }),
-    });
-
-    await new PriceChangeModel({
-      product: doProduct.product,
-      productName: doProduct.name,
-      price: doProduct.price,
-      diff: doProduct.diff,
-      deliveryOrder: deliveryOrder._id,
-      date: deliveryOrder.date,
-    }).save();
-  }
-};
-
-const deletePrice = async ({
-  id,
-  index,
-}) => {
-  const deliveryOrder = await DeliveryOrderModel.findOne({ _id: id });
-  const productId = deliveryOrder?.products?.[index]?.product;
-  const deleted = await PriceModel.deleteOne({
-    product: productId,
-    deliveryOrder: id,
-  });
-  if (deleted.deletedCount) {
-    const prices = await PriceModel.find({ product: productId })
-      .sort({ nOrder: -1 })
-      .limit(1);
-    const lastPrice = prices?.[0];
-    await ProductModel.updateOne({ _id: productId }, {
-      price: lastPrice?.price,
-      cost: lastPrice?.cost,
-      sale: lastPrice?.sale,
-    });
-  }
-};
+const priceChangesCount = () => PriceChangeModel.count();
 
 module.exports = {
   updatePrice,
   deletePrice,
+  priceChanges,
+  priceChangeRead,
+  priceChangeDelete,
+  priceChangesCount,
 };
