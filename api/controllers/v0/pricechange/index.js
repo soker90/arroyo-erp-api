@@ -40,5 +40,16 @@ module.exports = ({ priceService }) => {
     middlewares: [
       authMiddleware,
     ],
+  },
+  {
+    method: 'delete',
+    domain: 'pricechanges',
+    path: '/:id',
+    handler: priceChangeController.delete,
+    bindTo: priceChangeController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };

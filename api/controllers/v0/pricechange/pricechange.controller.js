@@ -57,6 +57,18 @@ class PriceChangeController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  /**
+   * Change to read/unread
+   */
+  delete(req, res) {
+    logService.logInfo('[cambios de precio] - Eliminando cambio de precio');
+    Promise.resolve(req.params)
+      .then(this.priceService.priceChangeDelete)
+      .then(this.priceService.priceChanges)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = PriceChangeController;
