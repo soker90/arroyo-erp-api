@@ -79,35 +79,35 @@ module.exports = (
       authMiddleware,
     ],
   },
-    {
-      method: 'post',
-      domain: 'deliveryorders',
-      path: '/:id/product',
-      handler: deliveryOrderController.addProduct,
-      bindTo: deliveryOrderController,
-      skipVersion: true,
-      middlewares: [
-        authMiddleware,
-      ],
-    }, {
-      method: 'put',
-      domain: 'deliveryorders',
-      path: '/:id/product/:index',
-      handler: deliveryOrderController.updateProduct,
-      bindTo: deliveryOrderController,
-      skipVersion: true,
-      middlewares: [
-        authMiddleware,
-      ],
-    }, {
-      method: 'delete',
-      domain: 'deliveryorders',
-      path: '/:id/product/:index',
-      handler: deliveryOrderController.deleteProduct,
-      bindTo: deliveryOrderController,
-      skipVersion: true,
-      middlewares: [
-        authMiddleware,
-      ],
-    }];
+  {
+    method: 'post',
+    domain: 'deliveryorders',
+    path: '/:id/product',
+    handler: deliveryOrderController.addProduct,
+    bindTo: deliveryOrderController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'put',
+    domain: 'deliveryorders',
+    path: '/:id/product/:index',
+    handler: deliveryOrderController.updateProduct,
+    bindTo: deliveryOrderController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'delete',
+    domain: 'deliveryorders',
+    path: '/:id/product/:index',
+    handler: deliveryOrderController.deleteProduct,
+    bindTo: deliveryOrderController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }];
 };
