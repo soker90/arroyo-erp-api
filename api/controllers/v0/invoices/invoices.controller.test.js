@@ -930,12 +930,14 @@ describe('InvoicesController', () => {
                 : {
                   ...invoiceWithProvider,
                   re: 2,
+                  nInvoice: 22,
                 }
               : {
                 ...invoiceWithProvider,
                 type: 'Efectivo',
                 paymentDate: 1596632580000,
                 paid: true,
+                nInvoice: 33,
               };
 
             supertest(app)
@@ -1275,7 +1277,6 @@ describe('InvoicesController', () => {
           }));
 
           afterAll(() => testDB.clean('payments'));
-
 
           beforeAll(done => {
             supertest(app)

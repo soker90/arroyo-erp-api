@@ -107,6 +107,18 @@ class PaymentMerged extends Error {
   }
 }
 
+class InvoiceExist extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'El número de factura ya existe') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   InvoiceMissingDeliveryOrders,
   InvoiceNotFoundDeliveryOrder,
@@ -116,5 +128,6 @@ module.exports = {
   InvoiceParamsMissing,
   InvoiceWithOrderNumber,
   InvoiceNoRemovable,
-  PaymentMerged
+  PaymentMerged,
+  InvoiceExist,
 };

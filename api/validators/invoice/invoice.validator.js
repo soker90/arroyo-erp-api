@@ -1,7 +1,17 @@
 /* eslint-disable camelcase, nonblock-statement-body-position */
-const { InvoiceModel, AutoIncrement, PaymentModel } = require('arroyo-erp-models');
-const { invoiceErrors, commonErrors } = require('../../../errors');
-const { CONCEPT, TYPE_PAYMENT } = require('../../../constants');
+const {
+  InvoiceModel,
+  AutoIncrement,
+  PaymentModel,
+} = require('arroyo-erp-models');
+const {
+  invoiceErrors,
+  commonErrors,
+} = require('../../../errors');
+const {
+  CONCEPT,
+  TYPE_PAYMENT,
+} = require('../../../constants');
 const { isNumber } = require('../../../utils');
 
 /**
@@ -20,7 +30,10 @@ const _checkId = async id => {
  */
 const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
-const validateTwoIds = ({ a, b }) => _checkId(a) && _checkId(b);
+const validateTwoIds = ({
+  a,
+  b,
+}) => _checkId(a) && _checkId(b);
 
 /**
  * Check if year if valid
@@ -45,7 +58,13 @@ const _isInvalidDate = date => !date || typeof date !== 'number';
  * @param {String} id
  * @returns {Promise<void>}
  */
-const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) => {
+const confirmParams = async ({
+  body: {
+    type,
+    paymentDate,
+  },
+  params: { id },
+}) => {
   if (!type) throw new invoiceErrors.InvoiceParamsMissing();
   if (paymentDate && typeof paymentDate !== 'number') throw new commonErrors.DateNotValid();
   if (type === TYPE_PAYMENT.CASH && !paymentDate) throw new commonErrors.DateNotValid();
@@ -62,7 +81,15 @@ const confirmParams = async ({ body: { type, paymentDate }, params: { id } }) =>
  * @param deliveryOrders
  */
 const createParams = ({
-  concept, deliveryOrders, dateInvoice, dateRegister, total, provider, type, bookColumn, re,
+  concept,
+  deliveryOrders,
+  dateInvoice,
+  dateRegister,
+  total,
+  provider,
+  type,
+  bookColumn,
+  re,
 }) => {
   if (!concept || !bookColumn) throw new invoiceErrors.InvoiceParamsMissing();
 
@@ -76,7 +103,12 @@ const createParams = ({
   }
 };
 
-const editBody = ({ body: { data, totals } }) => {
+const editBody = ({
+  body: {
+    data,
+    totals,
+  },
+}) => {
   if (!data && !totals) throw new invoiceErrors.InvoiceParamsMissing();
 };
 
@@ -95,6 +127,43 @@ const isRemovable = async ({ id }) => {
     throw new invoiceErrors.PaymentMerged();
 };
 
+const validateNInvoice = async ({
+  dateInvoice,
+  nInvoice,
+  provider,
+}) => {
+  const date = dateInvoice ? new Date(dateInvoice) : new Date();
+  const startYear = date.getFullYear()
+    .toString();
+  const start = new Date(startYear);
+  const end = new Date((startYear + 1).toString());
+  const existInvoice = await InvoiceModel.exists({
+    nInvoice,
+    provider,
+    dateRegister: {
+      $gte: start,
+      $lt: end,
+    },
+  });
+
+  if (existInvoice) throw new invoiceErrors.InvoiceExist();
+};
+
+const validateNInvoiceEdit = async ({
+  body: { data },
+  params: { id },
+}) => {
+  if (data?.nInvoice) {
+    const invoice = await InvoiceModel.findOne({ _id: id });
+    if (data.nInvoice !== invoice.nInvoice) {
+      await validateNInvoice({
+        ...data,
+        provider: invoice.provider,
+      });
+    }
+  }
+};
+
 module.exports = {
   confirmParams,
   validateId,
@@ -104,4 +173,6 @@ module.exports = {
   editBody,
   isRemovable,
   validateTwoIds,
+  validateNInvoice,
+  validateNInvoiceEdit,
 };
