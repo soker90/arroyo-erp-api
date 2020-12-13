@@ -3,6 +3,7 @@ const {
   PriceModel,
   ProductModel,
   DeliveryOrderModel,
+  PriceChangeModal,
 } = require('arroyo-erp-models');
 
 const LogService = require('../log.service');
@@ -47,6 +48,15 @@ const updatePrice = async deliveryOrder => {
       cost,
       ...(sale && { sale }),
     });
+
+    await new PriceChangeModal({
+      product: doProduct.product,
+      productName: doProduct.name,
+      price: doProduct.price,
+      diff: doProduct.diff,
+      deliveryOrder: deliveryOrder._id,
+      date: deliveryOrder.date,
+    }).save();
   }
 };
 
@@ -72,8 +82,6 @@ const deletePrice = async ({
     });
   }
 };
-
-
 
 module.exports = {
   updatePrice,
