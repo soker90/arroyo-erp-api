@@ -1,26 +1,26 @@
 const supertest = require('supertest');
 const {
-  mongoose,
-  InvoiceModel,
-  DeliveryOrderModel,
-  ProviderModel,
-  AutoIncrement,
-  PaymentModel,
-  BillingModel,
-} = require('arroyo-erp-models');
+        mongoose,
+        InvoiceModel,
+        DeliveryOrderModel,
+        ProviderModel,
+        AutoIncrement,
+        PaymentModel,
+        BillingModel,
+      } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-  commonErrors,
-  invoiceErrors,
-  providerErrors,
-} = require('../../../../errors');
+        commonErrors,
+        invoiceErrors,
+        providerErrors,
+      } = require('../../../../errors');
 const {
-  CONCEPT,
-  TYPE_PAYMENT,
-  COLUMNS_INVOICES,
-} = require('../../../../constants/index');
+        CONCEPT,
+        TYPE_PAYMENT,
+        COLUMNS_INVOICES,
+      } = require('../../../../constants/index');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {
@@ -1756,6 +1756,7 @@ describe('InvoicesController', () => {
 
   describe('GET /invoices/export/:year', () => {
     const PATH = '/invoices/export/:year';
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -1834,6 +1835,106 @@ describe('InvoicesController', () => {
             .toBeTruthy();
           expect(response.statusCode)
             .toBe(200);
+        });
+      });
+    });
+  });
+  describe('PATCH /invoices/expense', () => {
+    const PATH = (a, b) => `/invoices/swap/${a}/${b}`;
+
+    afterAll(() => testDB.cleanAll());
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .patch(PATH('5ea48dc376443fb4b0a7cb00', '5f7e133b4ccd161fef3f5786'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('Los ids no existen', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(PATH('5ea48dc376443fb4b0a7cb00', '5f7e133b4ccd161fef3f5786'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new invoiceErrors.InvoiceIdNotFound().message);
+        });
+      });
+
+      describe('Se intercambian los números de orden', () => {
+        let response;
+        let invoiceA;
+        let invoiceB;
+
+        beforeAll(async () => {
+          await InvoiceModel.create(invoiceMock)
+            .then(created => {
+              invoiceA = created;
+            });
+          await InvoiceModel.create(invoiceExpenseCreate)
+            .then(created => {
+              invoiceB = created;
+            });
+        });
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(PATH(invoiceA._id, invoiceB._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 204', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(204);
         });
       });
     });
