@@ -42,12 +42,13 @@ const _freeResponse = ({ free }) => free.map(({
   total,
   note,
   products: products.map(({
-    name, price, quantity, taxBase: taxBaseProduct,
+    name, price, quantity, taxBase: taxBaseProduct, canal,
   }) => ({
     name,
     price,
     quantity,
     taxBase: taxBaseProduct,
+    ...(canal && { canal }),
   })),
 }));
 
@@ -84,7 +85,7 @@ const _generateTotals = ({
  * nameProvider: *, products: *}}
  */
 const standardResponse = ({
-  _id, provider, nameProvider, products, date, nOrder, invoice, iva, re, total, taxBase, rate, note,
+  _id, provider, nameProvider, products, date, nOrder, invoice, iva, re, total, taxBase, rate, note, hasCanal,
 }) => ({
   _id,
   provider,
@@ -94,6 +95,7 @@ const standardResponse = ({
   nOrder,
   invoice,
   note,
+  ...(hasCanal && { hasCanal }),
   totals: _generateTotals({
     iva,
     re,

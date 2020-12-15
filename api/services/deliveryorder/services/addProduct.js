@@ -23,16 +23,23 @@ const _mergeProduct = (deliveryOrder, product) => {
  * @param {String} product
  * @param {Number} price
  * @param {Number} quantity
+ * @param {String} canal
  * @return {Promise<void>}
  */
 const addProduct = ({
   params: { id }, body: {
-    product, price, quantity,
+    product, price, quantity, canal,
   },
 }) => (
   DeliveryOrderModel.findOne({ _id: id })
     .then(async response => {
-      const newProduct = await calcProduct(product, price, quantity, response.date);
+      const newProduct = await calcProduct({
+        product,
+        price,
+        quantity,
+        date: response.date,
+        canal,
+      });
       return _mergeProduct(response, newProduct);
     })
     .then(calcData)

@@ -27,16 +27,23 @@ const _replaceProduct = (deliveryOrder, product, index) => {
  * @param {String} product
  * @param {Number} price
  * @param {Number} quantity
+ * @param {String} canal
  * @return {Promise<void>}
  */
 const updateProduct = ({
   params: { id, index }, body: {
-    product, price, quantity,
+    product, price, quantity, canal,
   },
 }) => (
   DeliveryOrderModel.findOne({ _id: id })
     .then(async response => {
-      const productModified = await calcProduct(product, price, quantity, response.date);
+      const productModified = await calcProduct({
+        product,
+        price,
+        quantity,
+        date: response.date,
+        canal,
+      });
       return _replaceProduct(response, productModified, index);
     })
     .then(calcData)

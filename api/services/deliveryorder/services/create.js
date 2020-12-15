@@ -6,11 +6,12 @@ const { INITIAL_SCHEMA } = require('../constants');
  * @param {string} provider
  */
 const create = async ({ provider }) => {
-  const { name } = await ProviderModel.findOne({ _id: provider });
+  const { name, hasCanal } = await ProviderModel.findOne({ _id: provider });
 
   const data = {
     provider,
     nameProvider: name,
+    ...(hasCanal && { hasCanal }),
     ...INITIAL_SCHEMA,
   };
 

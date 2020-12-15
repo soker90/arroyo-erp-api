@@ -44,10 +44,17 @@ const calcData = deliveryOrder => {
  * @param {number} price
  * @param {number} quantity
  * @param {Number} date
+ * @param {String} canal
  * @return {Promise<{product: *, total: number, code: *, quantity: number, re: number,
  * iva: number, price: number, name: *, diff: number, taxBase: number}>}
  */
-const calcProduct = async (product, price, quantity, date) => {
+const calcProduct = async ({
+  product,
+  price,
+  quantity,
+  date,
+  canal,
+}) => {
   const {
     name, iva, re, code, rate, _id,
   } = await ProductModel.findOne({
@@ -76,6 +83,7 @@ const calcProduct = async (product, price, quantity, date) => {
     price: Number(price),
     quantity: Number(quantity),
     name,
+    canal,
     taxBase,
     ...(rate && { rate: rateCalc }),
     ...(lastPrice !== null && { diff: price - lastPrice }),
