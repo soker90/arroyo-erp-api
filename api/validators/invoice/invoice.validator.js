@@ -30,10 +30,13 @@ const _checkId = async id => {
  */
 const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
-const validateTwoIds = ({
+const validateTwoIds = async ({
   a,
   b,
-}) => _checkId(a) && _checkId(b);
+}) => {
+  await _checkId(a);
+  await _checkId(b);
+};
 
 /**
  * Check if year if valid
