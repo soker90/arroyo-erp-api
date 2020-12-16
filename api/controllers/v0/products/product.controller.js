@@ -56,6 +56,7 @@ class ProductController {
     Promise.resolve(req.body)
       .tap(this.providerValidator.validateProvider)
       .tap(this.productValidator.validateFields)
+      .tap(this.productValidator.validateCodeDuplicate)
       .then(this.productService.create)
       .then(() => res.status(201)
         .send())
@@ -70,6 +71,7 @@ class ProductController {
     Promise.resolve(req)
       .tap(this.productValidator.validateIdParam)
       .tap(this.productValidator.validateFieldsBody)
+      .tap(this.productValidator.validateCodeDuplicateEdit)
       .then(this.productService.update)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

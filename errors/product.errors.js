@@ -48,9 +48,22 @@ class ProviderNotFound extends Error {
   }
 }
 
+class ProductCodeExists extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'El código de producto ya existe') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   ProductMissingParams,
   ProductMissingUpdate,
   ProductNotFound,
   ProviderNotFound,
+  ProductCodeExists,
 };

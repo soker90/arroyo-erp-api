@@ -49,6 +49,7 @@ describe('ProductController', () => {
 
   describe('GET /products', () => {
     const PATH = '/products';
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -259,6 +260,7 @@ describe('ProductController', () => {
   });
 
   describe('POST /products', () => {
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -456,7 +458,7 @@ describe('ProductController', () => {
               .post('/products')
               .set('Authorization', `Bearer ${token}`)
               .send({
-                ...productMock,
+                ...product2Mock,
                 provider: provider._id,
               })
               .end((err, res) => {
@@ -466,8 +468,36 @@ describe('ProductController', () => {
           });
 
           test('Debería dar un 201', () => {
-            expect(response.statusCode)
+            expect(response.status)
               .toBe(201);
+          });
+        });
+
+        describe('El código de producto está duplicado', () => {
+          let response;
+
+          beforeAll(done => {
+            supertest(app)
+              .post('/products')
+              .set('Authorization', `Bearer ${token}`)
+              .send({
+                ...productMock,
+                provider: provider._id,
+              })
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.status)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new productErrors.ProductCodeExists().message);
           });
         });
       });
@@ -476,6 +506,7 @@ describe('ProductController', () => {
 
   describe('PUT /products', () => {
     const PATH = id => `/products/${id}`;
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -587,11 +618,43 @@ describe('ProductController', () => {
               .toBeFalsy();
           });
         });
+
+        describe('El código está duplicado', () => {
+          let response;
+          let product2;
+
+          before(() => ProductModel.create(productMock)
+            .then(productCreated => {
+              product2 = productCreated;
+            }));
+
+          beforeAll(done => {
+            supertest(app)
+              .put(PATH(product2._id))
+              .set('Authorization', `Bearer ${token}`)
+              .send(product2Mock)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 400', () => {
+            expect(response.statusCode)
+              .toBe(400);
+          });
+
+          test('El mensaje de error es correcto', () => {
+            expect(response.body.message)
+              .toBe(new productErrors.ProductCodeExists().message);
+          });
+        });
       });
     });
   });
 
   describe('GET /products/:id', () => {
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 

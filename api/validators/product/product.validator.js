@@ -43,10 +43,42 @@ const validateFields = ({
 
 const validateFieldsBody = ({ body }) => validateFields(body);
 
+const validateCodeDuplicate = async ({
+  code,
+  provider,
+}) => {
+  if (code) {
+    const existInvoice = await ProductModel.exists({
+      code,
+      provider,
+    });
+
+    if (existInvoice)
+      throw new productErrors.ProductCodeExists();
+  }
+};
+
+const validateCodeDuplicateEdit = async ({
+  params: { id },
+  body: { code },
+}) => {
+  if (code) {
+    const product = await ProductModel.findOne({ _id: id });
+    if (code !== product.code) {
+      await validateCodeDuplicate({
+        code,
+        provider: product.provider,
+      });
+    }
+  }
+};
+
 module.exports = {
   validateProductBody,
   validateFields,
   validateIdParam,
   validateId,
   validateFieldsBody,
+  validateCodeDuplicate,
+  validateCodeDuplicateEdit,
 };
