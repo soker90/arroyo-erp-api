@@ -76,7 +76,7 @@ const billings = ({ year }) => {
   logService.logInfo(`[billings] - Facturación del año ${year}`);
 
   return BillingModel.find({ year }, 'trimesters provider annual')
-    .populate('provider', 'businessName', ProviderModel)
+    .populate('provider', 'businessName name', ProviderModel)
     .sort({ 'provider.name': 1 });
 };
 

@@ -9,11 +9,8 @@ const billingsResponse = billings => billings.map(({
   trimesters,
   annual,
 }) => ({
-  name: provider.businessName,
-  cif: provider?.cif,
-  postalCode: provider?.postalCode,
-  city: provider?.city,
-  province: provider?.province,
+  name: provider?.name,
+  businessName: provider?.businessName,
   trimester1: trimesters[0],
   trimester2: trimesters[1],
   trimester3: trimesters[2],
