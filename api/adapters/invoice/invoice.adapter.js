@@ -9,6 +9,7 @@ const dataResponse = invoice => ({
   nOrder: invoice.nOrder,
   nInvoice: invoice.nInvoice,
   concept: invoice.concept,
+  mailSend: invoice.mailSend,
 });
 
 /**
