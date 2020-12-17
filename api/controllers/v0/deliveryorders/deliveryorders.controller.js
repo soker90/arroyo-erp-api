@@ -31,6 +31,7 @@ class DeliveryOrdersController {
     switch (error.name) {
     case 'DeliveryOrderMissing':
     case 'DeliveryOrderDateRequired':
+    case 'DeliveryOrderDeleteWithInvoice':
       this.errorHandler.sendBadRequest(res)(error);
       break;
     case 'DeliveryOrderProviderNotFound':

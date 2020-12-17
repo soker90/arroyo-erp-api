@@ -157,8 +157,10 @@ describe('BillingsController', () => {
           const responseData = response.body[0];
           expect(responseData.annual)
             .toBe(billing.annual);
-          expect(responseData.name)
+          expect(responseData.businessName)
             .toBe(provider.businessName);
+          expect(responseData.name)
+            .toBe(provider.name);
           expect(responseData.trimester1)
             .toBe(billing.trimesters[0]);
           expect(responseData.trimester2)

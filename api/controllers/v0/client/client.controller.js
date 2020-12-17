@@ -20,6 +20,7 @@ class ClientsController {
   _handleError(res, error) {
     switch (error.name) {
     case 'ClientMissingName':
+    case 'ParamNotValidError':
       this.errorHandler.sendBadRequest(res)(error);
       break;
     case 'ClientIdNotFound':

@@ -27,7 +27,11 @@ class ProductController {
       break;
     case 'ProductNotFound':
     case 'ProviderNotFound':
+    case 'ProviderIdNotFound':
       this.errorHandler.sendNotFound(res)(error);
+      break;
+    case 'ProductCodeExists':
+      this.errorHandler.sendConflict(res)(error);
       break;
       /* istanbul ignore next */
     default:

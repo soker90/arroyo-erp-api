@@ -8,7 +8,10 @@ const logService = new LogService(TYPE);
 
 class PaymentsController {
   constructor({
-    paymentService, errorHandler, paymentValidator, productValidator,
+    paymentService,
+    errorHandler,
+    paymentValidator,
+    productValidator,
   }) {
     this.errorHandler = errorHandler;
     this.paymentService = paymentService;
@@ -18,6 +21,12 @@ class PaymentsController {
 
   _handleError(res, error) {
     switch (error.name) {
+    case 'PaymentDivideNotMerged':
+    case 'DateNotValid':
+    case 'MissingParamsError':
+    case 'PaymentsMissing':
+      this.errorHandler.sendBadRequest(res)(error);
+      break;
     case 'PaymentIdNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;

@@ -20,6 +20,8 @@ class ProvidersController {
   _handleError(res, error) {
     switch (error.name) {
     case 'ProviderMissingName':
+    case 'ParamNotValidError':
+    case 'ProviderTypeNotValid':
       this.errorHandler.sendBadRequest(res)(error);
       break;
     case 'ProviderIdNotFound':

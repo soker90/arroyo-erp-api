@@ -3,7 +3,7 @@ const { mongoose, PaymentModel, InvoiceModel } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
-const { commonErrors } = require('../../../../errors');
+const { commonErrors, paymentErrors } = require('../../../../errors');
 const { TYPE_PAYMENT } = require('../../../../constants');
 
 describe('PaymentsController', () => {
@@ -501,6 +501,11 @@ describe('PaymentsController', () => {
           expect(response.status)
             .toBe(400);
         });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new paymentErrors.PaymentsMissing().message);
+        });
       });
 
       describe('Solo se envía un pago', () => {
@@ -684,6 +689,11 @@ describe('PaymentsController', () => {
         test('Debería dar un 400', () => {
           expect(response.status)
             .toBe(400);
+        });
+
+        test('El mensaje de error es corecto', () => {
+          expect(response.body.message)
+            .toBe(new paymentErrors.PaymentDivideNotMerged().message);
         });
       });
 

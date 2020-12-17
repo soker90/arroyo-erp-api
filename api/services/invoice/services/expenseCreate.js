@@ -9,7 +9,7 @@ const { isTypeCash } = require('../../../../utils');
  */
 const create = async ({
   nInvoice, dateInvoice, dateRegister, total, provider, concept, re, type, paymentDate,
-  bookColumn,
+  bookColumn, mailSend,
 }) => {
   const { name, businessName, cif } = await ProviderModel.findOne({ _id: provider });
 
@@ -28,6 +28,7 @@ const create = async ({
     bookColumn,
     ...(re && { re }),
     total,
+    ...(mailSend && { mailSend }),
     payment: {
       ...(paymentDate && { paymentDate }),
       type,

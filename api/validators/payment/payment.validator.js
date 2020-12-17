@@ -47,7 +47,7 @@ const confirmParams = async ({ body: { type, paymentDate, numCheque } }) => {
  * @returns {Promise<void>}
  */
 const havePayments = async ({ payments }) => {
-  if (payments?.length < 2) throw new paymentErrors.PaymentsMissing();
+  if (!Array.isArray(payments) || payments.length < 2) throw new paymentErrors.PaymentsMissing();
   await Promise.all(payments.map(_checkIdPayment));
 };
 

@@ -164,9 +164,9 @@ describe('ProductController', () => {
               });
           });
 
-          test('Debería dar un 400', () => {
+          test('Debería dar un 404', () => {
             expect(response.statusCode)
-              .toBe(400);
+              .toBe(404);
           });
 
           test('El mensaje de error es correcto', () => {
@@ -311,9 +311,9 @@ describe('ProductController', () => {
             });
         });
 
-        test('Debería dar un 400', () => {
+        test('Debería dar un 404', () => {
           expect(response.statusCode)
-            .toBe(400);
+            .toBe(404);
         });
 
         test('El mensaje de error es correcto', () => {
@@ -490,9 +490,9 @@ describe('ProductController', () => {
               });
           });
 
-          test('Debería dar un 400', () => {
+          test('Debería dar un 409', () => {
             expect(response.status)
-              .toBe(400);
+              .toBe(409);
           });
 
           test('El mensaje de error es correcto', () => {
@@ -639,9 +639,9 @@ describe('ProductController', () => {
               });
           });
 
-          test('Debería dar un 400', () => {
+          test('Debería dar un 409', () => {
             expect(response.statusCode)
-              .toBe(400);
+              .toBe(409);
           });
 
           test('El mensaje de error es correcto', () => {

@@ -19,16 +19,16 @@ describe('Error handlers', () => {
     const mockRes = _getMockResponse();
 
     beforeAll(() => {
-      errorHandlers.sendError(mockRes)(message);
+      errorHandlers.sendError(mockRes)(new Error('test'));
     });
 
-    test('It should contain an statusCode of 400', () => {
-      expect(mockRes.statusCode).toBe(400);
+    test('It should contain an statusCode of 500', () => {
+      expect(mockRes.statusCode).toBe(500);
     });
 
     test('It should contain a payload with an error message', () => {
-      expect(mockRes.payload.error).toBe('Bad Request');
-      expect(mockRes.payload.message).toBe('Bad Request');
+      expect(mockRes.payload.error).toBe('Internal Server Error');
+      expect(mockRes.payload.message).toBe('test');
     });
   });
 

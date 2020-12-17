@@ -22,13 +22,19 @@ function sendResourceFailedError(res) {
   };
 }
 
-function sendError(res) {
+/**
+ * Send a Boom error
+ */
+function sendError(res, code) {
   return err => {
-    const { statusCode, payload } = Boom.badRequest(err.message, err.code).output;
-    res.status(err.code || statusCode).send(payload);
+    const { statusCode, payload } = Boom.boomify(err, { statusCode: code }).output;
 
-    const logMessage = `${err.message || 'Unknow error'} :`;
-    logService.logInfo(`[Error] - ${logMessage}`);
+    payload.message = err.message || payload.message;
+    payload.name = err.name || payload.error;
+    res.status(statusCode).send(payload);
+
+    const logMessage = `${payload.message || payload.error || 'Unknow error'} :`;
+    console.error(logMessage, err, err.stack);
   };
 }
 

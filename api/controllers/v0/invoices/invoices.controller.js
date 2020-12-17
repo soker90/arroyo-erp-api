@@ -44,6 +44,9 @@ class InvoicesController {
     case 'InvoiceWithoutDeliveryOrders':
     case 'InvoiceNoRemovable':
     case 'PaymentMerged':
+    case 'ParamNotValidError':
+    case 'ProviderIdNotFound':
+    case 'InvoiceWithOrderNumber':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */

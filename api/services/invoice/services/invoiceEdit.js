@@ -11,13 +11,14 @@ const _getDataForUpdate = (data, totals) => {
   let newData = {};
   if (data) {
     const {
-      dateRegister, dateInvoice, nInvoice, concept,
+      dateRegister, dateInvoice, nInvoice, concept, mailSend,
     } = data;
     newData = {
       dateRegister,
       dateInvoice,
       nInvoice,
       concept,
+      mailSend,
     };
   }
 
