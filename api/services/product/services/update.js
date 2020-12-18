@@ -12,7 +12,7 @@ const update = ({
 }) => ProductModel.findOneAndUpdate({ _id: params.id }, {
   code,
   name,
-  ...(rate && { rate }),
+  ...(rate !== undefined && { rate }),
   iva,
   re,
   profit,
