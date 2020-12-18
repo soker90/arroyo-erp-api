@@ -83,7 +83,7 @@ const calcProduct = async ({
     price: Number(price),
     quantity: Number(quantity),
     name,
-    canal,
+    ...(canal !== undefined && { canal }),
     taxBase,
     ...(rate && { rate: rateCalc }),
     ...(lastPrice !== null && { diff: price - lastPrice }),
