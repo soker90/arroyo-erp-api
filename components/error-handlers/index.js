@@ -25,6 +25,7 @@ function sendResourceFailedError(res) {
 /**
  * Send a Boom error
  */
+/* istanbul ignore next */
 function sendError(res, code) {
   return err => {
     const { statusCode, payload } = Boom.boomify(err, { statusCode: code }).output;
