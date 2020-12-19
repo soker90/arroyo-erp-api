@@ -9,6 +9,7 @@ const PaymentService = require('./payment');
 const PriceService = require('./price');
 const ProductService = require('./product');
 const ProviderService = require('./provider');
+const ReminderService = require('./reminder');
 
 module.exports = {
   accountService: AccountService,
@@ -22,4 +23,5 @@ module.exports = {
   priceService: PriceService,
   productService: ProductService,
   providerService: ProviderService,
+  reminderService: ReminderService,
 };

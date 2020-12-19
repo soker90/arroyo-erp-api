@@ -7,6 +7,7 @@ const noteErrors = require('./note.errors');
 const paymentErrors = require('./payment.errors');
 const productErrors = require('./product.errors');
 const providerErrors = require('./provider.errors');
+const reminderErrors = require('./reminder.errors');
 const userErrors = require('./user.errors');
 
 module.exports = {
@@ -19,5 +20,6 @@ module.exports = {
   paymentErrors,
   productErrors,
   providerErrors,
+  reminderErrors,
   userErrors,
 };

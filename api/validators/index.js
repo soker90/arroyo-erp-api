@@ -6,6 +6,7 @@ const noteValidator = require('./note');
 const paymentValidator = require('./payment');
 const productValidator = require('./product');
 const providerValidator = require('./provider');
+const reminderValidator = require('./reminder');
 
 module.exports = {
   billingValidator,
@@ -16,4 +17,5 @@ module.exports = {
   paymentValidator,
   productValidator,
   providerValidator,
+  reminderValidator,
 };

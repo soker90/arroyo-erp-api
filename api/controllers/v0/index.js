@@ -5,6 +5,7 @@ const adapters = require('../../adapters');
 const AccountController = require('./account');
 const BillingController = require('./billings');
 const ClientController = require('./client');
+const DashboardController = require('./dashboard');
 const DeliveryOrderController = require('./deliveryorders');
 const InvoiceController = require('./invoices');
 const NoteController = require('./notes');
@@ -17,6 +18,7 @@ module.exports = [
   ...AccountController(services),
   ...BillingController(services, validators, adapters),
   ...ClientController(services, validators),
+  ...DashboardController(services, validators),
   ...DeliveryOrderController(services, validators, adapters),
   ...InvoiceController(services, validators, adapters),
   ...NoteController(services, validators),
