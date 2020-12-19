@@ -1,6 +1,7 @@
 const { DeliveryOrderModel } = require('arroyo-erp-models');
 const {
-  calcData, calcProduct,
+  calcData,
+  calcProduct,
 } = require('../utils');
 
 /**
@@ -27,8 +28,12 @@ const _mergeProduct = (deliveryOrder, product) => {
  * @return {Promise<void>}
  */
 const addProduct = ({
-  params: { id }, body: {
-    product, price, quantity, canal,
+  params: { id },
+  body: {
+    product,
+    price,
+    quantity,
+    canal,
   },
 }) => (
   DeliveryOrderModel.findOne({ _id: id })
@@ -43,6 +48,9 @@ const addProduct = ({
       return _mergeProduct(response, newProduct);
     })
     .then(calcData)
+    .then(deliveryOrder => ({
+      deliveryOrder,
+    }))
 );
 
 module.exports = addProduct;

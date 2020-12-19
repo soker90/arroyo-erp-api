@@ -12,24 +12,62 @@ const TYPE = 'PriceService';
 const logService = new LogService(TYPE);
 const { roundNumber } = require('../../../../utils');
 
-/**
- * Update price of the product
- * @param {Object} deliveryOrder
- * @return {Promise<void>}
- */
-const updatePrice = async deliveryOrder => {
-  const doProduct = deliveryOrder.products.slice(-1)
+const getProductChanged = (deliveryOrder, index) => {
+  if (index)
+    return deliveryOrder.products[index];
+  return deliveryOrder.products.slice(-1)
     .pop();
-  const productData = await ProductModel.findOne({ _id: doProduct.product });
+};
 
+/**
+ * Devuelve el último precio
+ * @param product
+ * @return {PriceModel}
+ */
+const getLastPrice = product => PriceModel.find({ product })
+  .sort({ date: -1 })
+  .limit(1);
+
+/**
+ * Calcula el precio con impuestos y el precio de venta del producto
+ * @param doProduct
+ * @return {Promise<{sale: (number|*), cost: (number|*)}>}
+ */
+const calcCostSale = async doProduct => {
+  const productData = await ProductModel.findOne({ _id: doProduct.product });
   const cost = roundNumber(doProduct.total / doProduct.quantity);
 
   const sale = productData.profit
     ? roundNumber(cost * productData.profit + cost)
     : undefined;
 
-  if (doProduct.price !== productData.price) {
+  return {
+    cost,
+    sale,
+  };
+};
+
+/**
+ * Update price of the product
+ * @param {Object} deliveryOrder
+ * @param {number} index
+ * @return {Promise<void>}
+ */
+const updatePrice = async ({
+  deliveryOrder,
+  index,
+}) => {
+  const doProduct = getProductChanged(deliveryOrder, index);
+  const lastPrice = (await getLastPrice(doProduct.product))?.pop?.();
+
+  if (doProduct.price !== lastPrice?.price) {
     logService.logInfo(`[update price] - Actualizando precio de ${doProduct.name} ${doProduct.product}`);
+
+    const {
+      cost,
+      sale,
+    } = await calcCostSale(doProduct);
+
     // Añade el precio a la collection de precios
     await PriceModel.updateOne({
       product: doProduct.product,
@@ -40,26 +78,36 @@ const updatePrice = async deliveryOrder => {
       product: doProduct.product,
       price: doProduct.price,
       cost,
-      ...(sale && { sale }),
+      ...(sale !== undefined && { sale }),
     }, { upsert: true });
 
+    const isNewestOrder = deliveryOrder.date > (lastPrice?.date || 0)
+      || deliveryOrder._id.toString() === lastPrice?.deliveryOrder;
+
     // Actualiza el último precio en el producto
-    await ProductModel.updateOne({ _id: doProduct.product }, {
-      price: doProduct.price,
-      cost,
-      ...(sale && { sale }),
-    });
+    if (isNewestOrder) {
+      await ProductModel.updateOne({ _id: doProduct.product }, {
+        price: doProduct.price,
+        cost,
+        ...(sale !== undefined && { sale }),
+      });
+    }
 
     // Añade el nuevo precio a las notificaciones de cambio de precio
-    await new PriceChangeModel({
+    await PriceChangeModel.updateOne({
+      product: doProduct.product,
+      deliveryOrder: deliveryOrder._id,
+    }, {
       product: doProduct.product,
       productName: doProduct.name,
       price: doProduct.price,
-      diff: doProduct.diff,
+      ...(doProduct.diff !== undefined && { diff: doProduct.diff }),
       deliveryOrder: deliveryOrder._id,
       date: deliveryOrder.date,
-    }).save();
+    }, { upsert: true });
   }
+
+  return deliveryOrder;
 };
 
 module.exports = updatePrice;

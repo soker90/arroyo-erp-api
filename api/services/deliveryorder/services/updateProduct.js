@@ -47,6 +47,10 @@ const updateProduct = ({
       return _replaceProduct(response, productModified, index);
     })
     .then(calcData)
+    .then(deliveryOrder => ({
+      deliveryOrder,
+      index,
+    }))
 );
 
 module.exports = updateProduct;

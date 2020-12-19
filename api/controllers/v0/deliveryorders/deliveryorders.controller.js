@@ -123,8 +123,8 @@ class DeliveryOrdersController {
       .tap(this.deliveryOrderValidator.validateProductParams)
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.addProduct)
+      .then(this.priceService.updatePrice)
       .tap(this.invoiceService.refresh)
-      .tap(this.priceService.updatePrice)
       .then(this.deliveryOrderAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
@@ -141,8 +141,8 @@ class DeliveryOrdersController {
       .tap(this.deliveryOrderValidator.validateProductParams)
       .tap(this.productValidator.validateProductBody)
       .then(this.deliveryOrderService.updateProduct)
+      .then(this.priceService.updatePrice)
       .tap(this.invoiceService.refresh)
-      // .tap(this.priceService.updatePrice)
       .then(this.deliveryOrderAdapter.productsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
