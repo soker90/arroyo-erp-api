@@ -25,18 +25,22 @@ const _invoicesAdapter = billings => billings.map(({
   anual: formatNumber(annual),
 }));
 
-const _getBilling = async year => {
+const _getBilling = async (year, short) => {
   const invoices = await BillingModel.find({
     year,
-    annual: { $gte: 3004.99 },
+    ...(short && { annual: { $gte: 3004.99 } }),
   }, 'trimesters provider annual')
     .populate('provider', 'businessName cif postalCode city province name', ProviderModel);
 
-  return _invoicesAdapter(invoices).sort(orderByProvider);
+  return _invoicesAdapter(invoices)
+    .sort(orderByProvider);
 };
 
-const exportOds = async ({ year }) => {
-  const billing = await _getBilling(year);
+const exportOds = async ({
+  year,
+  short,
+}) => {
+  const billing = await _getBilling(year, short);
 
   let billingFile = null;
   let error = null;

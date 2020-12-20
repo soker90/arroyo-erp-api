@@ -31,10 +31,32 @@ const _invoicesAdapter = invoices => invoices.map(invoice => {
   };
 });
 
-const _getInvoices = async year => {
+const _getDates = (year, month) => {
+  if (month) {
+    const start = new Date(`${year}-${month}`);
+    const nextMonth = Number(month) + 3;
+    const end = (nextMonth > 12)
+      ? new Date(`${Number(year) + 1}-1`)
+      : new Date(`${year}-${nextMonth}`);
+    return {
+      start,
+      end,
+    };
+  }
   const start = new Date(year);
   const nextYear = Number(year) + 1;
   const end = new Date(nextYear.toString());
+
+  return {
+    start,
+    end,
+  };
+};
+const _getInvoices = async (year, month) => {
+  const {
+    start,
+    end,
+  } = _getDates(year, month);
 
   const invoices = await InvoiceModel.find({
     dateRegister: {
@@ -48,8 +70,8 @@ const _getInvoices = async year => {
   return _invoicesAdapter(invoices);
 };
 
-const exportOds = async ({ year }) => {
-  const invoices = await _getInvoices(year);
+const exportOds = async ({ year, month }) => {
+  const invoices = await _getInvoices(year, month);
 
   let bookFile = null;
   let error = null;

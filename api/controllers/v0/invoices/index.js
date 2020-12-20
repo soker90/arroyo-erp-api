@@ -123,6 +123,16 @@ module.exports = (
       authMiddleware,
     ],
   }, {
+    method: 'get',
+    domain: 'invoices',
+    path: '/export/:year/:month',
+    handler: invoicesController.export,
+    bindTo: invoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
     method: 'patch',
     domain: 'invoices',
     path: '/swap/:a/:b',
