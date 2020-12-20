@@ -1,3 +1,4 @@
+const { orderByProvider } = require('../../services/billing/utils');
 /**
  * Return adapted object with invoice data
  * @param billings
@@ -16,7 +17,8 @@ const billingsResponse = billings => billings.map(({
   trimester3: trimesters[2],
   trimester4: trimesters[3],
   annual,
-}));
+}))
+  .sort(orderByProvider);
 
 module.exports = {
   billingsResponse,

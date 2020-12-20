@@ -1,6 +1,7 @@
 const { BillingModel } = require('arroyo-erp-models');
 
 const LogService = require('../../log.service');
+const { roundNumber } = require('../../../../utils');
 
 const TYPE = 'BillingService';
 const logService = new LogService(TYPE);
@@ -12,7 +13,7 @@ const logService = new LogService(TYPE);
  * @returns {number}
  */
 const _getSumByTrimesters = (billing, trimester) => billing?.[`invoicesTrimester${trimester}`]?.reduce(
-  (accumulator, currentValue) => (accumulator + currentValue.total), 0,
+  (accumulator, currentValue) => roundNumber(accumulator + currentValue.total), 0,
 );
 
 /**
