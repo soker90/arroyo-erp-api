@@ -1,4 +1,7 @@
-const { DeliveryOrderModel, ProviderModel } = require('arroyo-erp-models');
+const {
+  DeliveryOrderModel,
+  ProviderModel,
+} = require('arroyo-erp-models');
 const {
   InvoiceNotFoundDeliveryOrder,
 } = require('../../../../errors/invoice.errors');
@@ -7,7 +10,8 @@ const { roundNumber } = require('../../../../utils');
 /**
  * Obtiene los datos de los albaranes de la factura
  * @param {Array} deliveryOrdersData
- * @returns {Promise<{deliveryOrders: [], total: number, re: number, iva: number, taxBase: number}>}
+ * @returns {Promise<{deliveryOrders: [], dataInvoice: {total: (number|*),
+ * re: (number|*), iva: (number|*), taxBase: (number|*)}}>}
  * @private
  */
 const calcDeliveryOrdersData = async deliveryOrdersData => {
@@ -15,6 +19,7 @@ const calcDeliveryOrdersData = async deliveryOrdersData => {
   let reI = 0;
   let totalI = 0;
   let taxBaseI = 0;
+  let provider = null;
   const deliveryOrders = [];
 
   for (const deliveryOrderId of deliveryOrdersData) {
@@ -29,19 +34,23 @@ const calcDeliveryOrdersData = async deliveryOrdersData => {
     totalI += deliveryOrder.total;
     taxBaseI += deliveryOrder.taxBase;
 
+    if (!provider) provider = deliveryOrder.provider;
     deliveryOrders.push(deliveryOrder);
   }
 
+  console.log(deliveryOrdersData)
   return {
+    dataInvoice: {
+      total: roundNumber(totalI, 2),
+      iva: roundNumber(ivaI, 2),
+      re: roundNumber(reI, 2),
+      taxBase: roundNumber(taxBaseI, 2),
+      ...(deliveryOrdersData.length && {
+        provider,
+        deliveryOrders: deliveryOrdersData,
+      }),
+    },
     deliveryOrders,
-    total: roundNumber(totalI, 2),
-    iva: roundNumber(ivaI, 2),
-    re: roundNumber(reI, 2),
-    taxBase: roundNumber(taxBaseI, 2),
-    ...(deliveryOrders.length && {
-      nameProvider: deliveryOrders[0].nameProvider,
-      provider: deliveryOrders[0].provider,
-    }),
   };
 };
 
@@ -50,15 +59,22 @@ const calcDeliveryOrdersData = async deliveryOrdersData => {
  * @param {Object} invoice
  */
 const calcNewShopping = async invoice => {
-  const deliveryOrderData = await calcDeliveryOrdersData(invoice.deliveryOrders);
-  const provider = await ProviderModel.findOne({ _id: deliveryOrderData.provider });
+  const {
+    dataInvoice,
+    deliveryOrders,
+  } = await calcDeliveryOrdersData(invoice.deliveryOrders);
+  const provider = await ProviderModel.findOne({ _id: dataInvoice.provider });
   return ({
-    ...deliveryOrderData,
-    dateRegister: Date.now(),
-    concept: invoice.concept,
-    bookColumn: invoice.bookColumn,
-    businessName: provider?.businessName,
-    cif: provider?.cif,
+    deliveryOrders,
+    dataInvoice: {
+      ...dataInvoice,
+      dateRegister: Date.now(),
+      concept: invoice.concept,
+      bookColumn: invoice.bookColumn,
+      businessName: provider?.businessName,
+      cif: provider?.cif,
+      nameProvider: provider?.name,
+    },
   });
 };
 

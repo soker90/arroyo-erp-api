@@ -1,4 +1,4 @@
-const { InvoiceModel } = require('arroyo-erp-models');
+const { InvoiceModel, DeliveryOrderModel } = require('arroyo-erp-models');
 
 // Split services
 const invoiceConfirm = require('./services/invoiceConfirm');
@@ -17,7 +17,8 @@ const swap = require('./services/swap');
  * @param {String} id
  * @returns {Promise<*>}
  */
-const invoice = ({ id }) => InvoiceModel.findOne({ _id: id });
+const invoice = ({ id }) => InvoiceModel.findOne({ _id: id })
+  .populate('deliveryOrders', null, DeliveryOrderModel);
 
 module.exports = {
   create,

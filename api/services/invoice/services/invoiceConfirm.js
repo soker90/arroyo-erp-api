@@ -11,7 +11,7 @@ const _addNOrderToDeliveryOrder = async invoice => {
   const { nOrder } = invoice;
   for (const deliveryOrder of invoice.deliveryOrders) {
     const model = await DeliveryOrderModel
-      .findOneAndUpdate({ _id: deliveryOrder._id }, { nOrder });
+      .findOneAndUpdate({ _id: deliveryOrder }, { nOrder });
     model.save();
   }
 };

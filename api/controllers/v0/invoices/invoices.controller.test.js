@@ -1,26 +1,26 @@
 const supertest = require('supertest');
 const {
-        mongoose,
-        InvoiceModel,
-        DeliveryOrderModel,
-        ProviderModel,
-        AutoIncrement,
-        PaymentModel,
-        BillingModel,
-      } = require('arroyo-erp-models');
+  mongoose,
+  InvoiceModel,
+  DeliveryOrderModel,
+  ProviderModel,
+  AutoIncrement,
+  PaymentModel,
+  BillingModel,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-        commonErrors,
-        invoiceErrors,
-        providerErrors,
-      } = require('../../../../errors');
+  commonErrors,
+  invoiceErrors,
+  providerErrors,
+} = require('../../../../errors');
 const {
-        CONCEPT,
-        TYPE_PAYMENT,
-        COLUMNS_INVOICES,
-      } = require('../../../../constants/index');
+  CONCEPT,
+  TYPE_PAYMENT,
+  COLUMNS_INVOICES,
+} = require('../../../../constants/index');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {
@@ -76,9 +76,6 @@ const deliveryOrder2Mock = {
 };
 
 const invoiceMock = {
-  deliveryOrders: [
-    deliveryOrderMock, deliveryOrder2Mock,
-  ],
   total: 75.48,
   iva: 6.8,
   re: 0.68,
@@ -514,8 +511,17 @@ describe('InvoicesController', () => {
       describe('Devuelve los datos de la factura ', () => {
         let response;
         let invoice;
+        let deliveryOrder;
 
-        before(() => InvoiceModel.create(invoiceMock)
+        before(() => DeliveryOrderModel.create(deliveryOrderMock)
+          .then(orderCreated => {
+            deliveryOrder = orderCreated;
+          }));
+
+        before(() => InvoiceModel.create({
+          ...invoiceMock,
+          deliveryOrders: [deliveryOrder._id],
+        })
           .then(invoiceCreated => {
             invoice = invoiceCreated;
           }));
@@ -545,7 +551,7 @@ describe('InvoicesController', () => {
           expect(bodyResponse.name)
             .toBe(invoiceMock.name);
           expect(bodyResponse.deliveryOrders.length)
-            .toBe(invoiceMock.deliveryOrders.length);
+            .toBe(1);
         });
       });
     });
@@ -677,7 +683,7 @@ describe('InvoicesController', () => {
         describe('Se crea la factura de un albarán', () => {
           beforeAll(done => {
             supertest(app)
-              .post('/invoices/')
+              .post('/invoices')
               .send({
                 concept: CONCEPT.COMPRAS,
                 deliveryOrders: [deliveryOrder._id],
@@ -697,24 +703,8 @@ describe('InvoicesController', () => {
               .toBe(200);
           });
 
-          test('Devuelve los datos correctos', () => {
-            const deliveryOrderResponse = response.body.deliveryOrders[0];
-            expect(response.body.concept)
-              .toBe(CONCEPT.COMPRAS);
-            expect(deliveryOrder._id.toString())
-              .toBe(deliveryOrderResponse._id);
-            expect(response.body.iva)
-              .toBe(deliveryOrder.iva);
-            expect(response.body.nameProvider)
-              .toBe(deliveryOrder.nameProvider);
-            expect(response.body.provider)
-              .toBe(deliveryOrder.provider);
-            expect(response.body.re)
-              .toBe(deliveryOrder.re);
-            expect(response.body.taxBase)
-              .toBe(deliveryOrder.taxBase);
-            expect(response.body.total)
-              .toBe(deliveryOrder.total);
+          test('Devuelve un id', () => {
+            expect(response.body.id).toBeTruthy();
           });
         });
 
@@ -748,26 +738,7 @@ describe('InvoicesController', () => {
           });
 
           test('Devuelve los datos correctos', () => {
-            const deliveryOrderResponse = response.body.deliveryOrders[0];
-            const deliveryOrder2Response = response.body.deliveryOrders[1];
-            expect(response.body.concept)
-              .toBe(CONCEPT.COMPRAS);
-            expect(deliveryOrder._id.toString())
-              .toBe(deliveryOrderResponse._id);
-            expect(deliveryOrder2._id.toString())
-              .toBe(deliveryOrder2Response._id);
-            expect(response.body.iva)
-              .toBe(roundNumber(deliveryOrder.iva + deliveryOrder2.iva, 2));
-            expect(response.body.nameProvider)
-              .toBe(deliveryOrder.nameProvider);
-            expect(response.body.provider)
-              .toBe(deliveryOrder.provider);
-            expect(response.body.re)
-              .toBe(roundNumber(deliveryOrder.re + deliveryOrder2.re, 2));
-            expect(response.body.taxBase)
-              .toBe(roundNumber(deliveryOrder.taxBase + deliveryOrder2.taxBase, 2));
-            expect(response.body.total)
-              .toBe(roundNumber(deliveryOrder.total + deliveryOrder2.total, 2));
+            expect(response.body.id).toBeTruthy();
           });
         });
       });
