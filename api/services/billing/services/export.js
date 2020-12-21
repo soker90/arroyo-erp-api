@@ -5,7 +5,6 @@ const {
 } = require('arroyo-erp-models');
 
 const { orderByProvider } = require('../utils');
-const { formatNumber } = require('../../../../utils');
 
 const _invoicesAdapter = billings => billings.map(({
   provider,
@@ -18,11 +17,11 @@ const _invoicesAdapter = billings => billings.map(({
   cp: provider.postalCode,
   poblacion: provider.city,
   provincia: provider.province,
-  trimestre1: formatNumber(trimesters[0]),
-  trimestre2: formatNumber(trimesters[1]),
-  trimestre3: formatNumber(trimesters[2]),
-  trimestre4: formatNumber(trimesters[3]),
-  anual: formatNumber(annual),
+  trimestre1: trimesters[0],
+  trimestre2: trimesters[1],
+  trimestre3: trimesters[2],
+  trimestre4: trimesters[3],
+  anual: annual,
 }));
 
 const _getBilling = async (year, short) => {
