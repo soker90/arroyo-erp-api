@@ -31,7 +31,7 @@ const calcData = deliveryOrder => {
 
   deliveryOrder.set('iva', roundNumber(ivaDO, 2));
   deliveryOrder.set('re', roundNumber(reDO, 2));
-  deliveryOrder.set('total', totalDO);
+  deliveryOrder.set('total', roundNumber(totalDO));
   deliveryOrder.set('taxBase', roundNumber(taxBaseDO, 2));
   deliveryOrder.set('rate', roundNumber(rateDO, 3));
   deliveryOrder.save();
