@@ -115,12 +115,14 @@ const basicResponse = ({
   _id,
   date,
   note,
-  totals: _generateTotals({
-    iva,
-    re,
-    total,
-    taxBase,
-    rate,
+  ...(total && {
+    totals: _generateTotals({
+      iva,
+      re,
+      total,
+      taxBase,
+      rate,
+    }),
   }),
 });
 

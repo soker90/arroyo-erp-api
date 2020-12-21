@@ -12,6 +12,7 @@ const invoices = ({
   dateInvoice,
   total,
   nInvoice,
+  numCheque,
 }) => {
   const start = new Date(year);
   const nextYear = Number(year) + 1;
@@ -21,6 +22,7 @@ const invoices = ({
     ...(dateInvoice && { dateInvoice }),
     ...(total && { total }),
     ...(nInvoice && { nInvoice }),
+    ...(numCheque && { numCheque }),
   };
 
   return InvoiceModel.find({
