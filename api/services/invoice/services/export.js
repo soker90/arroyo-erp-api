@@ -16,6 +16,7 @@ const _invoicesAdapter = invoices => invoices.map(invoice => {
     nombreProveedor: invoice.businessName,
     cif: invoice.cif,
     concepto: invoice.concept,
+    codigo: invoice.code,
     compras: getCategoryTotal(invoice, COLUMNS_INVOICES.COMPRAS),
     autonomos: getCategoryTotal(invoice, COLUMNS_INVOICES.AUTONOMOS),
     salario: getCategoryTotal(invoice, COLUMNS_INVOICES.SALARIO),
