@@ -10,12 +10,13 @@ const _getPricesOfProduct = product => PriceModel.find({ product })
   .sort({ date: -1 })
   .limit(25)
   .then(prices => prices.map(({
-    date, price, cost, sale,
+    date, price, cost, sale, deliveryOrder,
   }) => ({
     date,
     price,
     cost,
     sale,
+    deliveryOrder,
   })));
 
 /**
