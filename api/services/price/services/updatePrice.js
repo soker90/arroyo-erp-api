@@ -60,7 +60,7 @@ const updatePrice = async ({
   const doProduct = getProductChanged(deliveryOrder, index);
   const lastPrice = (await getLastPrice(doProduct.product))?.pop?.();
 
-  if (doProduct.price !== lastPrice?.price) {
+  if (doProduct.price !== lastPrice?.price && doProduct.price !== 0) {
     logService.logInfo(`[update price] - Actualizando precio de ${doProduct.name} ${doProduct.product}`);
 
     const {
