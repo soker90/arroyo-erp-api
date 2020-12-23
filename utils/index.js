@@ -25,25 +25,11 @@ const isNumber = num => typeof num === 'number';
 
 const formatDate = date => new Date(date).toLocaleDateString('es-ES');
 
-/**
- *
- * @param cell
- * @return {string}
- */
-const formatNumber = cell => {
-  const num = new Intl.NumberFormat('es-ES', {
-    style: 'decimal',
-    maximumFractionDigits: 2,
-  });
-  return num.format(cell);
-};
-
 module.exports = {
   roundNumber,
   replaceArrayElement,
   isEmptyObject,
   isNumber,
   formatDate,
-  formatNumber,
   ...payments,
 };

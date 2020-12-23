@@ -1,19 +1,19 @@
 const supertest = require('supertest');
 const {
-        mongoose,
-        DeliveryOrderModel,
-        ProviderModel,
-        ProductModel,
-        PriceModel,
-        InvoiceModel,
-      } = require('arroyo-erp-models');
+  mongoose,
+  DeliveryOrderModel,
+  ProviderModel,
+  ProductModel,
+  PriceModel,
+  InvoiceModel,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-        deliveryOrderErrors,
-        productErrors,
-      } = require('../../../../errors');
+  deliveryOrderErrors,
+  productErrors,
+} = require('../../../../errors');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {
@@ -25,6 +25,7 @@ const deliveryOrderMock = {
   rate: 0.5,
   re: 0.68,
   taxBase: 68,
+  hasCanal: true,
   products: [
     {
       code: '',
@@ -37,6 +38,8 @@ const deliveryOrderMock = {
       iva: 6.8,
       re: 0.68,
       total: 75.48,
+      canal: '33s',
+
     },
   ],
 };
@@ -338,11 +341,11 @@ describe('DeliveryOrderController', () => {
         });
       });
 
-      describe('Se crea el proveedor', () => {
+      describe('Se crea el albarán', () => {
         let response;
         let provider;
 
-        before(() => ProviderModel.create({ name: 'Mi proveedor' })
+        before(() => ProviderModel.create({ name: 'Mi proveedor', hasCanal: true })
           .then(providerCreated => {
             provider = providerCreated;
           }));
@@ -808,7 +811,10 @@ describe('DeliveryOrderController', () => {
         let deliveryOrder;
         let response;
 
-        before(() => DeliveryOrderModel.create(deliveryOrder2Mock)
+        before(() => DeliveryOrderModel.create({
+          ...deliveryOrder2Mock,
+          hasCanal: true,
+        })
           .then(created => {
             deliveryOrder = created;
           }));
@@ -841,6 +847,8 @@ describe('DeliveryOrderController', () => {
             .toBe(deliveryOrder2Mock.nOrder);
           expect(response.body.invoice)
             .toBe(deliveryOrder2Mock.invoice);
+          expect(response.body.hasCanal)
+            .toBe(true);
         });
       });
     });
@@ -1083,6 +1091,7 @@ describe('DeliveryOrderController', () => {
               product: product._id,
               quantity: 4,
               price: 12,
+              canal: '993',
             };
             supertest(app)
               .post(PATH(deliveryOrder._id))

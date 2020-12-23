@@ -16,7 +16,6 @@ const productMock = {
   iva: 11,
   re: 1.2,
   rate: 2,
-  profit: 12.3,
   price: 4,
   cost: 4.23,
   sale: 1.13,
@@ -34,6 +33,7 @@ const product2Mock = {
   price: 3,
   cost: 3.33,
   sale: 3.73,
+  profit: 12.3,
 };
 
 const priceMock = {

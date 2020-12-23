@@ -22,7 +22,7 @@ const invoices = ({
     ...(dateInvoice && { dateInvoice }),
     ...(total && { total }),
     ...(nInvoice && { nInvoice }),
-    ...(numCheque && { numCheque }),
+    ...(numCheque && { 'payment.numCheque': numCheque }),
   };
 
   return InvoiceModel.find({

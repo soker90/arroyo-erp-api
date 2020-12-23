@@ -47,12 +47,15 @@ const validateCodeDuplicate = async ({
   code,
   provider,
 }) => {
+  /* istanbul ignore else */
+
   if (code) {
     const existInvoice = await ProductModel.exists({
       code,
       provider,
     });
 
+    /* istanbul ignore else */
     if (existInvoice)
       throw new productErrors.ProductCodeExists();
   }
@@ -62,8 +65,10 @@ const validateCodeDuplicateEdit = async ({
   params: { id },
   body: { code },
 }) => {
+  /* istanbul ignore else */
   if (code) {
     const product = await ProductModel.findOne({ _id: id });
+    /* istanbul ignore else */
     if (code !== product.code) {
       await validateCodeDuplicate({
         code,

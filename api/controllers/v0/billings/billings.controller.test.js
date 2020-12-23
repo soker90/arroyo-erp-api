@@ -263,6 +263,35 @@ describe('BillingsController', () => {
             .toBe(200);
         });
       });
+
+      describe('La petición se procesa correctamente con los mayores a  3005€', () => {
+        let response;
+        let provider;
+
+        before(() => ProviderModel.create(providerMock)
+          .then(providerCreated => {
+            provider = providerCreated;
+          }));
+
+        before(() => BillingModel.create({ ...billingMock, provider: provider._id }));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH('2020&short=true'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+      });
     });
   });
 });

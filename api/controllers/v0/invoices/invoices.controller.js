@@ -47,6 +47,7 @@ class InvoicesController {
     case 'ParamNotValidError':
     case 'ProviderIdNotFound':
     case 'InvoiceWithOrderNumber':
+    case 'InvoiceExist':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
