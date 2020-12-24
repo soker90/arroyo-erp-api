@@ -25,11 +25,8 @@ const validateProductBody = ({ body: { product } }) => _checkId(product);
  * Validate params
  * @param {number} code
  * @param {string} name
- * @param {string} provider
- * @param {number} fee
  * @param {number} iva
  * @param {number} re
- * @param {boolean} isUpdate
  * @return {Object}
  * @private
  */
@@ -37,8 +34,13 @@ const validateFields = ({
   name,
   iva,
   re,
+  price,
 }) => {
-  if (!name || typeof iva !== 'number' || typeof re !== 'number') throw new productErrors.ProductMissingParams();
+  if (!name) throw new productErrors.ProductMissingParams();
+  if (!price) {
+    if (typeof iva !== 'number' || typeof re !== 'number')
+      throw new productErrors.ProductMissingParams();
+  }
 };
 
 const validateFieldsBody = ({ body }) => validateFields(body);
