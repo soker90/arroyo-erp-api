@@ -78,6 +78,14 @@ const validateCodeDuplicateEdit = async ({
   }
 };
 
+const validateFieldsCreateByClients = ({
+  name,
+  code,
+  price,
+}) => {
+  if (!name || !code || typeof price !== 'number') throw new productErrors.ProductMissingParams();
+};
+
 module.exports = {
   validateProductBody,
   validateFields,
@@ -86,4 +94,5 @@ module.exports = {
   validateFieldsBody,
   validateCodeDuplicate,
   validateCodeDuplicateEdit,
+  validateFieldsCreateByClients,
 };

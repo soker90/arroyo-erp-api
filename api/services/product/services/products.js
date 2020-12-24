@@ -8,13 +8,16 @@ const { ProductModel } = require('arroyo-erp-models');
  */
 const products = ({ provider }) => {
   const filter = {
-    ...(provider && { provider }),
+    provider: provider || { $exists: false },
   };
 
   return ProductModel
     .find(filter)
-    .select('_id name code price cost sale')
-    .sort({ code: 1, name: 1 })
+    .select('_id name code price cost sale price')
+    .sort({
+      code: 1,
+      name: 1,
+    })
     .lean();
 };
 

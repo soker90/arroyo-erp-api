@@ -5,7 +5,10 @@ const ProductController = require('./product.controller');
 
 module.exports = (
   { productService },
-  { providerValidator, productValidator },
+  {
+    providerValidator,
+    productValidator,
+  },
 ) => {
   const productController = new ProductController({
     errorHandler,
@@ -49,6 +52,16 @@ module.exports = (
     domain: 'products',
     path: '/:id',
     handler: productController.product,
+    bindTo: productController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'post',
+    domain: 'products/clients',
+    path: '/',
+    handler: productController.createForClients,
     bindTo: productController,
     skipVersion: true,
     middlewares: [

@@ -36,11 +36,10 @@ const product2Mock = {
   profit: 12.3,
 };
 
-const priceMock = {
-  date: Date.now(),
-  price: 3,
-  cost: 3.33,
-  sale: 3.73,
+const productClient = {
+  code: 'yy34',
+  name: 'Product 9',
+  price: 22.5,
 };
 
 describe('ProductController', () => {
@@ -112,7 +111,7 @@ describe('ProductController', () => {
         let response;
         let product;
 
-        before(() => ProductModel.create(productMock)
+        before(() => ProductModel.create({ productMock, provider: undefined })
           .then(productCreated => {
             product = productCreated;
           }));
@@ -823,6 +822,127 @@ describe('ProductController', () => {
 
           reviewPrice(response.body.prices[0], price1);
           reviewPrice(response.body.prices[1], price2);
+        });
+      });
+    });
+  });
+  describe('POST /products/clients', () => {
+    const PATH = '/products/clients';
+    afterAll(() => testDB.cleanAll());
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      before(done => {
+        supertest(app)
+          .post(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Existe el token', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe.each([
+        'code', 'name', 'price',
+      ])('No se envía %s', (item => {
+        let response;
+
+        beforeAll(done => {
+          const productData = { ...productClient };
+          delete productData[item];
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send(productData)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductMissingParams().message);
+        });
+      }));
+
+      describe('Se añade un producto correctamente', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send(productClient)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Devuelve los datos correctos', () => {
+          expect(response.body[0].name).toBe(productClient.name);
+          expect(response.body[0].code).toBe(productClient.code);
+          expect(response.body[0].price).toBe(productClient.price);
+        });
+      });
+
+      describe('El código de producto está duplicado', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send(productClient)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 409', () => {
+          expect(response.status)
+            .toBe(409);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductCodeExists().message);
         });
       });
     });

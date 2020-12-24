@@ -68,6 +68,20 @@ class ProductController {
   }
 
   /**
+   * Create the new product
+   */
+  createForClients(req, res) {
+    logService.logInfo('[products] - Crea un producto para clientes');
+    Promise.resolve(req.body)
+      .tap(this.productValidator.validateFieldsCreateByClients)
+      .tap(this.productValidator.validateCodeDuplicate)
+      .then(this.productService.createForClients)
+      .then(this.productService.products)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
    * Edit the product
    */
   edit(req, res) {
