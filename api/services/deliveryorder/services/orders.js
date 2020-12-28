@@ -3,11 +3,13 @@ const { DeliveryOrderModel } = require('arroyo-erp-models');
 /**
  * Devuelve los albaranes no incluidos en una factura
  * @param {String} provider
+ * @param {String} client
  * @returns {Array}
  * @private
  */
-const _getFree = ({ provider }) => DeliveryOrderModel.find({
+const _getFree = ({ provider, client }) => DeliveryOrderModel.find({
   provider,
+  client,
   invoice: { $exists: false },
 })
   .sort({ date: 1 });
@@ -17,12 +19,16 @@ const _getFree = ({ provider }) => DeliveryOrderModel.find({
  * @param {String} provider
  * @param {String} offset
  * @param {String} limit
+ * @param {String} client
  * @returns {Array}
  * @private
  */
-const _getInInvoices = ({ provider, offset, limit }) => (
+const _getInInvoices = ({
+  provider, client, offset, limit,
+}) => (
   DeliveryOrderModel.find({
     provider,
+    client,
     invoice: { $exists: true },
   })
     .sort({ date: -1 })
@@ -33,12 +39,14 @@ const _getInInvoices = ({ provider, offset, limit }) => (
 /**
  * Devuelve el número de albaren incluidos en facturas
  * @param {String} provider
+ * @param {String} client
  * @returns {Number}
  * @private
  */
-const _countInInvoices = ({ provider }) => (
+const _countInInvoices = ({ provider, client }) => (
   DeliveryOrderModel.find({
     provider,
+    client,
     nOrder: { $exists: true },
   })
     .countDocuments()

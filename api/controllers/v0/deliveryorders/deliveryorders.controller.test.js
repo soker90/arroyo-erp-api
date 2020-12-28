@@ -1,19 +1,21 @@
 const supertest = require('supertest');
 const {
-  mongoose,
-  DeliveryOrderModel,
-  ProviderModel,
-  ProductModel,
-  PriceModel,
-  InvoiceModel,
-} = require('arroyo-erp-models');
+        mongoose,
+        DeliveryOrderModel,
+        ProviderModel,
+        ProductModel,
+        PriceModel,
+        InvoiceModel,
+        ClientModel,
+      } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-  deliveryOrderErrors,
-  productErrors,
-} = require('../../../../errors');
+        deliveryOrderErrors,
+        productErrors,
+        clientErrors,
+      } = require('../../../../errors');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {
@@ -345,7 +347,10 @@ describe('DeliveryOrderController', () => {
         let response;
         let provider;
 
-        before(() => ProviderModel.create({ name: 'Mi proveedor', hasCanal: true })
+        before(() => ProviderModel.create({
+          name: 'Mi proveedor',
+          hasCanal: true,
+        })
           .then(providerCreated => {
             provider = providerCreated;
           }));
@@ -1675,6 +1680,133 @@ describe('DeliveryOrderController', () => {
                 .toBe(0);
             });
           });
+        });
+      });
+    });
+  });
+
+  describe('POST /deliveryorders/client', () => {
+    const PATH = '/deliveryorders/client';
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No se envía cliente', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new clientErrors.ClientIdNotFound().message);
+        });
+      });
+
+      describe('El cliente no existe', () => {
+        let response;
+
+        const dataSend = {
+          client: '5f148a51702f6d366d76d9c4',
+        };
+
+        before(done => {
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send(dataSend)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new clientErrors.ClientIdNotFound().message);
+        });
+      });
+
+      describe('Se crea el albarán', () => {
+        let response;
+        let client;
+
+        before(() => ClientModel.create({ name: 'Mi cliente' })
+          .then(clientCreated => {
+            client = clientCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ client: client._id })
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Devuelve un albarán en facturas', () => {
+          expect(response.body._id)
+            .toBeTruthy();
+          expect(response.body.name)
+            .toBe(client.name);
+          expect(`${response.body.client}`)
+            .toBe(client._id.toString());
+          expect(response.body.totals.total)
+            .toBe(0);
         });
       });
     });

@@ -6,7 +6,6 @@ const INITIAL_SCHEMA = {
   iva: 0,
   rate: 0,
   re: 0,
-  historicPrice: 0,
   diff: 0,
   taxBase: 0,
 };

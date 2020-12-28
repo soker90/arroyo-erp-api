@@ -15,6 +15,7 @@ module.exports = (
     deliveryOrderValidator,
     productValidator,
     providerValidator,
+    clientValidator,
   }, { deliveryOrderAdapter },
 ) => {
   const deliveryOrderController = new DeliveryOrderController({
@@ -26,6 +27,7 @@ module.exports = (
     deliveryOrderAdapter,
     invoiceService,
     priceService,
+    clientValidator,
   });
 
   return [{
@@ -104,6 +106,16 @@ module.exports = (
     domain: 'deliveryorders',
     path: '/:id/product/:index',
     handler: deliveryOrderController.deleteProduct,
+    bindTo: deliveryOrderController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'post',
+    domain: 'deliveryorders',
+    path: '/client',
+    handler: deliveryOrderController.createForClient,
     bindTo: deliveryOrderController,
     skipVersion: true,
     middlewares: [

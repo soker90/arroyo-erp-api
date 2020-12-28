@@ -2,6 +2,7 @@ const { DeliveryOrderModel } = require('arroyo-erp-models');
 
 const orders = require('./services/orders');
 const create = require('./services/create');
+const createForClient = require('./services/createForClient');
 const update = require('./services/update');
 const deleteDeliveryOrder = require('./services/delete');
 const addProduct = require('./services/addProduct');
@@ -19,6 +20,7 @@ const deliveryOrder = ({ id }) => DeliveryOrderModel.findOne({ _id: id });
 module.exports = {
   orders,
   create,
+  createForClient,
   update,
   delete: deleteDeliveryOrder,
   deliveryOrder,

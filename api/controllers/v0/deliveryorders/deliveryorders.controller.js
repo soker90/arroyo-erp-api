@@ -16,6 +16,7 @@ class DeliveryOrdersController {
     deliveryOrderAdapter,
     invoiceService,
     priceService,
+    clientValidator,
   }) {
     this.deliveryOrderService = deliveryOrderService;
     this.errorHandler = errorHandler;
@@ -24,6 +25,7 @@ class DeliveryOrdersController {
     this.providerValidator = providerValidator;
     this.deliveryOrderAdapter = deliveryOrderAdapter;
     this.invoiceService = invoiceService;
+    this.clientValidator = clientValidator;
     this.priceService = priceService;
   }
 
@@ -38,6 +40,7 @@ class DeliveryOrdersController {
     case 'DeliveryOrderNotFound':
     case 'ProductNotFound':
     case 'DeliveryOrderProductIndexNotFound':
+    case 'ClientIdNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
       /* istanbul ignore next */
@@ -68,6 +71,19 @@ class DeliveryOrdersController {
     Promise.resolve(req.body)
       .tap(this.deliveryOrderValidator.validateProvider)
       .then(this.deliveryOrderService.create)
+      .then(this.deliveryOrderAdapter.standardResponse)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Create the new delivery order for client
+   */
+  createForClient(req, res) {
+    logService.logInfo('[delivery orders] - Create delivery order for client');
+    Promise.resolve(req.body)
+      .tap(this.clientValidator.validateClient)
+      .then(this.deliveryOrderService.createForClient)
       .then(this.deliveryOrderAdapter.standardResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
