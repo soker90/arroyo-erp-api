@@ -111,15 +111,5 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
-  }, {
-    method: 'post',
-    domain: 'deliveryorders',
-    path: '/client',
-    handler: deliveryOrderController.createForClient,
-    bindTo: deliveryOrderController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
   }];
 };

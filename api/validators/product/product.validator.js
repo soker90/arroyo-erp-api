@@ -34,13 +34,8 @@ const validateFields = ({
   name,
   iva,
   re,
-  price,
 }) => {
-  if (!name) throw new productErrors.ProductMissingParams();
-  if (!price) {
-    if (typeof iva !== 'number' || typeof re !== 'number')
-      throw new productErrors.ProductMissingParams();
-  }
+  if (!name || typeof iva !== 'number' || typeof re !== 'number') throw new productErrors.ProductMissingParams();
 };
 
 const validateFieldsBody = ({ body }) => validateFields(body);

@@ -19,7 +19,6 @@ const _checkId = async id => {
  */
 const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
-const validateClient = ({ client }) => _checkId(client);
 
 /**
  * Compruba que solo reciba campos válidos y que reciba nombre
@@ -44,5 +43,4 @@ module.exports = {
   fieldsValidBody,
   validateIdParam,
   validateId,
-  validateClient
 };

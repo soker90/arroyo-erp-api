@@ -86,12 +86,11 @@ const _generateTotals = ({
  */
 const standardResponse = ({
   _id, provider, nameProvider, products, date, nOrder, invoice, iva, re, total, taxBase, rate,
-  note, hasCanal, client, name,
+  note, hasCanal,
 }) => ({
   _id,
   provider,
-  client,
-  name: name || nameProvider,
+  nameProvider,
   date,
   products,
   nOrder,

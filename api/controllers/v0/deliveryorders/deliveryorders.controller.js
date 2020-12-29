@@ -77,19 +77,6 @@ class DeliveryOrdersController {
   }
 
   /**
-   * Create the new delivery order for client
-   */
-  createForClient(req, res) {
-    logService.logInfo('[delivery orders] - Create delivery order for client');
-    Promise.resolve(req.body)
-      .tap(this.clientValidator.validateClient)
-      .then(this.deliveryOrderService.createForClient)
-      .then(this.deliveryOrderAdapter.standardResponse)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  }
-
-  /**
    * Edit the delivery order
    */
   edit(req, res) {
