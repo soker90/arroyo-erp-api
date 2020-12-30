@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 
 const LogService = require('../../../services/log.service');
 
-const TYPE = 'InvoiceController';
+const TYPE = 'ClientInvoiceController';
 
 const logService = new LogService(TYPE);
 
@@ -17,6 +17,8 @@ class ClientInvoicesController {
     providerValidator,
     deliveryOrderService,
     autoIncrementService,
+    clientValidator,
+    clientInvoiceService,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -27,27 +29,16 @@ class ClientInvoicesController {
     this.providerValidator = providerValidator;
     this.deliveryOrderService = deliveryOrderService;
     this.autoIncrementService = autoIncrementService;
+    this.clientValidator = clientValidator;
+    this.clientInvoiceService = clientInvoiceService;
   }
 
   _handleError(res, error) {
     switch (error.name) {
-    case 'InvoiceInvalidDateInvoice':
-    case 'DateNotValid':
-      this.errorHandler.sendValidationError(res)(error);
-      break;
-    case 'InvoiceNotFoundDeliveryOrder':
-    case 'InvoiceIdNotFound':
+    case 'ClientIdNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
-    case 'InvoiceMissingDeliveryOrders':
-    case 'InvoiceParamsMissing':
-    case 'InvoiceWithoutDeliveryOrders':
-    case 'InvoiceNoRemovable':
-    case 'PaymentMerged':
     case 'ParamNotValidError':
-    case 'ProviderIdNotFound':
-    case 'InvoiceWithOrderNumber':
-    case 'InvoiceExist':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -71,34 +62,36 @@ class ClientInvoicesController {
   }
 
   /**
-   * Return all invoices
+   * Return all client invoices
    */
   invoices(req, res) {
-    logService.logInfo('[invoices] - List of invoices');
+    logService.logInfo('[invoices] - List of client invoices');
     Promise.resolve(req.query)
-      .then(this.invoiceService.invoices)
+      .tap(this.invoiceValidator.isValidYear)
+      .then(this.clientInvoiceService.invoices)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
   invoicesShort(req, res) {
     logService.logInfo(
-      '[invoicesShort] - List of invoices with short info',
+      '[invoicesShort] - List of client invoices with short info',
     );
     Promise.resolve(req.query)
-      .then(this.invoiceService.invoicesShort)
+      .tap(this.clientValidator.validateClient)
+      .then(this.clientInvoiceService.invoicesShort)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
   /**
-   * Create the invoice
+   * Create the client invoice
    */
   create(req, res) {
-    logService.logInfo('[invoices] - Create invoice');
+    logService.logInfo('[client invoices] - Crea factura para clientes');
     Promise.resolve(req.body)
-      .tap(this.invoiceValidator.createParams)
-      .then(this.invoiceService.create)
+      .tap(this.clientValidator.validateClient)
+      .then(this.clientInvoiceService.create)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -185,7 +178,8 @@ class ClientInvoicesController {
     Promise.resolve(req.params)
       .tap(this.invoiceValidator.validateTwoIds)
       .then(this.invoiceService.swap)
-      .then(() => res.status(204).send())
+      .then(() => res.status(204)
+        .send())
       .catch(this._handleError.bind(this, res));
   }
 }

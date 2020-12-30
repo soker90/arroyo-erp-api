@@ -1,7 +1,7 @@
 const { authMiddleware } = require('../../../../components/auth');
 const errorHandler = require('../../../../components/error-handlers');
 
-const InvoiceController = require('./clientInvoices.controller');
+const ClientInvoiceController = require('./clientInvoices.controller');
 
 module.exports = (
   {
@@ -10,14 +10,16 @@ module.exports = (
     billingService,
     deliveryOrderService,
     autoIncrementService,
+    clientInvoiceService,
   },
   {
     invoiceValidator,
     providerValidator,
+    clientValidator,
   },
   { invoiceAdapter },
 ) => {
-  const invoicesController = new InvoiceController({
+  const clientInvoicesController = new ClientInvoiceController({
     invoiceService,
     paymentService,
     errorHandler,
@@ -27,25 +29,16 @@ module.exports = (
     providerValidator,
     deliveryOrderService,
     autoIncrementService,
+    clientValidator,
+    clientInvoiceService,
   });
 
   return [{
     method: 'post',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/',
-    handler: invoicesController.create,
-    bindTo: invoicesController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
-  },
-  {
-    method: 'post',
-    domain: 'invoices/expense',
-    path: '/',
-    handler: invoicesController.expenseCreate,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.create,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
@@ -53,40 +46,40 @@ module.exports = (
   },
   {
     method: 'get',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/',
-    handler: invoicesController.invoices,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.invoices,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
     ],
   }, {
     method: 'patch',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/:id',
-    handler: invoicesController.edit,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.edit,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
     ],
   }, {
     method: 'delete',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/:id',
-    handler: invoicesController.delete,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.delete,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
     ],
   }, {
     method: 'get',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/short',
-    handler: invoicesController.invoicesShort,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.invoicesShort,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
@@ -94,50 +87,50 @@ module.exports = (
   },
   {
     method: 'get',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/:id',
-    handler: invoicesController.invoice,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.invoice,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
     ],
   }, {
     method: 'patch',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/:id/confirm',
-    handler: invoicesController.invoiceConfirm,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.invoiceConfirm,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
     ],
   }, {
     method: 'get',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/export/:year',
-    handler: invoicesController.export,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.export,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
     ],
   }, {
     method: 'get',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/export/:year/:month',
-    handler: invoicesController.export,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.export,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
     ],
   }, {
     method: 'patch',
-    domain: 'invoices',
+    domain: 'client/invoices',
     path: '/swap/:a/:b',
-    handler: invoicesController.swap,
-    bindTo: invoicesController,
+    handler: clientInvoicesController.swap,
+    bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
       authMiddleware,
