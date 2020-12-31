@@ -16,6 +16,7 @@ module.exports = (
     invoiceValidator,
     providerValidator,
     clientValidator,
+    clientInvoiceValidator,
   },
   { invoiceAdapter },
 ) => {
@@ -31,6 +32,7 @@ module.exports = (
     autoIncrementService,
     clientValidator,
     clientInvoiceService,
+    clientInvoiceValidator,
   });
 
   return [{

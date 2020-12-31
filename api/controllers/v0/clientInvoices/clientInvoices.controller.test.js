@@ -14,9 +14,26 @@ const {
 } = require('../../../../errors');
 
 const invoiceMock = {
+  taxBase: 200.73,
+  iva: 95.01,
   total: 295.74,
-  date: 1594474393373.0,
+  date: 1594474393373,
   nInvoice: '22/2020',
+  deliveryOrders: [
+    {
+      date: 1609439904890,
+      products: [
+        {
+          name: 'Producto',
+          weight: 112.2,
+          unit: 'Kg',
+          price: 1.23,
+          total: 198.23,
+        },
+      ],
+    },
+
+  ],
 };
 
 describe('ClientInvoicesController', () => {
@@ -386,6 +403,130 @@ describe('ClientInvoicesController', () => {
             .toBe(invoiceMock.total);
           expect(response.body[1].nInvoice)
             .toBe(invoiceMock.nInvoice);
+        });
+      });
+    });
+  });
+
+  describe('GET /client/invoices/:id', () => {
+    const PATH = id => `/client/invoices/${id}`;
+    before(() => testDB.clean());
+
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH('none'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      let client;
+
+      before(() => ClientModel.create({ name: 'Cliente' })
+        .then(clientCreated => {
+          client = clientCreated;
+        }));
+
+      describe('La factura no existe', () => {
+        let response;
+        before(done => {
+          supertest(app)
+            .get(PATH('5ed7e0548eb012d630aa258c'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.status)
+            .toBe(404);
+        });
+
+        test('No devuelve facturas', () => {
+          expect(response.body.message)
+            .toBe(new invoiceErrors.InvoiceIdNotFound().message);
+        });
+      });
+
+      describe('Devuelve los datos de la factura', () => {
+        let response;
+        let invoice;
+
+        before(() => ClientInvoiceModel.create({
+          ...invoiceMock,
+          client: client._id,
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        before(done => {
+          supertest(app)
+            .get(PATH(invoice._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Los datos son correctos', () => {
+          expect(response.body.client)
+            .toBe(client._id.toString());
+          expect(response.body.date)
+            .toBe(invoiceMock.date);
+          expect(response.body.nInvoice)
+            .toBe(invoiceMock.nInvoice);
+          expect(response.body.total)
+            .toBe(invoiceMock.total);
+          expect(response.body.taxBase)
+            .toBe(invoiceMock.taxBase);
+          expect(response.body.iva)
+            .toBe(invoiceMock.iva);
+          expect(response.body.deliveryOrders[0].date)
+            .toBe(invoiceMock.deliveryOrders[0].date);
+          expect(response.body.deliveryOrders[0].products[0].name)
+            .toBe(invoiceMock.deliveryOrders[0].products[0].name);
+          expect(response.body.deliveryOrders[0].products[0].weight)
+            .toBe(invoiceMock.deliveryOrders[0].products[0].weight);
+          expect(response.body.deliveryOrders[0].products[0].unit)
+            .toBe(invoiceMock.deliveryOrders[0].products[0].unit);
+          expect(response.body.deliveryOrders[0].products[0].price)
+            .toBe(invoiceMock.deliveryOrders[0].products[0].price);
+          expect(response.body.deliveryOrders[0].products[0].total)
+            .toBe(invoiceMock.deliveryOrders[0].products[0].total);
         });
       });
     });

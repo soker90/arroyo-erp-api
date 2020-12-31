@@ -1,6 +1,6 @@
 /* eslint-disable camelcase, nonblock-statement-body-position */
 const {
-  InvoiceModel,
+  ClientInvoiceModel,
   AutoIncrement,
   PaymentModel,
 } = require('arroyo-erp-models');
@@ -20,7 +20,7 @@ const { isNumber } = require('../../../utils');
  * @returns {Promise<void>}
  */
 const _checkId = async id => {
-  const invoiceExist = await InvoiceModel.exists({ _id: id });
+  const invoiceExist = await ClientInvoiceModel.exists({ _id: id });
   if (!invoiceExist) throw new invoiceErrors.InvoiceIdNotFound();
 };
 /**
@@ -168,14 +168,5 @@ const validateNInvoiceEdit = async ({
 };
 
 module.exports = {
-  confirmParams,
   validateId,
-  validateIdParam,
-  isValidYear,
-  createParams,
-  editBody,
-  isRemovable,
-  validateTwoIds,
-  validateNInvoice,
-  validateNInvoiceEdit,
 };

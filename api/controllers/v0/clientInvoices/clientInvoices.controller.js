@@ -19,6 +19,7 @@ class ClientInvoicesController {
     autoIncrementService,
     clientValidator,
     clientInvoiceService,
+    clientInvoiceValidator,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -31,11 +32,13 @@ class ClientInvoicesController {
     this.autoIncrementService = autoIncrementService;
     this.clientValidator = clientValidator;
     this.clientInvoiceService = clientInvoiceService;
+    this.clientInvoiceValidator = clientInvoiceValidator;
   }
 
   _handleError(res, error) {
     switch (error.name) {
     case 'ClientIdNotFound':
+    case 'InvoiceIdNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
     case 'ParamNotValidError':
@@ -52,11 +55,11 @@ class ClientInvoicesController {
    * Return invoice
    */
   invoice(req, res) {
-    logService.logInfo('[inovice]  - Get invoice');
+    logService.logInfo('[inovice]  - Get invoice of client');
     Promise.resolve(req.params)
-      .tap(this.invoiceValidator.validateId)
-      .then(this.invoiceService.invoice)
-      .then(this.invoiceAdapter.fullResponse)
+      .tap(this.clientInvoiceValidator.validateId)
+      .then(this.clientInvoiceService.invoice)
+      // .then(this.invoiceAdapter.fullResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
