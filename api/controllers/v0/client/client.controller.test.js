@@ -466,23 +466,23 @@ describe('ClientController', () => {
           });
 
           test('Devuelve los datos correctos', () => {
-            expect(response.body._id)
+            expect(response.body.client._id)
               .toEqual(client._id.toString());
-            expect(response.body.address)
+            expect(response.body.client.address)
               .toEqual(client.address);
-            expect(response.body.businessName)
+            expect(response.body.client.businessName)
               .toEqual(client.businessName);
-            expect(response.body.cif)
+            expect(response.body.client.cif)
               .toEqual(client.cif);
-            expect(response.body.city)
+            expect(response.body.client.city)
               .toEqual(client.city);
-            expect(response.body.email)
+            expect(response.body.client.email)
               .toEqual(client.email);
-            expect(response.body.phone)
+            expect(response.body.client.phone)
               .toEqual(client.phone);
-            expect(response.body.postalCode)
+            expect(response.body.client.postalCode)
               .toEqual(client.postalCode);
-            expect(response.body.province)
+            expect(response.body.client.province)
               .toEqual(client.province);
           });
         });
