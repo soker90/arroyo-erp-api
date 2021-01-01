@@ -20,6 +20,7 @@ class ClientInvoicesController {
     clientValidator,
     clientInvoiceService,
     clientInvoiceValidator,
+    clientInvoiceAdapter,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -33,6 +34,7 @@ class ClientInvoicesController {
     this.clientValidator = clientValidator;
     this.clientInvoiceService = clientInvoiceService;
     this.clientInvoiceValidator = clientInvoiceValidator;
+    this.clientInvoiceAdapter = clientInvoiceAdapter;
   }
 
   _handleError(res, error) {
@@ -42,6 +44,7 @@ class ClientInvoicesController {
       this.errorHandler.sendNotFound(res)(error);
       break;
     case 'ParamNotValidError':
+    case 'InvoiceParamsMissing':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -119,33 +122,15 @@ class ClientInvoicesController {
   }
 
   /**
-   * Create the invoice
-   */
-  expenseCreate(req, res) {
-    logService.logInfo('[invoices] - Create invoice for expense');
-    Promise.resolve(req.body)
-      .tap(this.providerValidator.validateProvider)
-      .tap(this.invoiceValidator.createParams)
-      .tap(this.invoiceValidator.validateNInvoice)
-      .then(this.invoiceService.expenseCreate)
-      .tap(this.paymentService.create)
-      .tap(this.billingService.add)
-      .tap(this.billingService.refresh)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  }
-
-  /**
-   * Edit the invoice
+   * Edit the client invoice
    */
   edit(req, res) {
-    logService.logInfo('[invoices]  - Edit invoices');
+    logService.logInfo('[client invoices]  - Edit client invoices');
     Promise.resolve(req)
-      .tap(this.invoiceValidator.validateIdParam)
-      .tap(this.invoiceValidator.editBody)
-      .tap(this.invoiceValidator.validateNInvoiceEdit)
-      .then(this.invoiceService.invoiceEdit)
-      .then(this.invoiceAdapter.conditionalDataTotalsResponse)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.editBody)
+      .then(this.clientInvoiceService.invoiceEdit)
+      .then(this.clientInvoiceAdapter.conditionalDataTotalsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

@@ -18,7 +18,7 @@ module.exports = (
     clientValidator,
     clientInvoiceValidator,
   },
-  { invoiceAdapter },
+  { invoiceAdapter, clientInvoiceAdapter },
 ) => {
   const clientInvoicesController = new ClientInvoiceController({
     invoiceService,
@@ -33,6 +33,7 @@ module.exports = (
     clientValidator,
     clientInvoiceService,
     clientInvoiceValidator,
+    clientInvoiceAdapter,
   });
 
   return [{

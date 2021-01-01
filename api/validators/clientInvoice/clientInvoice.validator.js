@@ -108,11 +108,11 @@ const createParams = ({
 
 const editBody = ({
   body: {
-    data,
+    date,
     totals,
   },
 }) => {
-  if (!data && !totals) throw new invoiceErrors.InvoiceParamsMissing();
+  if (date === undefined && !totals) throw new invoiceErrors.InvoiceParamsMissing();
 };
 
 const isRemovable = async ({ id }) => {
@@ -130,43 +130,8 @@ const isRemovable = async ({ id }) => {
     throw new invoiceErrors.PaymentMerged();
 };
 
-const validateNInvoice = async ({
-  dateInvoice,
-  nInvoice,
-  provider,
-}) => {
-  const date = dateInvoice ? new Date(dateInvoice) : new Date();
-  const startYear = date.getFullYear()
-    .toString();
-  const start = new Date(startYear);
-  const end = new Date((startYear + 1).toString());
-  const existInvoice = await InvoiceModel.exists({
-    nInvoice,
-    provider,
-    dateRegister: {
-      $gte: start,
-      $lt: end,
-    },
-  });
-
-  if (existInvoice) throw new invoiceErrors.InvoiceExist();
-};
-
-const validateNInvoiceEdit = async ({
-  body: { data },
-  params: { id },
-}) => {
-  if (data?.nInvoice) {
-    const invoice = await InvoiceModel.findOne({ _id: id });
-    if (data.nInvoice !== invoice.nInvoice) {
-      await validateNInvoice({
-        ...data,
-        provider: invoice.provider,
-      });
-    }
-  }
-};
-
 module.exports = {
   validateId,
+  validateIdParam,
+  editBody,
 };
