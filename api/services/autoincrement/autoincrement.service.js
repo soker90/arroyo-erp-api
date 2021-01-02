@@ -7,7 +7,7 @@ const TYPE = 'AutoIncrementService';
 const logService = new LogService(TYPE);
 
 /**
- * Create note
+ * Decrement invoice nOrder
  * @return {Promise<string>}
  */
 const decrementInvoice = invoice => {
@@ -19,6 +19,21 @@ const decrementInvoice = invoice => {
   logService.logInfo('[decrementInvoice] - No se decrementa el número de orden');
 };
 
+/**
+ * Decrement client invoice
+ * @param {ClientInvoiceModel} invoice
+ * @return {Promise<string>}
+ */
+const decrementClientInvoice = invoice => {
+  if (invoice.nInvoice) {
+    logService.logInfo('[decrementInvoice] - Se decrementa el último número de factura de cliente');
+    const date = new Date(invoice.date);
+    return AutoIncrement.decrease(`clientInvoice${date.getFullYear()}`);
+  }
+  logService.logInfo('[decrementInvoice] - No se decrementa el número de orden');
+};
+
 module.exports = {
   decrementInvoice,
+  decrementClientInvoice,
 };

@@ -45,6 +45,7 @@ class ClientInvoicesController {
       break;
     case 'ParamNotValidError':
     case 'InvoiceParamsMissing':
+    case 'InvoiceNoRemovable':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -106,16 +107,12 @@ class ClientInvoicesController {
    * Delete invoice
    */
   delete(req, res) {
-    logService.logInfo('[invoices] - Eliminar factura');
+    logService.logInfo('[client invoices] - Eliminar factura de cliente');
     Promise.resolve(req.params)
-      .tap(this.invoiceValidator.validateId)
-      .tap(this.invoiceValidator.isRemovable)
-      .then(this.invoiceService.invoiceDelete)
-      .tap(this.deliveryOrderService.refreshInvoice)
-      .tap(this.autoIncrementService.decrementInvoice)
-      .tap(this.paymentService.remove)
-      .tap(this.billingService.remove)
-      .tap(this.billingService.refresh)
+      .tap(this.clientInvoiceValidator.validateId)
+      .tap(this.clientInvoiceValidator.isRemovable)
+      .then(this.clientInvoiceService.invoiceDelete)
+      .tap(this.autoIncrementService.decrementClientInvoice)
       .then(() => res.status(204)
         .send())
       .catch(this._handleError.bind(this, res));

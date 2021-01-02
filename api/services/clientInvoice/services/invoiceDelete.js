@@ -1,13 +1,12 @@
 const {
-  InvoiceModel,
+  ClientInvoiceModel,
 } = require('arroyo-erp-models');
 
-// const deleteA = await PaymentModel.deleteOne({ invoices: id });
 /**
- * Get all invoices
+ * Delete invoice
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoiceDelete = ({ id }) => InvoiceModel.findOneAndDelete({ _id: id });
+const invoiceDelete = ({ id }) => ClientInvoiceModel.findOneAndDelete({ _id: id });
 
 module.exports = invoiceDelete;
