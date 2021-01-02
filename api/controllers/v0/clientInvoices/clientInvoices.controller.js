@@ -95,7 +95,7 @@ class ClientInvoicesController {
    * Create the client invoice
    */
   create(req, res) {
-    logService.logInfo('[client invoices] - Crea factura para clientes');
+    logService.logInfo('[create] - Crea factura para clientes');
     Promise.resolve(req.body)
       .tap(this.clientValidator.validateClient)
       .then(this.clientInvoiceService.create)
@@ -107,7 +107,7 @@ class ClientInvoicesController {
    * Delete invoice
    */
   delete(req, res) {
-    logService.logInfo('[client invoices] - Eliminar factura de cliente');
+    logService.logInfo('[delete] - Eliminar factura de cliente');
     Promise.resolve(req.params)
       .tap(this.clientInvoiceValidator.validateId)
       .tap(this.clientInvoiceValidator.isRemovable)
@@ -117,18 +117,43 @@ class ClientInvoicesController {
         .send())
       .catch(this._handleError.bind(this, res));
   }
-
   /**
    * Edit the client invoice
    */
   edit(req, res) {
-    logService.logInfo('[client invoices]  - Edit client invoices');
+    logService.logInfo('[edit]  - Edit client invoices');
     Promise.resolve(req)
       .tap(this.clientInvoiceValidator.validateIdParam)
       .tap(this.clientInvoiceValidator.editBody)
       .then(this.clientInvoiceService.invoiceEdit)
       .then(this.clientInvoiceAdapter.conditionalDataTotalsResponse)
       .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Edit the delivery order of the client invoice
+   */
+  addDeliveryOrder(req, res) {
+    logService.logInfo('[addDeliveryOrder]  - Añade un albarán a la factura');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .then(this.clientInvoiceService.addDeliveryOrder)
+      .then(() => res.status(204)
+        .send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Edit the delivery order of the client invoice
+   */
+  editDeliveryOrder(req, res) {
+    logService.logInfo('[addDeliveryOrder]  - Actualiza un albarán de la factura');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .then(this.clientInvoiceService.addDeliveryOrder)
+      .then(() => res.status(204)
+        .send())
       .catch(this._handleError.bind(this, res));
   }
 

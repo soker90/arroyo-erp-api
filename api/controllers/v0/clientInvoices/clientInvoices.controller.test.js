@@ -896,4 +896,109 @@ describe('ClientInvoicesController', () => {
       });
     });
   });
+
+  describe('POST /client/invoices/:id/deliveryOrder', () => {
+    const PATH = id => `/client/invoices/${id}/deliveryOrder`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post(PATH('5ef26172ccfd9d1541b870be'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('La factura no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH('5f761ae5a7d8986bc28ff7f4'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.body.message)
+            .toBe(new invoiceErrors.InvoiceIdNotFound().message);
+        });
+      });
+
+      describe('Añade un albarán', () => {
+        let response;
+        let invoice;
+
+        before(() => ClientInvoiceModel.create({
+          date: Date.now(),
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH(invoice._id))
+            .send()
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 204', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.status)
+            .toBe(204);
+        });
+
+        test('Se añade el albarán', async () => {
+          const invoiceEdited = await ClientInvoiceModel.findOne({ _id: invoice._id });
+          const { deliveryOrders } = invoiceEdited;
+          expect(deliveryOrders[0].date).toBeNull();
+          expect(deliveryOrders[0].total).toBe(0);
+          expect(deliveryOrders[0].products.length).toBe(0);
+        });
+      });
+    });
+  });
 });

@@ -99,6 +99,16 @@ module.exports = (
       authMiddleware,
     ],
   }, {
+    method: 'post',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder',
+    handler: clientInvoicesController.addDeliveryOrder,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
     method: 'patch',
     domain: 'client/invoices',
     path: '/:id/confirm',
