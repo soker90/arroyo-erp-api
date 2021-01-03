@@ -181,6 +181,20 @@ class ClientInvoicesController {
   }
 
   /**
+   * Add product to the delivery order
+   */
+  addProduct(req, res) {
+    logService.logInfo('[addProduct]  - Añade un producto a un albarán');
+    Promise.resolve(req)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
+      .tap(this.clientInvoiceValidator.validateProduct)
+      .then(this.clientInvoiceService.addProduct)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
    * Return invoice
    */
   invoiceConfirm(req, res) {

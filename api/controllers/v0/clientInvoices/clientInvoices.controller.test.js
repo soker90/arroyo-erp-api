@@ -1365,3 +1365,5 @@ describe('ClientInvoicesController', () => {
     });
   });
 });
+
+// TODO addProduct

@@ -7,13 +7,14 @@ const invoiceEdit = require('./services/invoiceEdit');
 // const refresh = require('./services/refresh');
 const invoices = require('./services/invoices');
 const invoicesShort = require('./services/invoicesShort');
-// const expenseCreate = require('./services/expenseCreate');
 // const exportOds = require('./services/export');
 const invoiceDelete = require('./services/invoiceDelete');
 // const swap = require('./services/swap');
 const addDeliveryOrder = require('./services/addDeliveryOrder');
 const editDeliveryOrder = require('./services/editDeliveryOrder');
 const deleteDeliveryOrder = require('./services/deleteDeliveryOrder');
+
+const addProduct = require('./services/addProduct');
 
 /**
  * Get invoice data
@@ -32,6 +33,7 @@ module.exports = {
   addDeliveryOrder,
   editDeliveryOrder,
   deleteDeliveryOrder,
+  addProduct,
   // invoiceConfirm,
   // refresh,
   // expenseCreate,

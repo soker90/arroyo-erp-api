@@ -131,6 +131,18 @@ const isDORemovable = async ({
     throw new deliveryOrderErrors.DeliveryOrderNoRemovable();
 };
 
+const validateProduct = ({
+  body: {
+    name,
+    weight,
+    unit,
+    price,
+  },
+}) => {
+  if (!isNumber(weight) || !isNumber(price) || !name || !unit)
+    throw new commonErrors.MissingParamsError();
+};
+
 module.exports = {
   validateId,
   validateIdParam,
@@ -140,4 +152,5 @@ module.exports = {
   validateDeliveryOrder,
   isDORemovable,
   validateDeliveryOrderParam,
+  validateProduct,
 };
