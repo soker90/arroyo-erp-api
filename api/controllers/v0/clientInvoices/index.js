@@ -17,8 +17,12 @@ module.exports = (
     providerValidator,
     clientValidator,
     clientInvoiceValidator,
+    deliveryOrderValidator,
   },
-  { invoiceAdapter, clientInvoiceAdapter },
+  {
+    invoiceAdapter,
+    clientInvoiceAdapter,
+  },
 ) => {
   const clientInvoicesController = new ClientInvoiceController({
     invoiceService,
@@ -34,6 +38,7 @@ module.exports = (
     clientInvoiceService,
     clientInvoiceValidator,
     clientInvoiceAdapter,
+    deliveryOrderValidator,
   });
 
   return [{
@@ -103,6 +108,26 @@ module.exports = (
     domain: 'client/invoices',
     path: '/:id/deliveryOrder',
     handler: clientInvoicesController.addDeliveryOrder,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'patch',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder',
+    handler: clientInvoicesController.editDeliveryOrder,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'delete',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder',
+    handler: clientInvoicesController.deleteDeliveryOrder,
     bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [

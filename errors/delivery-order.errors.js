@@ -87,6 +87,18 @@ class DeliveryOrderDeleteWithInvoice extends Error {
   }
 }
 
+class DeliveryOrderNoRemovable extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'No se puedo borrar un albarán con productos') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   DeliveryOrderMissingId,
   DeliveryOrderMissing,
@@ -95,4 +107,5 @@ module.exports = {
   DeliveryOrderProductIndexNotFound,
   DeliveryOrderDateRequired,
   DeliveryOrderDeleteWithInvoice,
+  DeliveryOrderNoRemovable,
 };

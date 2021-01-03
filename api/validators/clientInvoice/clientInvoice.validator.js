@@ -7,6 +7,7 @@ const {
 const {
   invoiceErrors,
   commonErrors,
+  deliveryOrderErrors,
 } = require('../../../errors');
 const {
   CONCEPT,
@@ -78,34 +79,6 @@ const confirmParams = async ({
   if (invoice.nOrder) throw new invoiceErrors.InvoiceWithOrderNumber();
 };
 
-/**
- * Valida los datos envíados para crear una factura
- * @param concept
- * @param deliveryOrders
- */
-const createParams = ({
-  concept,
-  deliveryOrders,
-  dateInvoice,
-  dateRegister,
-  total,
-  provider,
-  type,
-  bookColumn,
-  re,
-}) => {
-  if (!concept || !bookColumn) throw new invoiceErrors.InvoiceParamsMissing();
-
-  if (concept === CONCEPT.COMPRAS && !deliveryOrders?.length)
-    throw new invoiceErrors.InvoiceMissingDeliveryOrders();
-
-  if (![CONCEPT.COMPRAS].includes(concept)) {
-    if (!isNumber(dateInvoice) || !isNumber(dateRegister) || !isNumber(total)
-      || !provider || !type || (re && !isNumber(re)))
-      throw new invoiceErrors.InvoiceParamsMissing();
-  }
-};
-
 const editBody = ({
   body: {
     date,
@@ -128,9 +101,43 @@ const isRemovable = async ({ id }) => {
     throw new invoiceErrors.InvoiceNoRemovable();
 };
 
+/**
+ * Check if invalid date
+ * @param {number} date
+ * @private
+ */
+const isValidDate = ({ body: { date } }) => {
+  if (!date || typeof date !== 'number')
+    throw new commonErrors.DateNotValid();
+};
+
+const validateDeliveryOrder = async ({ deliveryOrder }) => {
+  const doExist = await ClientInvoiceModel.exists({ 'deliveryOrders._id': deliveryOrder });
+  if (!doExist) throw new deliveryOrderErrors.DeliveryOrderNotFound();
+};
+
+const validateDeliveryOrderParam = async ({ params }) => validateDeliveryOrder(params);
+
+const isDORemovable = async ({
+  id,
+  deliveryOrder,
+}) => {
+  const invoiceDO = await ClientInvoiceModel.findOne({
+    _id: id,
+    'deliveryOrders._id': deliveryOrder,
+  }, { 'deliveryOrders.$': 1 });
+
+  if (invoiceDO?.deliveryOrders?.[0]?.products?.length)
+    throw new deliveryOrderErrors.DeliveryOrderNoRemovable();
+};
+
 module.exports = {
   validateId,
   validateIdParam,
   editBody,
   isRemovable,
+  isValidDate,
+  validateDeliveryOrder,
+  isDORemovable,
+  validateDeliveryOrderParam,
 };

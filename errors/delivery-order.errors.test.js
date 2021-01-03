@@ -138,4 +138,23 @@ describe('DeliveryOrderErrors', () => {
         .toEqual('CustomMessage');
     });
   });
+
+  describe('DeliveryOrderNoRemovable', () => {
+    test('should exist and extend from Error', () => {
+      expect(new DeliveryOrderErrors.DeliveryOrderNoRemovable())
+        .toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderNoRemovable();
+      expect(err.message)
+        .toEqual('No se puedo borrar un albarán con productos');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new DeliveryOrderErrors.DeliveryOrderNoRemovable('CustomMessage');
+      expect(err.message)
+        .toEqual('CustomMessage');
+    });
+  });
 });

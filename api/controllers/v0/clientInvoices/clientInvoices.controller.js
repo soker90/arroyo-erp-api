@@ -21,6 +21,7 @@ class ClientInvoicesController {
     clientInvoiceService,
     clientInvoiceValidator,
     clientInvoiceAdapter,
+    deliveryOrderValidator,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -35,17 +36,21 @@ class ClientInvoicesController {
     this.clientInvoiceService = clientInvoiceService;
     this.clientInvoiceValidator = clientInvoiceValidator;
     this.clientInvoiceAdapter = clientInvoiceAdapter;
+    this.deliveryOrderValidator = deliveryOrderValidator;
   }
 
   _handleError(res, error) {
     switch (error.name) {
     case 'ClientIdNotFound':
     case 'InvoiceIdNotFound':
+    case 'DeliveryOrderNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
     case 'ParamNotValidError':
     case 'InvoiceParamsMissing':
     case 'InvoiceNoRemovable':
+    case 'DateNotValid':
+    case 'DeliveryOrderNoRemovable':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -117,6 +122,7 @@ class ClientInvoicesController {
         .send())
       .catch(this._handleError.bind(this, res));
   }
+
   /**
    * Edit the client invoice
    */
@@ -139,7 +145,7 @@ class ClientInvoicesController {
     Promise.resolve(req.params)
       .tap(this.clientInvoiceValidator.validateId)
       .then(this.clientInvoiceService.addDeliveryOrder)
-      .then(() => res.status(204)
+      .then(() => res.status(201)
         .send())
       .catch(this._handleError.bind(this, res));
   }
@@ -149,9 +155,26 @@ class ClientInvoicesController {
    */
   editDeliveryOrder(req, res) {
     logService.logInfo('[addDeliveryOrder]  - Actualiza un albarán de la factura');
+    Promise.resolve(req)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
+      .tap(this.clientInvoiceValidator.isValidDate)
+      .then(this.clientInvoiceService.editDeliveryOrder)
+      .then(() => res.status(204)
+        .send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Delete the delivery order of the client invoice
+   */
+  deleteDeliveryOrder(req, res) {
+    logService.logInfo('[deleteDeliveryOrder]  - Elimina un albarán de la factura');
     Promise.resolve(req.params)
       .tap(this.clientInvoiceValidator.validateId)
-      .then(this.clientInvoiceService.addDeliveryOrder)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrder)
+      .tap(this.clientInvoiceValidator.isDORemovable)
+      .then(this.clientInvoiceService.deleteDeliveryOrder)
       .then(() => res.status(204)
         .send())
       .catch(this._handleError.bind(this, res));
