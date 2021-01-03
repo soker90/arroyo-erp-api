@@ -607,7 +607,7 @@ describe('ProvidersController', () => {
               7.62,
               6.5,
             ],
-            year: 2020,
+            year: new Date().getFullYear(),
             annual: 20.52,
           };
 

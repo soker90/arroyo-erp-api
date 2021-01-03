@@ -1078,7 +1078,6 @@ describe('InvoicesController', () => {
               .send({
                 data: {
                   ...invoiceData,
-                  dateInvoice: undefined,
                   nInvoice,
                 },
               })

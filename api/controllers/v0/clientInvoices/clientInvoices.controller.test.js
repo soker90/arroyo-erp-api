@@ -977,7 +977,6 @@ describe('ClientInvoicesController', () => {
         beforeAll(done => {
           supertest(app)
             .post(PATH(invoice._id))
-            .send()
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
               response = res;
@@ -985,11 +984,19 @@ describe('ClientInvoicesController', () => {
             });
         });
 
-        test('Debería dar un 204', () => {
+        test('Debería dar un 200', () => {
           expect(token)
             .toBeTruthy();
           expect(response.status)
-            .toBe(204);
+            .toBe(200);
+        });
+
+        test('Contiene un albarán nuevo', () => {
+          const deliveryOrder = response.body.deliveryOrders.pop();
+          expect(deliveryOrder.date)
+            .toBeNull();
+          expect(deliveryOrder.total).toBe(0);
+          expect(deliveryOrder.products.length).toBe(0);
         });
       });
     });
