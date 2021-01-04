@@ -995,8 +995,10 @@ describe('ClientInvoicesController', () => {
           const deliveryOrder = response.body.deliveryOrders.pop();
           expect(deliveryOrder.date)
             .toBeNull();
-          expect(deliveryOrder.total).toBe(0);
-          expect(deliveryOrder.products.length).toBe(0);
+          expect(deliveryOrder.total)
+            .toBe(0);
+          expect(deliveryOrder.products.length)
+            .toBe(0);
         });
       });
     });
@@ -1364,6 +1366,212 @@ describe('ClientInvoicesController', () => {
       });
     });
   });
-});
 
-// TODO addProduct
+  describe('POST /client/invoices/:id/deliveryOrder/:order/products', () => {
+    const PATH = (id, order) => `/client/invoices/${id}/deliveryOrder/${order}/product`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post(PATH('5ef26172ccfd9d1541b870be', '5ef26172ccfd9d1541b870be'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('La factura no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH('5f761ae5a7d8986bc28ff7f4', '5ef26172ccfd9d1541b870be'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.body.message)
+            .toBe(new invoiceErrors.InvoiceIdNotFound().message);
+        });
+      });
+
+      describe('El albarán no existe', () => {
+        let response;
+        let invoice;
+
+        before(() => ClientInvoiceModel.create({
+          date: Date.now(),
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH(invoice._id, '5ef26172ccfd9d1541b870be'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new deliveryOrderErrors.DeliveryOrderNotFound().message);
+        });
+      });
+
+      describe.each([
+        'unit', 'name', 'price', 'weight',
+      ])('No se envía %s', (item => {
+        let response;
+        let invoice;
+        const productMock = {
+          unit: 'Kg',
+          name: 'Producto',
+          price: 2.34,
+          weight: 3.43,
+        };
+
+        before(async () => {
+          await ClientInvoiceModel.create({
+            date: Date.now(),
+            deliveryOrders: [{
+              date: null,
+              total: 0,
+              products: [],
+            }],
+          })
+            .then(invoiceCreated => {
+              invoice = invoiceCreated;
+            });
+        });
+
+        beforeAll(done => {
+          delete productMock[item];
+          supertest(app)
+            .post(PATH(invoice._id, invoice.deliveryOrders[0]._id))
+            .send(productMock)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.status)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new invoiceErrors.InvoiceParamsMissing().message);
+        });
+      }));
+
+      describe('Añade un producto', () => {
+        let invoice;
+        let response;
+        const productMock = {
+          unit: 'Kg',
+          name: 'Producto',
+          price: 2.34,
+          weight: 3.43,
+        };
+
+        before(() => ClientInvoiceModel.create({
+          date: Date.now(),
+          deliveryOrders: [{
+            date: null,
+            total: 0,
+            products: [],
+          }],
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH(invoice._id, invoice.deliveryOrders[0]._id))
+            .send(productMock)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('El producto se ha añadido', () => {
+          const product = response.body.deliveryOrders[0].products[0];
+          expect(product.name)
+            .toBe(productMock.name);
+          expect(product.unit)
+            .toBe(productMock.unit);
+          expect(product.price)
+            .toBe(productMock.price);
+          expect(product.weight)
+            .toBe(productMock.weight);
+        });
+      });
+    });
+  });
+});

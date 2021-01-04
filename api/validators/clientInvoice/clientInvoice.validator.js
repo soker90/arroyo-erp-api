@@ -140,7 +140,7 @@ const validateProduct = ({
   },
 }) => {
   if (!isNumber(weight) || !isNumber(price) || !name || !unit)
-    throw new commonErrors.MissingParamsError();
+    throw new invoiceErrors.InvoiceParamsMissing();
 };
 
 module.exports = {
