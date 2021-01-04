@@ -193,6 +193,7 @@ class ClientInvoicesController {
       .tap(this.clientInvoiceValidator.validateProduct)
       .tap(this.productService.updatePrice)
       .then(this.clientInvoiceService.addProduct)
+      .then(this.clientInvoiceService.refresh)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -208,6 +209,7 @@ class ClientInvoicesController {
       .tap(this.clientInvoiceValidator.validateProduct)
       .tap(this.productService.updatePrice)
       .then(this.clientInvoiceService.editProduct)
+      .then(this.clientInvoiceService.refresh)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -221,6 +223,7 @@ class ClientInvoicesController {
       .tap(this.clientInvoiceValidator.validateId)
       .tap(this.clientInvoiceValidator.validateDeliveryOrder)
       .then(this.clientInvoiceService.deleteProduct)
+      .then(this.clientInvoiceService.refresh)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

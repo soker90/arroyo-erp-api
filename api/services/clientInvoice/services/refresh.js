@@ -1,19 +1,32 @@
-const { InvoiceModel } = require('arroyo-erp-models');
-const { calcDeliveryOrdersData } = require('../utils/invoices');
+const { ClientInvoice } = require('arroyo-erp-models');
 
 /**
- * Actualiza la factura del albaran dado, en caso de que este
- * esté en una factura
- * @param {Object} deliveryOrder
+ * Actualiza la factura
+ * @param {Object} invoice
  * @returns {Promise<{invoice}|*>}
  */
-const refresh = async deliveryOrder => {
-  if (!deliveryOrder.invoice) return;
+const refresh = invoice => {
+  let total = 0;
+  const deliveryOrders = invoice.deliveryOrders.map(deliveryOrder => {
+    const totalDO = deliveryOrder.products.reduce(
+      (accumulator, current) => accumulator + current.total,
+      0
+    );
+    total += totalDO;
+    return {
+      ...deliveryOrder,
+      total: totalDO,
+    };
+  });
 
-  const newData = await InvoiceModel.findOne({ _id: deliveryOrder.invoice })
-    .then(({ deliveryOrders }) => calcDeliveryOrdersData(deliveryOrders));
-
-  await InvoiceModel.updateOne({ _id: deliveryOrder.invoice }, newData.dataInvoice);
+  const taxBase = total / 1.1;
+  const iva = taxBase * 0.1;
+  return ClientInvoice.findOneAndUpdate({ _id: invoice._id }, {
+    deliveryOrders,
+    total,
+    iva,
+    taxBase,
+  }, { new: true });
 };
 
 module.exports = refresh;
