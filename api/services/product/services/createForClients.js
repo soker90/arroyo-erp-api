@@ -8,11 +8,9 @@ const {
  * @return {Promise<string>}
  */
 const createForClients = ({
-  code,
   name,
   price,
 }) => new ProductModel({
-  code,
   name,
   price,
 }).save();

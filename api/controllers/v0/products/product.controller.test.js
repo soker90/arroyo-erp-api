@@ -37,7 +37,6 @@ const product2Mock = {
 };
 
 const productClient = {
-  code: 'yy34',
   name: 'Product 9',
   price: 22.5,
 };
@@ -864,7 +863,7 @@ describe('ProductController', () => {
       });
 
       describe.each([
-        'code', 'name', 'price',
+        'name', 'price',
       ])('No se envía %s', (item => {
         let response;
 
@@ -916,7 +915,6 @@ describe('ProductController', () => {
 
         test('Devuelve los datos correctos', () => {
           expect(response.body[0].name).toBe(productClient.name);
-          expect(response.body[0].code).toBe(productClient.code);
           expect(response.body[0].price).toBe(productClient.price);
         });
       });

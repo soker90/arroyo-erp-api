@@ -15,6 +15,8 @@ const editDeliveryOrder = require('./services/editDeliveryOrder');
 const deleteDeliveryOrder = require('./services/deleteDeliveryOrder');
 
 const addProduct = require('./services/addProduct');
+const editProduct = require('./services/editProduct');
+const deleteProduct = require('./services/deleteProduct');
 
 /**
  * Get invoice data
@@ -34,6 +36,8 @@ module.exports = {
   editDeliveryOrder,
   deleteDeliveryOrder,
   addProduct,
+  editProduct,
+  deleteProduct,
   // invoiceConfirm,
   // refresh,
   // expenseCreate,

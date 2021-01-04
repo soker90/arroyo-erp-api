@@ -22,6 +22,7 @@ class ClientInvoicesController {
     clientInvoiceValidator,
     clientInvoiceAdapter,
     deliveryOrderValidator,
+    productService,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -37,6 +38,7 @@ class ClientInvoicesController {
     this.clientInvoiceValidator = clientInvoiceValidator;
     this.clientInvoiceAdapter = clientInvoiceAdapter;
     this.deliveryOrderValidator = deliveryOrderValidator;
+    this.productService = productService;
   }
 
   _handleError(res, error) {
@@ -189,7 +191,36 @@ class ClientInvoicesController {
       .tap(this.clientInvoiceValidator.validateIdParam)
       .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
       .tap(this.clientInvoiceValidator.validateProduct)
+      .tap(this.productService.updatePrice)
       .then(this.clientInvoiceService.addProduct)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Edit product to the delivery order
+   */
+  editProduct(req, res) {
+    logService.logInfo('[addProduct]  - Edita un producto de un albarán');
+    Promise.resolve(req)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
+      .tap(this.clientInvoiceValidator.validateProduct)
+      .tap(this.productService.updatePrice)
+      .then(this.clientInvoiceService.editProduct)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Delete product to the delivery order
+   */
+  deleteProduct(req, res) {
+    logService.logInfo('[deleteProduct] - Elimina un producto de un albarán');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrder)
+      .then(this.clientInvoiceService.deleteProduct)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

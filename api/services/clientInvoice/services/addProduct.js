@@ -1,4 +1,5 @@
 const { ClientInvoiceModel } = require('arroyo-erp-models');
+const roundNumber = require('../../../../utils/roundNumber');
 
 /**
  * Add product to delivery order
@@ -21,8 +22,9 @@ const addProduct = ({
     unit,
     price,
   },
-}) => (
-  ClientInvoiceModel.findOneAndUpdate({
+}) => {
+  const total = roundNumber(weight * price);
+  return ClientInvoiceModel.findOneAndUpdate({
     _id: id,
     'deliveryOrders._id': deliveryOrder,
   }, {
@@ -32,9 +34,10 @@ const addProduct = ({
         weight,
         unit,
         price,
+        total,
       },
     },
-  }, {new: true})
-);
+  }, { new: true });
+};
 
 module.exports = addProduct;

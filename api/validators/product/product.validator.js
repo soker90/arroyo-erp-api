@@ -77,10 +77,9 @@ const validateCodeDuplicateEdit = async ({
 
 const validateFieldsCreateByClients = ({
   name,
-  code,
   price,
 }) => {
-  if (!name || !code || typeof price !== 'number') throw new productErrors.ProductMissingParams();
+  if (!name || typeof price !== 'number') throw new productErrors.ProductMissingParams();
 };
 
 module.exports = {

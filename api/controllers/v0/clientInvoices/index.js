@@ -11,6 +11,7 @@ module.exports = (
     deliveryOrderService,
     autoIncrementService,
     clientInvoiceService,
+    productService,
   },
   {
     invoiceValidator,
@@ -39,6 +40,7 @@ module.exports = (
     clientInvoiceValidator,
     clientInvoiceAdapter,
     deliveryOrderValidator,
+    productService,
   });
 
   return [{
@@ -138,6 +140,26 @@ module.exports = (
     domain: 'client/invoices',
     path: '/:id/deliveryOrder/:deliveryOrder/product',
     handler: clientInvoicesController.addProduct,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'patch',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder/product/:product',
+    handler: clientInvoicesController.editProduct,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'delete',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder/product/:product',
+    handler: clientInvoicesController.deleteProduct,
     bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [
