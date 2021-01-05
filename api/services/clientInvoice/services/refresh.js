@@ -1,4 +1,4 @@
-const { ClientInvoice } = require('arroyo-erp-models');
+const { ClientInvoiceModel } = require('arroyo-erp-models');
 
 /**
  * Actualiza la factura
@@ -21,7 +21,7 @@ const refresh = invoice => {
 
   const taxBase = total / 1.1;
   const iva = taxBase * 0.1;
-  return ClientInvoice.findOneAndUpdate({ _id: invoice._id }, {
+  return ClientInvoiceModel.findOneAndUpdate({ _id: invoice._id }, {
     deliveryOrders,
     total,
     iva,

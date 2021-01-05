@@ -919,30 +919,6 @@ describe('ProductController', () => {
         });
       });
 
-      describe('El código de producto está duplicado', () => {
-        let response;
-
-        beforeAll(done => {
-          supertest(app)
-            .post(PATH)
-            .set('Authorization', `Bearer ${token}`)
-            .send(productClient)
-            .end((err, res) => {
-              response = res;
-              done();
-            });
-        });
-
-        test('Debería dar un 409', () => {
-          expect(response.status)
-            .toBe(409);
-        });
-
-        test('El mensaje de error es correcto', () => {
-          expect(response.body.message)
-            .toBe(new productErrors.ProductCodeExists().message);
-        });
-      });
     });
   });
 });
