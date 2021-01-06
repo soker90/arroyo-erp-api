@@ -62,21 +62,12 @@ const _isInvalidDate = date => !date || typeof date !== 'number';
  * @param {String} id
  * @returns {Promise<void>}
  */
-const confirmParams = async ({
-  body: {
-    type,
-    paymentDate,
-  },
-  params: { id },
+const haveDate = async ({
+  id,
 }) => {
-  if (!type) throw new invoiceErrors.InvoiceParamsMissing();
-  if (paymentDate && typeof paymentDate !== 'number') throw new commonErrors.DateNotValid();
-  if (type === TYPE_PAYMENT.CASH && !paymentDate) throw new commonErrors.DateNotValid();
+  const invoice = await ClientInvoiceModel.findOne({ _id: id });
 
-  const invoice = await InvoiceModel.findOne({ _id: id });
-
-  if (_isInvalidDate(invoice.dateInvoice)) throw new invoiceErrors.InvoiceInvalidDateInvoice();
-  if (invoice.nOrder) throw new invoiceErrors.InvoiceWithOrderNumber();
+  if (_isInvalidDate(invoice.date)) throw new invoiceErrors.InvoiceInvalidDateInvoice();
 };
 
 const editBody = ({
@@ -153,4 +144,5 @@ module.exports = {
   isDORemovable,
   validateDeliveryOrderParam,
   validateProduct,
+  haveDate,
 };

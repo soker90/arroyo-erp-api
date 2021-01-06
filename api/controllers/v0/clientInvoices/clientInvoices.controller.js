@@ -53,6 +53,7 @@ class ClientInvoicesController {
     case 'InvoiceNoRemovable':
     case 'DateNotValid':
     case 'DeliveryOrderNoRemovable':
+    case 'InvoiceInvalidDateInvoice':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -229,18 +230,14 @@ class ClientInvoicesController {
   }
 
   /**
-   * Return invoice
+   * Generate nInvoice
    */
   invoiceConfirm(req, res) {
-    logService.logInfo('[inovice]  - Confirm invoice');
-    Promise.resolve(req)
-      .tap(this.invoiceValidator.validateIdParam)
-      .tap(this.invoiceValidator.confirmParams)
-      .then(this.invoiceService.invoiceConfirm)
-      .tap(this.paymentService.create)
-      .tap(this.billingService.add)
-      .tap(this.billingService.refresh)
-      .then(this.invoiceAdapter.dataAndPaymentResponse)
+    logService.logInfo('[invoiceConfirm]  - Confirm invoice');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .tap(this.clientInvoiceValidator.haveDate)
+      .then(this.clientInvoiceService.invoiceConfirm)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

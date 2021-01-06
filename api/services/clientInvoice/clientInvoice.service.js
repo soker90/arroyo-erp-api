@@ -1,7 +1,7 @@
 const { ClientInvoiceModel } = require('arroyo-erp-models');
 
 // Split services
-// const invoiceConfirm = require('./services/invoiceConfirm');
+const invoiceConfirm = require('./services/invoiceConfirm');
 const create = require('./services/create');
 const invoiceEdit = require('./services/invoiceEdit');
 const refresh = require('./services/refresh');
@@ -38,9 +38,8 @@ module.exports = {
   addProduct,
   editProduct,
   deleteProduct,
-  // invoiceConfirm,
+  invoiceConfirm,
   refresh,
-  // expenseCreate,
   // exportOds,
   // swap,
 };
