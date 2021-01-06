@@ -202,7 +202,7 @@ class ClientInvoicesController {
    * Edit product to the delivery order
    */
   editProduct(req, res) {
-    logService.logInfo('[addProduct]  - Edita un producto de un albarán');
+    logService.logInfo('[editProduct]  - Edita un producto de un albarán');
     Promise.resolve(req)
       .tap(this.clientInvoiceValidator.validateIdParam)
       .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
