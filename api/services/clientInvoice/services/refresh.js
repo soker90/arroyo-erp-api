@@ -1,19 +1,37 @@
-const { InvoiceModel } = require('arroyo-erp-models');
-const { calcDeliveryOrdersData } = require('../utils/invoices');
+const { ClientInvoiceModel } = require('arroyo-erp-models');
+const roundNumber = require('../../../../utils/roundNumber');
 
 /**
- * Actualiza la factura del albaran dado, en caso de que este
- * esté en una factura
- * @param {Object} deliveryOrder
+ * Actualiza la factura
+ * @param {Object} invoice
  * @returns {Promise<{invoice}|*>}
  */
-const refresh = async deliveryOrder => {
-  if (!deliveryOrder.invoice) return;
+const refresh = invoice => {
+  let total = 0;
+  const deliveryOrders = invoice.deliveryOrders.map(deliveryOrder => {
+    const totalDO = deliveryOrder.products.reduce(
+      (accumulator, current) => accumulator + current.total,
+      0,
+    );
+    total += totalDO;
 
-  const newData = await InvoiceModel.findOne({ _id: deliveryOrder.invoice })
-    .then(({ deliveryOrders }) => calcDeliveryOrdersData(deliveryOrders));
+    return {
+      _id: deliveryOrder._id,
+      date: deliveryOrder.date,
+      products: deliveryOrder.products,
+      total: totalDO,
+    };
+  });
+  total = roundNumber(total);
 
-  await InvoiceModel.updateOne({ _id: deliveryOrder.invoice }, newData.dataInvoice);
+  const taxBase = roundNumber(total / 1.1);
+  const iva = roundNumber(taxBase * 0.1);
+  return ClientInvoiceModel.findOneAndUpdate({ _id: invoice._id }, {
+    deliveryOrders,
+    total,
+    iva,
+    taxBase,
+  }, { new: true });
 };
 
 module.exports = refresh;

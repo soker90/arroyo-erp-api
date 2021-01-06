@@ -11,13 +11,19 @@ module.exports = (
     deliveryOrderService,
     autoIncrementService,
     clientInvoiceService,
+    productService,
   },
   {
     invoiceValidator,
     providerValidator,
     clientValidator,
+    clientInvoiceValidator,
+    deliveryOrderValidator,
   },
-  { invoiceAdapter },
+  {
+    invoiceAdapter,
+    clientInvoiceAdapter,
+  },
 ) => {
   const clientInvoicesController = new ClientInvoiceController({
     invoiceService,
@@ -31,6 +37,10 @@ module.exports = (
     autoIncrementService,
     clientValidator,
     clientInvoiceService,
+    clientInvoiceValidator,
+    clientInvoiceAdapter,
+    deliveryOrderValidator,
+    productService,
   });
 
   return [{
@@ -90,6 +100,66 @@ module.exports = (
     domain: 'client/invoices',
     path: '/:id',
     handler: clientInvoicesController.invoice,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'post',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder',
+    handler: clientInvoicesController.addDeliveryOrder,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'patch',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder',
+    handler: clientInvoicesController.editDeliveryOrder,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'delete',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder',
+    handler: clientInvoicesController.deleteDeliveryOrder,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'post',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder/product',
+    handler: clientInvoicesController.addProduct,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'patch',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder/product/:product',
+    handler: clientInvoicesController.editProduct,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'delete',
+    domain: 'client/invoices',
+    path: '/:id/deliveryOrder/:deliveryOrder/product/:product',
+    handler: clientInvoicesController.deleteProduct,
     bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [

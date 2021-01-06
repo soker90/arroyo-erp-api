@@ -74,7 +74,6 @@ class ProductController {
     logService.logInfo('[products] - Crea un producto para clientes');
     Promise.resolve(req.body)
       .tap(this.productValidator.validateFieldsCreateByClients)
-      .tap(this.productValidator.validateCodeDuplicate)
       .then(this.productService.createForClients)
       .then(this.productService.products)
       .then(data => res.send(data))

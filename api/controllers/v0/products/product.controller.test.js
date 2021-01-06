@@ -37,7 +37,6 @@ const product2Mock = {
 };
 
 const productClient = {
-  code: 'yy34',
   name: 'Product 9',
   price: 22.5,
 };
@@ -864,7 +863,7 @@ describe('ProductController', () => {
       });
 
       describe.each([
-        'code', 'name', 'price',
+        'name', 'price',
       ])('No se envía %s', (item => {
         let response;
 
@@ -916,35 +915,10 @@ describe('ProductController', () => {
 
         test('Devuelve los datos correctos', () => {
           expect(response.body[0].name).toBe(productClient.name);
-          expect(response.body[0].code).toBe(productClient.code);
           expect(response.body[0].price).toBe(productClient.price);
         });
       });
 
-      describe('El código de producto está duplicado', () => {
-        let response;
-
-        beforeAll(done => {
-          supertest(app)
-            .post(PATH)
-            .set('Authorization', `Bearer ${token}`)
-            .send(productClient)
-            .end((err, res) => {
-              response = res;
-              done();
-            });
-        });
-
-        test('Debería dar un 409', () => {
-          expect(response.status)
-            .toBe(409);
-        });
-
-        test('El mensaje de error es correcto', () => {
-          expect(response.body.message)
-            .toBe(new productErrors.ProductCodeExists().message);
-        });
-      });
     });
   });
 });

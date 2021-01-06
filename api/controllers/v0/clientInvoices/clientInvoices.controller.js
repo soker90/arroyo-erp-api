@@ -19,6 +19,10 @@ class ClientInvoicesController {
     autoIncrementService,
     clientValidator,
     clientInvoiceService,
+    clientInvoiceValidator,
+    clientInvoiceAdapter,
+    deliveryOrderValidator,
+    productService,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
@@ -31,14 +35,25 @@ class ClientInvoicesController {
     this.autoIncrementService = autoIncrementService;
     this.clientValidator = clientValidator;
     this.clientInvoiceService = clientInvoiceService;
+    this.clientInvoiceValidator = clientInvoiceValidator;
+    this.clientInvoiceAdapter = clientInvoiceAdapter;
+    this.deliveryOrderValidator = deliveryOrderValidator;
+    this.productService = productService;
   }
 
   _handleError(res, error) {
     switch (error.name) {
     case 'ClientIdNotFound':
+    case 'InvoiceIdNotFound':
+    case 'DeliveryOrderNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
     case 'ParamNotValidError':
+    case 'InvoiceParamsMissing':
+    case 'InvoiceNoRemovable':
+    case 'DateNotValid':
+    case 'DeliveryOrderNoRemovable':
+    case 'InvoiceInvalidDateInvoice':
       this.errorHandler.sendBadRequest(res)(error);
       break;
       /* istanbul ignore next */
@@ -52,11 +67,11 @@ class ClientInvoicesController {
    * Return invoice
    */
   invoice(req, res) {
-    logService.logInfo('[inovice]  - Get invoice');
+    logService.logInfo('[inovice]  - Get invoice of client');
     Promise.resolve(req.params)
-      .tap(this.invoiceValidator.validateId)
-      .then(this.invoiceService.invoice)
-      .then(this.invoiceAdapter.fullResponse)
+      .tap(this.clientInvoiceValidator.validateId)
+      .then(this.clientInvoiceService.invoice)
+      // .then(this.invoiceAdapter.fullResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
@@ -88,7 +103,7 @@ class ClientInvoicesController {
    * Create the client invoice
    */
   create(req, res) {
-    logService.logInfo('[client invoices] - Crea factura para clientes');
+    logService.logInfo('[create] - Crea factura para clientes');
     Promise.resolve(req.body)
       .tap(this.clientValidator.validateClient)
       .then(this.clientInvoiceService.create)
@@ -100,66 +115,129 @@ class ClientInvoicesController {
    * Delete invoice
    */
   delete(req, res) {
-    logService.logInfo('[invoices] - Eliminar factura');
+    logService.logInfo('[delete] - Eliminar factura de cliente');
     Promise.resolve(req.params)
-      .tap(this.invoiceValidator.validateId)
-      .tap(this.invoiceValidator.isRemovable)
-      .then(this.invoiceService.invoiceDelete)
-      .tap(this.deliveryOrderService.refreshInvoice)
-      .tap(this.autoIncrementService.decrementInvoice)
-      .tap(this.paymentService.remove)
-      .tap(this.billingService.remove)
-      .tap(this.billingService.refresh)
+      .tap(this.clientInvoiceValidator.validateId)
+      .tap(this.clientInvoiceValidator.isRemovable)
+      .then(this.clientInvoiceService.invoiceDelete)
+      .tap(this.autoIncrementService.decrementClientInvoice)
       .then(() => res.status(204)
         .send())
       .catch(this._handleError.bind(this, res));
   }
 
   /**
-   * Create the invoice
-   */
-  expenseCreate(req, res) {
-    logService.logInfo('[invoices] - Create invoice for expense');
-    Promise.resolve(req.body)
-      .tap(this.providerValidator.validateProvider)
-      .tap(this.invoiceValidator.createParams)
-      .tap(this.invoiceValidator.validateNInvoice)
-      .then(this.invoiceService.expenseCreate)
-      .tap(this.paymentService.create)
-      .tap(this.billingService.add)
-      .tap(this.billingService.refresh)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  }
-
-  /**
-   * Edit the invoice
+   * Edit the client invoice
    */
   edit(req, res) {
-    logService.logInfo('[invoices]  - Edit invoices');
+    logService.logInfo('[edit]  - Edit client invoices');
     Promise.resolve(req)
-      .tap(this.invoiceValidator.validateIdParam)
-      .tap(this.invoiceValidator.editBody)
-      .tap(this.invoiceValidator.validateNInvoiceEdit)
-      .then(this.invoiceService.invoiceEdit)
-      .then(this.invoiceAdapter.conditionalDataTotalsResponse)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.editBody)
+      .then(this.clientInvoiceService.invoiceEdit)
+      .then(this.clientInvoiceAdapter.conditionalDataTotalsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 
   /**
-   * Return invoice
+   * Edit the delivery order of the client invoice
+   */
+  addDeliveryOrder(req, res) {
+    logService.logInfo('[addDeliveryOrder]  - Añade un albarán a la factura');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .then(this.clientInvoiceService.addDeliveryOrder)
+      .then(data => res
+        .send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Edit the delivery order of the client invoice
+   */
+  editDeliveryOrder(req, res) {
+    logService.logInfo('[addDeliveryOrder]  - Actualiza un albarán de la factura');
+    Promise.resolve(req)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
+      .tap(this.clientInvoiceValidator.isValidDate)
+      .then(this.clientInvoiceService.editDeliveryOrder)
+      .then(() => res.status(204)
+        .send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Delete the delivery order of the client invoice
+   */
+  deleteDeliveryOrder(req, res) {
+    logService.logInfo('[deleteDeliveryOrder]  - Elimina un albarán de la factura');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrder)
+      .tap(this.clientInvoiceValidator.isDORemovable)
+      .then(this.clientInvoiceService.deleteDeliveryOrder)
+      .then(() => res.status(204)
+        .send())
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Add product to the delivery order
+   */
+  addProduct(req, res) {
+    logService.logInfo('[addProduct]  - Añade un producto a un albarán');
+    Promise.resolve(req)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
+      .tap(this.clientInvoiceValidator.validateProduct)
+      .tap(this.productService.updatePrice)
+      .then(this.clientInvoiceService.addProduct)
+      .then(this.clientInvoiceService.refresh)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Edit product to the delivery order
+   */
+  editProduct(req, res) {
+    logService.logInfo('[editProduct]  - Edita un producto de un albarán');
+    Promise.resolve(req)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrderParam)
+      .tap(this.clientInvoiceValidator.validateProduct)
+      .tap(this.productService.updatePrice)
+      .then(this.clientInvoiceService.editProduct)
+      .then(this.clientInvoiceService.refresh)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Delete product to the delivery order
+   */
+  deleteProduct(req, res) {
+    logService.logInfo('[deleteProduct] - Elimina un producto de un albarán');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrder)
+      .then(this.clientInvoiceService.deleteProduct)
+      .then(this.clientInvoiceService.refresh)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Generate nInvoice
    */
   invoiceConfirm(req, res) {
-    logService.logInfo('[inovice]  - Confirm invoice');
-    Promise.resolve(req)
-      .tap(this.invoiceValidator.validateIdParam)
-      .tap(this.invoiceValidator.confirmParams)
-      .then(this.invoiceService.invoiceConfirm)
-      .tap(this.paymentService.create)
-      .tap(this.billingService.add)
-      .tap(this.billingService.refresh)
-      .then(this.invoiceAdapter.dataAndPaymentResponse)
+    logService.logInfo('[invoiceConfirm]  - Confirm invoice');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateId)
+      .tap(this.clientInvoiceValidator.haveDate)
+      .then(this.clientInvoiceService.invoiceConfirm)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

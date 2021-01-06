@@ -1,42 +1,21 @@
-const { InvoiceModel, DeliveryOrderModel } = require('arroyo-erp-models');
-const generateOrderNumber = require('../../../../components/generate-num-order');
-const { isTypeCash } = require('../../../../utils');
+const { ClientInvoiceModel } = require('arroyo-erp-models');
+const generateNumberInvoice = require('../../../../components/generate-num-invoice');
 
 /**
- * Añade el numero de orden de la factura a los albaranes
- * @param {Object} invoice
- * @returns {Promise<void>}
- */
-const _addNOrderToDeliveryOrder = async invoice => {
-  const { nOrder } = invoice;
-  for (const deliveryOrder of invoice.deliveryOrders) {
-    const model = await DeliveryOrderModel
-      .findOneAndUpdate({ _id: deliveryOrder }, { nOrder });
-    model.save();
-  }
-};
-
-/**
- * Genera el número de orden correspondiente a la factura
+ * Genera el número de factura
  * @param {String} id
- * @param {Number} datePayment
- * @param {String} type
- * @returns {Promise<{nOrder: *, dateRegister: *, dateInvoice: number, nInvoice: *}>}
+ * @returns {{nInvoice: String}}
  */
-const invoiceConfirm = async ({ params: { id }, body: { paymentDate, type } }) => {
-  const invoiceData = await InvoiceModel.findOne({ _id: id });
-  invoiceData.nOrder = await generateOrderNumber(invoiceData.dateInvoice);
+const invoiceConfirm = async ({ id }) => {
+  const invoiceData = await ClientInvoiceModel.findOne({ _id: id });
 
-  invoiceData.payment = {
-    paymentDate,
-    type,
-    ...(isTypeCash(type) && { paid: true }),
-  };
+  const num = await generateNumberInvoice(invoiceData.date);
+  const date = new Date(invoiceData.date).getYear() - 100;
+  const nInvoice = `${date}-${num}`;
 
-  const invoice = await invoiceData.save();
-  await _addNOrderToDeliveryOrder(invoice);
+  await ClientInvoiceModel.updateOne({ _id: id }, { nInvoice });
 
-  return invoiceData;
+  return { nInvoice };
 };
 
 module.exports = invoiceConfirm;
