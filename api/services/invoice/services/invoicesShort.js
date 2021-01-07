@@ -15,12 +15,22 @@ const invoicesShort = async ({
   };
 
   const invoices = await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid')
-    .sort({ nOrder: -1 })
-    .skip(offset || 0)
-    .limit(limit)
+    .sort({
+      dateRegister: -1,
+      nOrder: -1,
+    })
+    .skip(Number(offset || 0))
+    .limit(Number(limit || 10))
     .lean();
 
   invoices.sort(a => (a.nOrder ? 0 : -1));
-  return invoices;
+
+  const count = await InvoiceModel.countDocuments(filter);
+
+  return {
+    invoices,
+    count,
+  };
 };
+
 module.exports = invoicesShort;
