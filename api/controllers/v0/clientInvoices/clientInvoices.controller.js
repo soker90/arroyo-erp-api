@@ -236,7 +236,7 @@ class ClientInvoicesController {
     logService.logInfo('[invoiceConfirm]  - Confirm invoice');
     Promise.resolve(req.params)
       .tap(this.clientInvoiceValidator.validateId)
-      .tap(this.clientInvoiceValidator.haveDate)
+      .tap(this.clientInvoiceValidator.isValidForConfirmed)
       .then(this.clientInvoiceService.invoiceConfirm)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

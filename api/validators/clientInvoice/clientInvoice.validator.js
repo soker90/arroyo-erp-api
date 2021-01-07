@@ -62,11 +62,12 @@ const _isInvalidDate = date => !date || typeof date !== 'number';
  * @param {String} id
  * @returns {Promise<void>}
  */
-const haveDate = async ({
+const isValidForConfirmed = async ({
   id,
 }) => {
   const invoice = await ClientInvoiceModel.findOne({ _id: id });
 
+  if (invoice.nInvoice) throw new invoiceErrors.InvoiceWithOrderNumber();
   if (_isInvalidDate(invoice.date)) throw new invoiceErrors.InvoiceInvalidDateInvoice();
 };
 
@@ -144,5 +145,5 @@ module.exports = {
   isDORemovable,
   validateDeliveryOrderParam,
   validateProduct,
-  haveDate,
+  isValidForConfirmed,
 };
