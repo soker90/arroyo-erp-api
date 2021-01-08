@@ -166,6 +166,17 @@ class DeliveryOrdersController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  /**
+   * Return all provider with the filters
+   */
+  countFree(req, res) {
+    logService.logInfo('[countFree] - Count delivery orders free by provider');
+    Promise.resolve(req.params)
+      .then(this.deliveryOrderService.countFree)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = DeliveryOrdersController;

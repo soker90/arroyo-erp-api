@@ -111,5 +111,15 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'get',
+    domain: 'deliveryorders',
+    path: '/countfree/:year',
+    handler: deliveryOrderController.countFree,
+    bindTo: deliveryOrderController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };
