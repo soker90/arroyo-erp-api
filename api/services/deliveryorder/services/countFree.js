@@ -1,4 +1,5 @@
 const { DeliveryOrderModel } = require('arroyo-erp-models');
+const orderByProvider = require('../../billing/utils/orderByProvider');
 
 const _countByMonthAndProvider = year => {
   const start = new Date(year);
@@ -36,7 +37,7 @@ const _getQuarter = month => parseInt((month - 1) / 3) + 1;
 
 const _generateInitialData = deliveryOrder => ({
   provider: deliveryOrder._id.provider,
-  nameProvider: deliveryOrder._id.nameProvider,
+  name: deliveryOrder._id.nameProvider,
   1: 0,
   2: 0,
   3: 0,
@@ -61,7 +62,7 @@ const countFree = async ({ year }) => {
     deliveryOrderCount[deOr._id.provider].total += deOr.count;
   });
 
-  return Object.values(deliveryOrderCount);
+  return Object.values(deliveryOrderCount).sort(orderByProvider);
 };
 
 module.exports = countFree;
