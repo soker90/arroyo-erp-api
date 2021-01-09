@@ -7,7 +7,7 @@ const invoiceEdit = require('./services/invoiceEdit');
 const refresh = require('./services/refresh');
 const invoices = require('./services/invoices');
 const invoicesShort = require('./services/invoicesShort');
-// const exportOds = require('./services/export');
+const exportOds = require('./services/export');
 const invoiceDelete = require('./services/invoiceDelete');
 // const swap = require('./services/swap');
 const addDeliveryOrder = require('./services/addDeliveryOrder');
@@ -40,6 +40,6 @@ module.exports = {
   deleteProduct,
   invoiceConfirm,
   refresh,
-  // exportOds,
+  exportOds,
   // swap,
 };

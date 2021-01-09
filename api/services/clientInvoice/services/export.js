@@ -1,83 +1,54 @@
 const carbone = require('carbone');
-const { InvoiceModel } = require('arroyo-erp-models');
-const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
+const { ClientInvoiceModel, ClientModel } = require('arroyo-erp-models');
 const { formatDate } = require('../../../../utils');
 
-const getCategoryTotal = (invoice, column) => (invoice.bookColumn === column ? invoice.total : null);
-const getRe = invoice => (invoice.bookColumn === COLUMNS_INVOICES.ALQUILER ? invoice.re : null);
-
-const _invoicesAdapter = invoices => invoices.map(invoice => {
-  const re = getRe(invoice);
-  return {
-    nOrden: invoice.nOrder,
-    fechaRegistro: formatDate(invoice.dateRegister),
-    fechaFactura: formatDate(invoice.dateInvoice),
-    nFactura: invoice.nInvoice,
-    nombreProveedor: invoice.businessName,
-    cif: invoice.cif,
-    concepto: invoice.concept,
-    codigo: invoice.code,
-    compras: getCategoryTotal(invoice, COLUMNS_INVOICES.COMPRAS),
-    autonomos: getCategoryTotal(invoice, COLUMNS_INVOICES.AUTONOMOS),
-    salario: getCategoryTotal(invoice, COLUMNS_INVOICES.SALARIO),
-    alquiler: getCategoryTotal(invoice, COLUMNS_INVOICES.ALQUILER),
-    suministros: getCategoryTotal(invoice, COLUMNS_INVOICES.SUMINISTROS),
-    comisiones: getCategoryTotal(invoice, COLUMNS_INVOICES.COMISIONES),
-    tributos: getCategoryTotal(invoice, COLUMNS_INVOICES.TRIBUTOS),
-    reparacion: getCategoryTotal(invoice, COLUMNS_INVOICES.REPARACION),
-    seguros: getCategoryTotal(invoice, COLUMNS_INVOICES.SEGUROS),
-    otros: getCategoryTotal(invoice, COLUMNS_INVOICES.OTROS),
-    retencion: re,
-    total: invoice.total - re,
-  };
+const _productAdapter = product => ({
+  descripcion: product.name,
+  peso: `${product.weight} ${product.unit}`,
+  precio: product.price,
+  importe: product.total,
 });
 
-const _getDates = (year, month) => {
-  if (month) {
-    const start = new Date(`${year}-${month}`);
-    const nextMonth = Number(month) + 3;
-    const end = (nextMonth > 12)
-      ? new Date(`${Number(year) + 1}-1`)
-      : new Date(`${year}-${nextMonth}`);
-    return {
-      start,
-      end,
-    };
-  }
-  const start = new Date(year);
-  const nextYear = Number(year) + 1;
-  const end = new Date(nextYear.toString());
+const _doAdapter = deliveryOrder => {
+  let rows = [];
+  if (deliveryOrder.date) rows.push({ descripcion: formatDate(deliveryOrder.date) });
 
-  return {
-    start,
-    end,
-  };
-};
-const _getInvoices = async (year, month) => {
-  const {
-    start,
-    end,
-  } = _getDates(year, month);
+  rows = [
+    ...rows,
+    ...deliveryOrder.products.map(_productAdapter),
+  ];
 
-  const invoices = await InvoiceModel.find({
-    dateRegister: {
-      $gte: start,
-      $lt: end,
-    },
-  })
-    .sort({ nOrder: 1 })
-    .lean();
-
-  return _invoicesAdapter(invoices);
+  return rows;
 };
 
-const exportOds = async ({ year, month }) => {
-  const invoices = await _getInvoices(year, month);
+const _invoicesAdapter = invoice => ({
+  fecha: formatDate(invoice.date),
+  nFactura: invoice.nInvoice,
+  empresa: invoice.client.businessName,
+  direccion: invoice.client.address,
+  ciudad: invoice.client.city,
+  cp: invoice.client.postalCode,
+  provincia: invoice.client.province,
+  cif: invoice.client.cif,
+  filas: invoice.deliveryOrders.map(_doAdapter).flat(),
+  base: invoice.taxBase,
+  iva: invoice.iva,
+  total: invoice.total,
+});
+
+const _getInvoice = async id => {
+  const invoice = await ClientInvoiceModel.findOne({ _id: id }).populate('client', null, ClientModel);
+
+  return _invoicesAdapter(invoice);
+};
+
+const exportOds = async ({ id }) => {
+  const invoice = await _getInvoice(id);
 
   let bookFile = null;
   let error = null;
 
-  carbone.render('./templates/book.ods', invoices, {
+  carbone.render('./templates/invoice-client.ods', invoice, {
     lang: 'es-es',
   }, (err, result) => {
     /* istanbul ignore next */

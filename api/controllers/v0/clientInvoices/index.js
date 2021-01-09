@@ -178,7 +178,7 @@ module.exports = (
   }, {
     method: 'get',
     domain: 'client/invoices',
-    path: '/export/:year',
+    path: '/export/:id',
     handler: clientInvoicesController.export,
     bindTo: clientInvoicesController,
     skipVersion: true,

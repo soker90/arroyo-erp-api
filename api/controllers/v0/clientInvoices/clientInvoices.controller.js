@@ -243,10 +243,10 @@ class ClientInvoicesController {
   }
 
   export(req, res) {
-    logService.logInfo('[inovice]  - Export invoices to book');
+    logService.logInfo('[inovice]  - Export invoice to ods');
     Promise.resolve(req.params)
-      .tap(this.invoiceValidator.isValidYear)
-      .then(this.invoiceService.exportOds)
+      .tap(this.clientInvoiceValidator.validateId)
+      .then(this.clientInvoiceService.exportOds)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
