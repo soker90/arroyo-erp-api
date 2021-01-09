@@ -1,19 +1,19 @@
 const supertest = require('supertest');
 const {
-  mongoose,
-  ClientModel,
-  ClientInvoiceModel,
-  AutoIncrement,
-} = require('arroyo-erp-models');
+        mongoose,
+        ClientModel,
+        ClientInvoiceModel,
+        AutoIncrement,
+      } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-  commonErrors,
-  invoiceErrors,
-  clientErrors,
-  deliveryOrderErrors,
-} = require('../../../../errors');
+        commonErrors,
+        invoiceErrors,
+        clientErrors,
+        deliveryOrderErrors,
+      } = require('../../../../errors');
 
 const invoiceMock = {
   taxBase: 200.73,
@@ -36,6 +36,18 @@ const invoiceMock = {
     },
 
   ],
+};
+
+const clientMock = {
+  name: 'Cliente 11',
+  address: 'C/Una, 9',
+  city: 'Alcazar',
+  postalCode: '13600',
+  province: 'CRc',
+  phone: '654456321',
+  email: 'ed@ss.es',
+  businessName: 'Nombre SL',
+  cif: 'B777',
 };
 
 describe('ClientInvoicesController', () => {
@@ -2099,6 +2111,104 @@ describe('ClientInvoicesController', () => {
           const products = response.body.deliveryOrders[0].products.length;
           expect(products)
             .toBe(0);
+        });
+      });
+    });
+  });
+
+  describe('GET /client/invoices/export/:id', () => {
+    const PATH = id => `/client/invoices/export/${id}`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH(2000))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      beforeAll(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('La factura no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH('5ff1ddd77dee043cfc99b8d5'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.status)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new invoiceErrors.InvoiceIdNotFound().message);
+        });
+      });
+
+      describe('La petición se procesa correctamente', () => {
+        let response;
+        let client;
+        let invoice;
+
+        before(() => ClientModel.create(clientMock)
+          .then(clientCreated => {
+            client = clientCreated;
+          }));
+
+        before(() => ClientInvoiceModel.create({
+          ...invoiceMock,
+          client: client._id,
+        })
+          .then(invoiceCreated => {
+            invoice = invoiceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH(invoice._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.status)
+            .toBe(200);
         });
       });
     });

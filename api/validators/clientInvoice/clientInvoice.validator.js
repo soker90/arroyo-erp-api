@@ -2,17 +2,12 @@
 const {
   ClientInvoiceModel,
   AutoIncrement,
-  PaymentModel,
 } = require('arroyo-erp-models');
 const {
   invoiceErrors,
   commonErrors,
   deliveryOrderErrors,
 } = require('../../../errors');
-const {
-  CONCEPT,
-  TYPE_PAYMENT,
-} = require('../../../constants');
 const { isNumber } = require('../../../utils');
 
 /**
@@ -31,22 +26,6 @@ const _checkId = async id => {
  */
 const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
-const validateTwoIds = async ({
-  a,
-  b,
-}) => {
-  await _checkId(a);
-  await _checkId(b);
-};
-
-/**
- * Check if year if valid
- * @param {String} year
- */
-const isValidYear = ({ year }) => {
-  // eslint-disable-next-line no-restricted-globals,radix
-  if (!parseInt(year)) throw new commonErrors.ParamNotValidError();
-};
 
 /**
  * Check if invalid date

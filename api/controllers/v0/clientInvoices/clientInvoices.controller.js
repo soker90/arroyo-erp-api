@@ -250,16 +250,6 @@ class ClientInvoicesController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
-
-  swap(req, res) {
-    logService.logInfo('[inovice]  - Intercambia el número de order de dos facturas');
-    Promise.resolve(req.params)
-      .tap(this.invoiceValidator.validateTwoIds)
-      .then(this.invoiceService.swap)
-      .then(() => res.status(204)
-        .send())
-      .catch(this._handleError.bind(this, res));
-  }
 }
 
 module.exports = ClientInvoicesController;

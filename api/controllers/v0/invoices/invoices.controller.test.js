@@ -307,8 +307,8 @@ describe('InvoicesController', () => {
         });
 
         test('Devuelve un array', () => {
-          expect(JSON.parse(response.text))
-            .toEqual([]);
+          expect(response.body.count).toBe(0);
+          expect(response.body.invoices.length).toBe(0);
         });
       });
 
@@ -345,12 +345,14 @@ describe('InvoicesController', () => {
           });
 
           test('Devuelve un array con un elemento', () => {
-            expect(JSON.parse(response.text).length)
+            expect(response.body.count)
+              .toBe(1);
+            expect(response.body.invoices.length)
               .toBe(1);
           });
 
           test('Los datos son correctos', () => {
-            const json = JSON.parse(response.text)[0];
+            const json = response.body.invoices[0];
             expect(JSON.stringify(json._id))
               .toEqual(JSON.stringify(invoice._id));
             expect(json.nOrder)
@@ -388,12 +390,12 @@ describe('InvoicesController', () => {
           });
 
           test('Devuelve un array con un elemento', () => {
-            expect(response.body.length)
+            expect(response.body.invoices.length)
               .toBe(1);
           });
 
           test('Los datos son correctos', () => {
-            const json = response.body[0];
+            const json = response.body.invoices[0];
             expect(json.nOrder)
               .toBe(32);
             expect(json.total)
@@ -442,11 +444,11 @@ describe('InvoicesController', () => {
           });
 
           test('Las facturas están ordenadas correctamente', () => {
-            expect(response.body[0].nOrder)
+            expect(response.body.invoices[0].nOrder)
               .toBeUndefined();
-            expect(response.body[1].nOrder)
+            expect(response.body.invoices[1].nOrder)
               .toBe(invoiceMock.nOrder);
-            expect(response.body[2].nOrder)
+            expect(response.body.invoices[2].nOrder)
               .toBe(nOrder);
           });
         });

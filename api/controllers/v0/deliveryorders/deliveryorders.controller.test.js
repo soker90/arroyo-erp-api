@@ -99,6 +99,7 @@ describe('DeliveryOrderController', () => {
   afterAll(() => testDB.disconnect());
 
   describe('GET /deliveryorders', () => {
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -256,6 +257,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('POST /deliveryorders', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = '/deliveryorders';
     describe('Usuario no autenticado', () => {
       let response;
@@ -394,6 +396,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('PATCH /deliveryorders/:id', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = '/deliveryorders';
     describe('Usuario no autenticado', () => {
       let response;
@@ -638,6 +641,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('DELETE /deliveryorders/:id', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = '/deliveryorders';
     describe('Usuario no autenticado', () => {
       let response;
@@ -754,6 +758,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('GET /deliveryorders/:id', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = '/deliveryorders';
     describe('Usuario no autenticado', () => {
       let response;
@@ -860,6 +865,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('GET /deliveryorders/countfree/:year', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = year => `/deliveryorders/countfree/${year}`;
     describe('Usuario no autenticado', () => {
       let response;
@@ -987,6 +993,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('POST /deliveryorders/:id/product', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = id => `/deliveryorders/${id}/product`;
     describe('Usuario no autenticado', () => {
       let response;
@@ -1347,6 +1354,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('PUT /deliveryorders/:id/product', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = (id, index) => `/deliveryorders/${id}/product/${index}`;
     describe('Usuario no autenticado', () => {
       let response;
@@ -1684,6 +1692,7 @@ describe('DeliveryOrderController', () => {
   });
 
   describe('DELETE /deliveryorders/:id/product', () => {
+    afterAll(() => testDB.cleanAll());
     const PATH = (id, index) => `/deliveryorders/${id}/product/${index}`;
     describe('Usuario no autenticado', () => {
       let response;

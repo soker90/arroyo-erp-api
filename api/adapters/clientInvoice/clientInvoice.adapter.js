@@ -22,7 +22,7 @@ const conditionalDataTotalsResponse = ({
   totals,
 }) => ({
   ...(date && { date: invoice.date }),
-  ...(totals && totalsResponse(invoice)),
+  ...(totals && { totals: totalsResponse(invoice) }),
 });
 
 module.exports = {
