@@ -6,7 +6,6 @@ const {
   ProductModel,
   PriceModel,
   InvoiceModel,
-  ClientModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
@@ -977,7 +976,7 @@ describe('DeliveryOrderController', () => {
         test('La respuesta es correcta', () => {
           expect(response.body[0].provider)
             .toBe(provider);
-          expect(response.body[0].nameProvider)
+          expect(response.body[0].name)
             .toBe(nameProvider);
           expect(response.body[0][1])
             .toBe(1);
