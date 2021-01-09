@@ -44,7 +44,7 @@ const _generateInitialData = deliveryOrder => ({
   total: 0,
 });
 /**
- * Create payment
+ * Cuenta los albaranes sin factura del año dado
  * @return {Promise<[]>}
  */
 const countFree = async ({ year }) => {
@@ -57,11 +57,10 @@ const countFree = async ({ year }) => {
 
     const quarter = _getQuarter(deOr._id.month);
 
-    deliveryOrderCount[deOr._id.provider][quarter] = deliveryOrderCount[deOr._id.provider][quarter] + deOr.count;
-    deliveryOrderCount[deOr._id.provider].total = deliveryOrderCount[deOr._id.provider].total + deOr.count;
+    deliveryOrderCount[deOr._id.provider][quarter] += deOr.count;
+    deliveryOrderCount[deOr._id.provider].total += deOr.count;
   });
 
-  console.log(deliveryOrderCount);
   return Object.values(deliveryOrderCount);
 };
 

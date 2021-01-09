@@ -1,21 +1,21 @@
 const supertest = require('supertest');
 const {
-        mongoose,
-        DeliveryOrderModel,
-        ProviderModel,
-        ProductModel,
-        PriceModel,
-        InvoiceModel,
-        ClientModel,
-      } = require('arroyo-erp-models');
+  mongoose,
+  DeliveryOrderModel,
+  ProviderModel,
+  ProductModel,
+  PriceModel,
+  InvoiceModel,
+  ClientModel,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-        deliveryOrderErrors,
-        productErrors,
-        clientErrors,
-      } = require('../../../../errors');
+  deliveryOrderErrors,
+  productErrors,
+  commonErrors,
+} = require('../../../../errors');
 const { roundNumber } = require('../../../../utils');
 
 const deliveryOrderMock = {
@@ -854,6 +854,133 @@ describe('DeliveryOrderController', () => {
             .toBe(deliveryOrder2Mock.invoice);
           expect(response.body.hasCanal)
             .toBe(true);
+        });
+      });
+    });
+  });
+
+  describe('GET /deliveryorders/countfree/:year', () => {
+    const PATH = year => `/deliveryorders/countfree/${year}`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH(2020))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El año no es correcto', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get(PATH('ss234'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.statusCode)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es el correcto', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.ParamNotValidError().message);
+        });
+      });
+
+      describe('No existen albaranes', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get(PATH(2021))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('No devuelve albaranes', () => {
+          expect(response.body.length)
+            .toBe(0);
+        });
+      });
+
+      describe('Devuelve correctamente el albarán', () => {
+        let response;
+        const provider = '5f14857d3ae0d32b417e8d0c';
+        const nameProvider = 'Test';
+
+        before(() => DeliveryOrderModel.create({
+          provider,
+          nameProvider,
+          date: 1610198989431,
+        }));
+
+        before(done => {
+          supertest(app)
+            .get(PATH(2021))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('La respuesta es correcta', () => {
+          expect(response.body[0].provider)
+            .toBe(provider);
+          expect(response.body[0].nameProvider)
+            .toBe(nameProvider);
+          expect(response.body[0][1])
+            .toBe(1);
+          expect(response.body[0][2])
+            .toBe(0);
+          expect(response.body[0][3])
+            .toBe(0);
+          expect(response.body[0][4])
+            .toBe(0);
         });
       });
     });

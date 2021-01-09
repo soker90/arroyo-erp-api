@@ -34,6 +34,7 @@ class DeliveryOrdersController {
     case 'DeliveryOrderMissing':
     case 'DeliveryOrderDateRequired':
     case 'DeliveryOrderDeleteWithInvoice':
+    case 'ParamNotValidError':
       this.errorHandler.sendBadRequest(res)(error);
       break;
     case 'DeliveryOrderProviderNotFound':
@@ -168,11 +169,12 @@ class DeliveryOrdersController {
   }
 
   /**
-   * Return all provider with the filters
+   * Count delivery orders free by provider
    */
   countFree(req, res) {
     logService.logInfo('[countFree] - Count delivery orders free by provider');
     Promise.resolve(req.params)
+      .tap(this.deliveryOrderValidator.isValidYear)
       .then(this.deliveryOrderService.countFree)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

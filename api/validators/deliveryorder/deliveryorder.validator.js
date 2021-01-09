@@ -2,7 +2,7 @@ const {
   DeliveryOrderModel,
   ProviderModel,
 } = require('arroyo-erp-models');
-const { deliveryOrderErrors } = require('../../../errors');
+const { deliveryOrderErrors, commonErrors } = require('../../../errors');
 
 /**
  * Check if exist id
@@ -88,6 +88,15 @@ const isRemovable = async ({ id }) => {
   if (deliveryOrder.invoice) throw new deliveryOrderErrors.DeliveryOrderDeleteWithInvoice();
 };
 
+/**
+ * Check if year if valid
+ * @param {String} year
+ */
+const isValidYear = ({ year }) => {
+  // eslint-disable-next-line no-restricted-globals,radix
+  if (!parseInt(year)) throw new commonErrors.ParamNotValidError();
+};
+
 module.exports = {
   validateId,
   validateIdParam,
@@ -97,4 +106,5 @@ module.exports = {
   validateProductIndexParams,
   hasDate,
   isRemovable,
+  isValidYear,
 };
