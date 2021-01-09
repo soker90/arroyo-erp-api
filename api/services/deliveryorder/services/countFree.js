@@ -8,7 +8,7 @@ const _countByMonthAndProvider = year => {
   const aggregatorOpts = [
     {
       $match: {
-        nOrder: { $exists: false },
+        invoice: { $exists: false },
         date: {
           $gte: start.getTime(),
           $lt: end.getTime(),
