@@ -4,14 +4,14 @@ const { formatDate } = require('../../../../utils');
 
 const _productAdapter = product => ({
   descripcion: product.name,
-  peso: `${product.weight} ${product.unit}`,
-  precio: product.price,
-  importe: product.total,
+  peso: `${product.weight.toLocaleString('es-ES')} ${product.unit}`,
+  precio: `${product.price.toLocaleString('es-ES')} €`,
+  importe: `${product.total.toLocaleString('es-ES')} €`,
 });
 
 const _doAdapter = deliveryOrder => {
   let rows = [];
-  if (deliveryOrder.date) rows.push({ descripcion: formatDate(deliveryOrder.date) });
+  if (deliveryOrder.date) rows.push({ fecha: formatDate(deliveryOrder.date) });
 
   rows = [
     ...rows,
@@ -65,7 +65,7 @@ const exportOds = async ({ id }) => {
       if (error) reject(error);
       /* istanbul ignore next */
       if (bookFile) resolve(bookFile);
-    }, 1000);
+    }, 100);
   });
 };
 
