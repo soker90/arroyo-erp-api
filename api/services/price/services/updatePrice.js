@@ -94,17 +94,19 @@ const updatePrice = async ({
     }
 
     // Añade el nuevo precio a las notificaciones de cambio de precio
-    await PriceChangeModel.updateOne({
-      product: doProduct.product,
-      deliveryOrder: deliveryOrder._id,
-    }, {
-      product: doProduct.product,
-      productName: doProduct.name,
-      price: doProduct.price,
-      ...(doProduct.diff !== undefined && { diff: doProduct.diff }),
-      deliveryOrder: deliveryOrder._id,
-      date: deliveryOrder.date,
-    }, { upsert: true });
+    if (doProduct.diff) {
+      await PriceChangeModel.updateOne({
+        product: doProduct.product,
+        deliveryOrder: deliveryOrder._id,
+      }, {
+        product: doProduct.product,
+        productName: doProduct.name,
+        price: doProduct.price,
+        diff: doProduct.diff ,
+        deliveryOrder: deliveryOrder._id,
+        date: deliveryOrder.date,
+      }, { upsert: true });
+    }
   }
 
   return deliveryOrder;
