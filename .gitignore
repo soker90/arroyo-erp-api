@@ -107,4 +107,4 @@ dist
 .idea
 
 # Templates
-#templates/invoice-client.ods
+templates/invoice-client.ods
