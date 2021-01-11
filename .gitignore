@@ -105,3 +105,6 @@ dist
 
 #Jetbrains
 .idea
+
+# Templates
+templates/invoice-client.ods
