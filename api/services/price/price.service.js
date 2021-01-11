@@ -4,6 +4,7 @@ const {
 
 const updatePrice = require('./services/updatePrice');
 const deletePrice = require('./services/deletePrice');
+const sendToTelegram = require('./services/sendToTelegram');
 
 const priceChangeRead = ({
   params: { id },
@@ -37,4 +38,5 @@ module.exports = {
   priceChangeRead,
   priceChangeDelete,
   priceChangesUnreadCount,
+  sendToTelegram,
 };

@@ -69,6 +69,18 @@ class PriceChangeController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  /**
+   * Change to read/unread
+   */
+  send(req, res) {
+    logService.logInfo('[send] - Enviar a telegram');
+    Promise.resolve(req.body)
+      // .then(this.priceService.priceChangeDelete)
+      .then(this.priceService.sendToTelegram)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = PriceChangeController;
