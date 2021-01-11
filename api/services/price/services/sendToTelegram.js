@@ -4,6 +4,7 @@ const {
   PriceModel,
   ProductModel,
   PriceChangeModel,
+  ProviderModel,
 } = require('arroyo-erp-models');
 
 const LogService = require('../../log.service');
@@ -16,13 +17,31 @@ const TYPE = 'PriceService';
  * @param {number} index
  * @return {Promise<void>}
  */
-const sendToTelegram = ({
+const sendToTelegram = async ({
   ids,
 }) => {
   const token = process.env.ARROYO_TOKEN_TELEGRAM;
-
   const bot = new TelegramBot(token);
-  bot.sendMessage(process.env.ARROYO_CHATID_TELEGRAM, 'Este es un mensaje enviado desde la aplicación del arroyo');
+
+  const prices = await PriceChangeModel.find({ _id: { $in: ids } })
+    .populate('product', null, ProductModel);
+
+  let message = '--------------------------------------------------------------------\n'
+    + '| Producto | Proveedor | Precio | Diferencia\n';
+
+  prices.forEach(price => {
+    const pricePrev = price.price - price.diff;
+    const priceWithRate = pricePrev + (price.product.rate || 0);
+    const costPrev = pricePrev + (priceWithRate * (price.product.iva + price.product.re));
+    const diff = costPrev - price.product.cost;
+    const row = '--------------------------------------------------------------------\n'
+      + `| ${price.product.name} | ${price.product.nameProvider} | ${price.product.cost} | ${diff}\n`;
+    message += row;
+  });
+
+  message += '--------------------------------------------------------------------';
+
+  bot.sendMessage(process.env.ARROYO_CHATID_TELEGRAM, message);
 };
 
 module.exports = sendToTelegram;
