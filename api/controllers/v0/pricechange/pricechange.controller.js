@@ -10,9 +10,11 @@ class PriceChangeController {
   constructor({
     priceService,
     errorHandler,
+    priceChangeValidator,
   }) {
     this.priceService = priceService;
     this.errorHandler = errorHandler;
+    this.priceChangeValidator = priceChangeValidator;
   }
 
   _handleError(res, error) {
@@ -71,13 +73,25 @@ class PriceChangeController {
   }
 
   /**
-   * Change to read/unread
+   * Changes prices to telegram
    */
   send(req, res) {
     logService.logInfo('[send] - Enviar a telegram');
     Promise.resolve(req.body)
-      // .then(this.priceService.priceChangeDelete)
+      .then(this.priceChangeValidator.validateIds)
       .then(this.priceService.sendToTelegram)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  /**
+   * Change to read/unread
+   */
+  deleteManyChanges(req, res) {
+    logService.logInfo('[deleteManyChanges] - Elimina varios cambios de precio');
+    Promise.resolve(req.body)
+      .then(this.priceChangeValidator.validateIds)
+      .then(this.priceService.deleteManyPricesChange)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

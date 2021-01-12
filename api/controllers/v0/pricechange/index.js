@@ -3,10 +3,11 @@ const errorHandler = require('../../../../components/error-handlers');
 
 const PriceChangeController = require('./pricechange.controller');
 
-module.exports = ({ priceService }) => {
+module.exports = ({ priceService }, { priceChangeValidator }) => {
   const priceChangeController = new PriceChangeController({
     errorHandler,
     priceService,
+    priceChangeValidator,
   });
 
   return [{
@@ -56,6 +57,16 @@ module.exports = ({ priceService }) => {
     domain: 'pricechanges',
     path: '/send',
     handler: priceChangeController.send,
+    bindTo: priceChangeController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'post',
+    domain: 'pricechanges',
+    path: '/deletemany',
+    handler: priceChangeController.deleteManyChanges,
     bindTo: priceChangeController,
     skipVersion: true,
     middlewares: [

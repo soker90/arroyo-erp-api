@@ -1,15 +1,15 @@
 /* eslint-disable nonblock-statement-body-position */
 const TelegramBot = require('node-telegram-bot-api');
 const {
-  PriceModel,
   ProductModel,
   PriceChangeModel,
-  ProviderModel,
 } = require('arroyo-erp-models');
 
 const LogService = require('../../log.service');
 
 const TYPE = 'PriceService';
+
+const logService = new LogService(TYPE);
 
 /**
  * Update price of the product
@@ -20,6 +20,7 @@ const TYPE = 'PriceService';
 const sendToTelegram = async ({
   ids,
 }) => {
+  logService.logInfo('Enviando mensaje a telegram');
   const token = process.env.ARROYO_TOKEN_TELEGRAM;
   const bot = new TelegramBot(token);
 
@@ -41,7 +42,7 @@ const sendToTelegram = async ({
 
   message += '--------------------------------------------------------------------';
 
-  bot.sendMessage(process.env.ARROYO_CHATID_TELEGRAM, message);
+  bot.sendMessage(process.env.ARROYO_CHAT_ID_TELEGRAM, message);
 };
 
 module.exports = sendToTelegram;
