@@ -27,7 +27,7 @@ const _invoicesAdapter = billings => billings.map(({
 const _getBilling = async (year, short) => {
   const invoices = await BillingModel.find({
     year,
-    ...(short && { annual: { $gte: 3004.99 } }),
+    ...(short && { annual: { $gt: 3005.06 } }),
   }, 'trimesters provider annual')
     .populate('provider', 'businessName cif postalCode city province name', ProviderModel);
 
