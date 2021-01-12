@@ -15,6 +15,4 @@ const validateIds = async ({ ids }) => {
   }
 };
 
-module.exports = {
-  validateIds,
-};
+module.exports = validateIds;

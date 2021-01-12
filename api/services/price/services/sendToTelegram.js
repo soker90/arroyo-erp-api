@@ -6,6 +6,7 @@ const {
 } = require('arroyo-erp-models');
 
 const LogService = require('../../log.service');
+const { roundNumber } = require('../../../../utils');
 
 const TYPE = 'PriceService';
 
@@ -34,7 +35,7 @@ const sendToTelegram = async ({
     const pricePrev = price.price - price.diff;
     const priceWithRate = pricePrev + (price.product.rate || 0);
     const costPrev = pricePrev + (priceWithRate * (price.product.iva + price.product.re));
-    const diff = costPrev - price.product.cost;
+    const diff = roundNumber(costPrev - price.product.cost);
     const row = '--------------------------------------------------------------------\n'
       + `| ${price.product.name} | ${price.product.nameProvider} | ${price.product.cost} | ${diff}\n`;
     message += row;
