@@ -5,6 +5,6 @@ const {
 
 const deleteManyPricesChange = ({
   ids,
-}) => PriceChangeModel.delete({ _id: { $in: ids } });
+}) => PriceChangeModel.deleteMany({ _id: { $in: ids } });
 
 module.exports = deleteManyPricesChange;

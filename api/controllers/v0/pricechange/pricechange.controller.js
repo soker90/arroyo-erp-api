@@ -78,7 +78,7 @@ class PriceChangeController {
   send(req, res) {
     logService.logInfo('[send] - Enviar a telegram');
     Promise.resolve(req.body)
-      .then(this.priceChangeValidator.validateIds)
+      .tap(this.priceChangeValidator.validateIds)
       .then(this.priceService.sendToTelegram)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
@@ -90,8 +90,9 @@ class PriceChangeController {
   deleteManyChanges(req, res) {
     logService.logInfo('[deleteManyChanges] - Elimina varios cambios de precio');
     Promise.resolve(req.body)
-      .then(this.priceChangeValidator.validateIds)
+      .tap(this.priceChangeValidator.validateIds)
       .then(this.priceService.deleteManyPricesChange)
+      .then(this.priceService.priceChanges)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
