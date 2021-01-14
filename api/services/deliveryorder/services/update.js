@@ -1,4 +1,5 @@
 const { DeliveryOrderModel } = require('arroyo-erp-models');
+const roundNumber = require('../../../../utils/roundNumber');
 
 /**
  * Edit delivery order
@@ -10,11 +11,11 @@ const update = ({ params, body: { date, note, totals } }) => {
     ...(date && { date }),
     ...(note !== undefined && { note }),
     ...(totals && {
-      total: totals.total,
-      iva: totals.iva,
-      ...(totals.rate && { rate: totals.rate }),
-      re: totals.re,
-      taxBase: totals.taxBase,
+      total: roundNumber(totals.total),
+      iva: roundNumber(totals.iva),
+      ...(totals.rate && { rate: roundNumber(totals.rate) }),
+      re: roundNumber(totals.re),
+      taxBase: roundNumber(totals.taxBase),
     }),
   };
 

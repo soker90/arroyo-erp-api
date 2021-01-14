@@ -1,4 +1,5 @@
 const { InvoiceModel } = require('arroyo-erp-models');
+const roundNumber = require('../../../../utils/roundNumber');
 
 /**
  * Get all data for update
@@ -28,11 +29,11 @@ const _getDataForUpdate = (data, totals) => {
     } = totals;
     newData = {
       ...newData,
-      total,
-      iva,
-      re,
-      rate,
-      taxBase,
+      total: roundNumber(total),
+      iva: roundNumber(iva),
+      re: roundNumber(re),
+      rate: roundNumber(rate),
+      taxBase: roundNumber(taxBase),
     };
   }
 

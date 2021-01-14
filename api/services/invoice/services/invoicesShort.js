@@ -14,7 +14,7 @@ const invoicesShort = async ({
     ...(provider && { provider }),
   };
 
-  const invoices = await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid')
+  const invoices = await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid mailSend')
     .sort({
       dateRegister: -1,
       nOrder: -1,
