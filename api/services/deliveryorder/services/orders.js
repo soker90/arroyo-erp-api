@@ -47,7 +47,7 @@ const _countInInvoices = ({ provider, client }) => (
   DeliveryOrderModel.find({
     provider,
     client,
-    nOrder: { $exists: true },
+    invoice: { $exists: true },
   })
     .countDocuments()
 );
