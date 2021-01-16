@@ -4,9 +4,9 @@
   "description": "API for Arroyo Erp",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node ./bin/www",
-    "start:dev": "NODE_ENV=dev nodemon ./bin/www",
-    "test": "NODE_ENV=test jest --detectOpenHandles --coverage",
+    "start": "NODE_ENV=production NTBA_FIX_319=1000 node ./bin/www",
+    "start:dev": "NODE_ENV=dev NTBA_FIX_319=1000 nodemon ./bin/www",
+    "test": "NODE_ENV=test NTBA_FIX_319=1000 jest --detectOpenHandles --coverage",
     "lint": "eslint '**/*.js'"
   },
   "pre-push": [

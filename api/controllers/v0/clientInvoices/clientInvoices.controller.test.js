@@ -1,19 +1,21 @@
 const supertest = require('supertest');
 const {
-        mongoose,
-        ClientModel,
-        ClientInvoiceModel,
-        AutoIncrement,
-      } = require('arroyo-erp-models');
+  mongoose,
+  ClientModel,
+  ClientInvoiceModel,
+  AutoIncrement,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-        commonErrors,
-        invoiceErrors,
-        clientErrors,
-        deliveryOrderErrors,
-      } = require('../../../../errors');
+  commonErrors,
+  invoiceErrors,
+  clientErrors,
+  deliveryOrderErrors,
+} = require('../../../../errors');
+const exportOds = require('../../../services/clientInvoice/services/export');
+jest.mock('../../../services/clientInvoice/services/export');
 
 const invoiceMock = {
   taxBase: 200.73,
