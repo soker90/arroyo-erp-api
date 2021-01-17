@@ -958,6 +958,12 @@ describe('DeliveryOrderController', () => {
           date: 1610198989431,
         }));
 
+        before(() => DeliveryOrderModel.create({
+          provider,
+          nameProvider,
+          date: 1610198989431,
+        }));
+
         before(done => {
           supertest(app)
             .get(PATH(2021))
@@ -979,7 +985,7 @@ describe('DeliveryOrderController', () => {
           expect(response.body[0].name)
             .toBe(nameProvider);
           expect(response.body[0][1])
-            .toBe(1);
+            .toBe(2);
           expect(response.body[0][2])
             .toBe(0);
           expect(response.body[0][3])

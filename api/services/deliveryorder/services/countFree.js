@@ -54,6 +54,7 @@ const countFree = async ({ year }) => {
   const deliveryOrderCount = {};
 
   deliveryOrderInfo.forEach(deOr => {
+    /* istanbul ignore else */
     if (!deliveryOrderCount[deOr._id.provider]) deliveryOrderCount[deOr._id.provider] = _generateInitialData(deOr);
 
     const quarter = _getQuarter(deOr._id.month);
