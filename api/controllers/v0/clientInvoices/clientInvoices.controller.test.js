@@ -15,6 +15,7 @@ const {
   deliveryOrderErrors,
 } = require('../../../../errors');
 const exportOds = require('../../../services/clientInvoice/services/export');
+
 jest.mock('../../../services/clientInvoice/services/export');
 
 const invoiceMock = {
@@ -1010,7 +1011,7 @@ describe('ClientInvoicesController', () => {
         });
       });
 
-      describe('Se genera un nuevo número de factura', () => {
+      describe.each([8, 12])('Se genera un nuevo número de factura empezando en %s', num => {
         let response;
         let invoice;
         const date = 1594062299563;
@@ -1023,7 +1024,7 @@ describe('ClientInvoicesController', () => {
 
         beforeAll(() => AutoIncrement.create({
           name: 'clientInvoice2020',
-          seq: 12,
+          seq: num,
         }));
 
         before(() => ClientInvoiceModel.create({
@@ -1048,6 +1049,8 @@ describe('ClientInvoicesController', () => {
             });
         });
 
+        afterAll(() => testDB.clean('AutoIncrement'));
+
         test('Debería dar un 200', () => {
           expect(token)
             .toBeTruthy();
@@ -1056,8 +1059,10 @@ describe('ClientInvoicesController', () => {
         });
 
         test('Devuelve un número de factura', () => {
+          const nextNum = num + 1;
+          const numInvoice = nextNum < 10 ? `0${nextNum}` : nextNum;
           expect(response.body.nInvoice)
-            .toBe('20-13');
+            .toBe(`20-${numInvoice}`);
         });
       });
     });
