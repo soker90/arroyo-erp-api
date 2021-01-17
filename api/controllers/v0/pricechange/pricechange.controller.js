@@ -19,6 +19,10 @@ class PriceChangeController {
 
   _handleError(res, error) {
     switch (error.name) {
+    case 'ElementsNotFound':
+    case 'PriceChangeNotFound':
+      this.errorHandler.sendNotFound(res)(error);
+      break;
     /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
@@ -43,6 +47,7 @@ class PriceChangeController {
   changeRead(req, res) {
     logService.logInfo('[cambios de precio] - Cambia a leido/no leido');
     Promise.resolve(req)
+      .tap(this.priceChangeValidator.validateIdParam)
       .then(this.priceService.priceChangeRead)
       .then(this.priceService.priceChanges)
       .then(data => res.send(data))
@@ -66,6 +71,7 @@ class PriceChangeController {
   delete(req, res) {
     logService.logInfo('[cambios de precio] - Eliminando cambio de precio');
     Promise.resolve(req.params)
+      .tap(this.priceChangeValidator.validateId)
       .then(this.priceService.priceChangeDelete)
       .then(this.priceService.priceChanges)
       .then(data => res.send(data))

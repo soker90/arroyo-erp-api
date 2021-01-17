@@ -2,6 +2,7 @@ const carbone = require('carbone');
 const { ClientInvoiceModel, ClientModel } = require('arroyo-erp-models');
 const { formatDate } = require('../../../../utils');
 
+/* istanbul ignore next */
 const _productAdapter = product => ({
   descripcion: product.name,
   peso: `${product.weight.toLocaleString('es-ES')} ${product.unit}`,
@@ -9,6 +10,7 @@ const _productAdapter = product => ({
   importe: `${product.total.toLocaleString('es-ES')} €`,
 });
 
+/* istanbul ignore next */
 const _doAdapter = deliveryOrder => {
   let rows = [];
   if (deliveryOrder.date) rows.push({ fecha: formatDate(deliveryOrder.date) });
@@ -21,6 +23,7 @@ const _doAdapter = deliveryOrder => {
   return rows;
 };
 
+/* istanbul ignore next */
 const _invoicesAdapter = invoice => ({
   fecha: formatDate(invoice.date),
   nFactura: invoice.nInvoice,
@@ -36,12 +39,14 @@ const _invoicesAdapter = invoice => ({
   total: invoice.total,
 });
 
+/* istanbul ignore next */
 const _getInvoice = async id => {
   const invoice = await ClientInvoiceModel.findOne({ _id: id }).populate('client', null, ClientModel);
 
   return _invoicesAdapter(invoice);
 };
 
+/* istanbul ignore next */
 const exportOds = async ({ id }) => {
   const invoice = await _getInvoice(id);
 

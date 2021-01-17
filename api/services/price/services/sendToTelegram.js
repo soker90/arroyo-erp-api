@@ -12,10 +12,10 @@ const TYPE = 'PriceService';
 
 const logService = new LogService(TYPE);
 
+/* istanbul ignore next */
 /**
  * Update price of the product
- * @param {Object} deliveryOrder
- * @param {number} index
+ * @param {Array} ids
  * @return {Promise<void>}
  */
 const sendToTelegram = async ({
