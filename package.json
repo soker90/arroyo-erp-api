@@ -47,7 +47,7 @@
     "jest-sonar-reporter": "^2.0.0",
     "mongodb-memory-server": "^6.9.3",
     "nock": "^13.0.5",
-    "supertest": "^6.0.1"
+    "supertest": "^6.1.1"
   },
   "jest": {
     "bail": true,
