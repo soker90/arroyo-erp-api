@@ -1,4 +1,5 @@
 const { InvoiceModel } = require('arroyo-erp-models');
+const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
 
 /**
  * Get all invoices
@@ -13,6 +14,8 @@ const invoices = ({
   total,
   nInvoice,
   numCheque,
+  nameProvider,
+  expenses,
 }) => {
   const start = new Date(year);
   const nextYear = Number(year) + 1;
@@ -23,6 +26,12 @@ const invoices = ({
     ...(total && { total }),
     ...(nInvoice && { nInvoice }),
     ...(numCheque && { 'payment.numCheque': numCheque }),
+    ...(nameProvider && { nameProvider }),
+    ...(expenses && {
+      bookColumn: {
+        $ne: COLUMNS_INVOICES.COMPRAS,
+      },
+    }),
   };
 
   return InvoiceModel.find({
