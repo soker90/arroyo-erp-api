@@ -6,7 +6,7 @@ const { COLUMNS_INVOICES } = require('../../../../constants/invoices');
  * @param {Object} params
  * @returns {Promise<*>}
  */
-const invoices = ({
+const invoices = async ({
   offset,
   limit,
   year,
@@ -34,7 +34,9 @@ const invoices = ({
     }),
   };
 
-  return InvoiceModel.find({
+  const count = await InvoiceModel.countDocuments(searchParams);
+
+  const invoicesList = await InvoiceModel.find({
     dateRegister: {
       $gte: start,
       $lt: end,
@@ -42,9 +44,14 @@ const invoices = ({
     ...searchParams,
   }, '_id businessName nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
     .sort({ nOrder: -1 })
-    .skip(offset || 0)
-    .limit(limit)
+    .skip(Number(offset || 0))
+    .limit(Number(limit || 100))
     .lean();
+
+  return {
+    invoices: invoicesList,
+    count,
+  };
 };
 
 module.exports = invoices;
