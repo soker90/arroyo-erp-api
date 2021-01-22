@@ -61,7 +61,7 @@ class InvoicesController {
    * Return invoice
    */
   invoice(req, res) {
-    logService.logInfo('[inovice]  - Get invoice');
+    logService.logInfo('[inovice]  - Get invoice--------');
     Promise.resolve(req.params)
       .tap(this.invoiceValidator.validateId)
       .then(this.invoiceService.invoice)
@@ -174,7 +174,7 @@ class InvoicesController {
 
   export(req, res) {
     logService.logInfo('[inovice]  - Export invoices to book');
-    Promise.resolve(req.params)
+    Promise.resolve(req.query)
       .tap(this.invoiceValidator.isValidYear)
       .then(this.invoiceService.exportOds)
       .then(data => res.send(data))

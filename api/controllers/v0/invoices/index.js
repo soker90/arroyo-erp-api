@@ -95,6 +95,17 @@ module.exports = (
   {
     method: 'get',
     domain: 'invoices',
+    path: '/export',
+    handler: invoicesController.export,
+    bindTo: invoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
+  {
+    method: 'get',
+    domain: 'invoices',
     path: '/:id',
     handler: invoicesController.invoice,
     bindTo: invoicesController,
@@ -107,26 +118,6 @@ module.exports = (
     domain: 'invoices',
     path: '/:id/confirm',
     handler: invoicesController.invoiceConfirm,
-    bindTo: invoicesController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
-  }, {
-    method: 'get',
-    domain: 'invoices',
-    path: '/export/:year',
-    handler: invoicesController.export,
-    bindTo: invoicesController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
-  }, {
-    method: 'get',
-    domain: 'invoices',
-    path: '/export/:year/:month',
-    handler: invoicesController.export,
     bindTo: invoicesController,
     skipVersion: true,
     middlewares: [

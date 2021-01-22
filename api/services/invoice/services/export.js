@@ -53,26 +53,47 @@ const _getDates = (year, month) => {
     end,
   };
 };
-const _getInvoices = async (year, month) => {
+const _getInvoices = async ({
+  year,
+  month,
+  dateInvoice,
+  total,
+  nInvoice,
+  numCheque,
+  nameProvider,
+  expenses,
+} = {}) => {
   const {
     start,
     end,
   } = _getDates(year, month);
 
-  const invoices = await InvoiceModel.find({
+  const searchParams = {
+    ...(dateInvoice && { dateInvoice }),
+    ...(total && { total }),
+    ...(nInvoice && { nInvoice }),
+    ...(numCheque && { 'payment.numCheque': numCheque }),
+    ...(nameProvider && { nameProvider }),
+    ...(expenses && {
+      bookColumn: {
+        $ne: COLUMNS_INVOICES.COMPRAS,
+      },
+    }),
     dateRegister: {
       $gte: start,
       $lt: end,
     },
-  })
+  };
+
+  const invoices = await InvoiceModel.find(searchParams)
     .sort({ nOrder: 1 })
     .lean();
 
   return _invoicesAdapter(invoices);
 };
 
-const exportOds = async ({ year, month }) => {
-  const invoices = await _getInvoices(year, month);
+const exportOds = async filters => {
+  const invoices = await _getInvoices(filters);
 
   let bookFile = null;
   let error = null;
