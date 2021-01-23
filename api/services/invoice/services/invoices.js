@@ -32,17 +32,15 @@ const invoices = async ({
         $ne: COLUMNS_INVOICES.COMPRAS,
       },
     }),
-  };
-
-  const count = await InvoiceModel.countDocuments(searchParams);
-
-  const invoicesList = await InvoiceModel.find({
     dateRegister: {
       $gte: start,
       $lt: end,
     },
-    ...searchParams,
-  }, '_id businessName nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
+  };
+
+  const count = await InvoiceModel.countDocuments(searchParams);
+
+  const invoicesList = await InvoiceModel.find(searchParams, '_id businessName nOrder dateInvoice total dateRegister dateInvoice nInvoice concept')
     .sort({ nOrder: -1 })
     .skip(Number(offset || 0))
     .limit(Number(limit || 100))
