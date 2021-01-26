@@ -47,9 +47,10 @@ const numChequeInvoice = {
   },
 };
 
-const _checkData = (invoices, invoice) => {
+const _checkData = ({ invoices, count }, invoice) => {
   expect(invoices.length)
     .toBe(1);
+  expect(count).toBe(1);
   expect(invoice.dateInvoice)
     .toBe(invoices[0].dateInvoice);
   expect(invoice.total)

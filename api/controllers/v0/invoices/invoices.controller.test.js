@@ -199,8 +199,10 @@ describe('InvoicesController', () => {
             .toBe(200);
         });
 
-        test('Devuelve un array', () => {
-          expect(response.body)
+        test('Devuelve un array de facturas', () => {
+          expect(response.body.count)
+            .toEqual(0);
+          expect(response.body.invoices)
             .toEqual([]);
         });
       });
@@ -232,12 +234,14 @@ describe('InvoicesController', () => {
           });
 
           test('Devuelve un array con un elemento', () => {
-            expect(response.body.length)
+            expect(response.body.count)
+              .toBe(1);
+            expect(response.body.invoices.length)
               .toBe(1);
           });
 
           test('Los datos son correctos', () => {
-            const json = JSON.parse(response.text)[0];
+            const json = response.body.invoices[0];
             expect(JSON.stringify(json._id))
               .toEqual(JSON.stringify(invoice._id));
             expect(json.nOrder)
