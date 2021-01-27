@@ -1,5 +1,8 @@
 /* eslint-disable nonblock-statement-body-position */
-const { PaymentModel, InvoiceModel } = require('arroyo-erp-models');
+const {
+  PaymentModel,
+  InvoiceModel,
+} = require('arroyo-erp-models');
 
 /**
  * Actualiza el pago con los datos dados
@@ -18,7 +21,10 @@ const _updatePayment = (id, data) => PaymentModel
  * @returns {Promise<void>}
  * @private
  */
-const _updateInvoices = async ({ invoices, nOrder }, paymentData) => {
+const _updateInvoices = async ({
+  invoices,
+  nOrder,
+}, paymentData) => {
   const payment = {
     ...paymentData,
     ...(invoices.length > 1 && { invoicesOrder: nOrder }),
@@ -35,8 +41,11 @@ const _updateInvoices = async ({ invoices, nOrder }, paymentData) => {
  * @returns {Promise<void>}
  */
 const confirm = async ({
-  params: { id }, body: {
-    paymentDate, type, numCheque,
+  params: { id },
+  body: {
+    paymentDate,
+    type,
+    numCheque,
   },
 }) => {
   const paymentData = {
@@ -46,9 +55,10 @@ const confirm = async ({
     paid: true,
   };
 
-  const payment = await _updatePayment(id, paymentData);
-
+  const payment = await PaymentModel.findOne({ _id: id });
   await _updateInvoices(payment, paymentData);
+  await PaymentModel.deleteOne({ _id: id });
+  await PaymentModel.deleteMany({ _id: { $in: payment.payments } });
 };
 
 module.exports = confirm;
