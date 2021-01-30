@@ -55,6 +55,8 @@ const _getDates = (year, month) => {
     end,
   };
 };
+
+/* istanbul ignore next */
 const _getInvoices = async ({
   year,
   month,

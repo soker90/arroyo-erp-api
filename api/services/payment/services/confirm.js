@@ -5,16 +5,6 @@ const {
 } = require('arroyo-erp-models');
 
 /**
- * Actualiza el pago con los datos dados
- * @param {String} id
- * @param {Object} data
- * @returns {Promise<Object>}
- * @private
- */
-const _updatePayment = (id, data) => PaymentModel
-  .findOneAndUpdate({ _id: id }, data, { new: true });
-
-/**
  * Actualiza las facturas con la información del pago
  * @param {Array<string>} invoices
  * @param {Object} paymentData

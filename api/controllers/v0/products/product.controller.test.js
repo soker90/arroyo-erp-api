@@ -763,14 +763,14 @@ describe('ProductController', () => {
         let response;
         let product;
         const price1 = {
-          date: Date.now(),
+          date: 1612031252249,
           price: 3,
           cost: 4,
           sale: 4.5,
         };
 
         const price2 = {
-          date: Date.now(),
+          date: 1612031263616,
           price: 4.1,
           cost: 4.6,
           sale: 5.1,
@@ -819,8 +819,8 @@ describe('ProductController', () => {
               .toBe(mock.sale);
           };
 
-          reviewPrice(response.body.prices[0], price1);
-          reviewPrice(response.body.prices[1], price2);
+          reviewPrice(response.body.prices[1], price1);
+          reviewPrice(response.body.prices[0], price2);
         });
       });
     });
