@@ -15,6 +15,7 @@ const { roundNumber } = require('../../../../utils');
 const getProductChanged = (deliveryOrder, index) => {
   if (index)
     return deliveryOrder.products[index];
+
   return deliveryOrder.products.slice(-1)
     .pop();
 };
@@ -47,6 +48,11 @@ const calcCostSale = async doProduct => {
   };
 };
 
+const isPriceChanges = (doProduct, lastPrice) => (
+  roundNumber(doProduct.price, 3) !== roundNumber(lastPrice?.price, 3)
+  && doProduct.price !== 0
+);
+
 /**
  * Update price of the product
  * @param {Object} deliveryOrder
@@ -60,7 +66,7 @@ const updatePrice = async ({
   const doProduct = getProductChanged(deliveryOrder, index);
   const lastPrice = (await getLastPrice(doProduct.product))?.pop?.();
 
-  if (doProduct.price !== lastPrice?.price && doProduct.price !== 0) {
+  if (isPriceChanges(doProduct, lastPrice)) {
     logService.logInfo(`[update price] - Actualizando precio de ${doProduct.name} ${doProduct.product}`);
 
     const {
@@ -102,7 +108,7 @@ const updatePrice = async ({
         product: doProduct.product,
         productName: doProduct.name,
         price: doProduct.price,
-        diff: doProduct.diff ,
+        diff: doProduct.diff,
         deliveryOrder: deliveryOrder._id,
         date: deliveryOrder.date,
       }, { upsert: true });
