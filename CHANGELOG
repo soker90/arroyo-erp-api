@@ -1,2 +1,5 @@
+[1.0.1]
+- Corregido fallo de redondeo al comparar si ha cambiado el precio del producto
+
 [1.0.0]
 - Primera versión estable
