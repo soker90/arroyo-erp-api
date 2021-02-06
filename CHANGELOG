@@ -1,3 +1,6 @@
+[1.0.2]
+- Corregida zona horaria en el Dockerfile
+
 [1.0.1]
 - Corregido fallo de redondeo al comparar si ha cambiado el precio del producto
 
