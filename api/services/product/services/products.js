@@ -13,7 +13,7 @@ const products = ({ provider }) => {
 
   return ProductModel
     .find(filter)
-    .select('_id name code price cost sale price')
+    .select('_id name code price cost sale price iva')
     .sort({
       code: 1,
       name: 1,
