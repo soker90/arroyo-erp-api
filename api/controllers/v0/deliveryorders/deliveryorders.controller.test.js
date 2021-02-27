@@ -249,6 +249,55 @@ describe('DeliveryOrderController', () => {
               .toBe(2);
             expect(response.body.inInvoices.data[0]._id.localeCompare(deliveryOrder3._id))
               .toBe(0);
+            expect(response.body.inInvoices.hasCanal)
+              .toBe(undefined);
+          });
+        });
+
+        describe('Filtrado por canal', () => {
+          let response;
+          let deliveryOrder3;
+
+          before(async () => {
+            const provider2 = await ProviderModel.create({
+              name: 'test',
+              hasCanal: true,
+            });
+
+            deliveryOrder3 = await DeliveryOrderModel.create({
+              ...deliveryOrderMock,
+              provider: provider2._id,
+              invoice: '603aa1744716635edf14ef81',
+            });
+            await DeliveryOrderModel.create({
+              ...deliveryOrder2Mock,
+              provider: provider2._id,
+              invoice: '603aa1744716635edf14ef81',
+            });
+          });
+
+          beforeAll(done => {
+            supertest(app)
+              .get(`/deliveryorders?provider=${deliveryOrder3.provider}&canal=${deliveryOrderMock.products[0].canal}`)
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('Devuelve un albarán en facturas', () => {
+            expect(response.body.inInvoices.count)
+              .toBe(1);
+            expect(response.body.inInvoices.data.length)
+              .toBe(1);
+            expect(response.body.inInvoices.hasCanal)
+              .toBe(true);
           });
         });
       });

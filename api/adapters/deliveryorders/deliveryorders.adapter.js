@@ -5,10 +5,19 @@
  * @returns {{data: Array, count: Number}}
  * @private
  */
-const _inInvoiceResponse = ({ inInvoices, inInvoiceCount }) => {
+const _inInvoiceResponse = ({
+  inInvoices,
+  inInvoiceCount,
+  hasCanal,
+}) => {
   const data = inInvoices.map(
     ({
-      _id, date, total, nOrder, nInvoice, note,
+      _id,
+      date,
+      total,
+      nOrder,
+      nInvoice,
+      note,
     }) => ({
       _id,
       date,
@@ -22,6 +31,7 @@ const _inInvoiceResponse = ({ inInvoices, inInvoiceCount }) => {
   return {
     count: inInvoiceCount,
     data,
+    hasCanal: hasCanal?.hasCanal,
   };
 };
 
@@ -32,7 +42,14 @@ const _inInvoiceResponse = ({ inInvoices, inInvoiceCount }) => {
  * @private
  */
 const _freeResponse = ({ free }) => free.map(({
-  _id, date, taxBase, products, iva, re, total, note,
+  _id,
+  date,
+  taxBase,
+  products,
+  iva,
+  re,
+  total,
+  note,
 }) => ({
   _id,
   date,
@@ -42,7 +59,11 @@ const _freeResponse = ({ free }) => free.map(({
   total,
   note,
   products: products.map(({
-    name, price, quantity, taxBase: taxBaseProduct, canal,
+    name,
+    price,
+    quantity,
+    taxBase: taxBaseProduct,
+    canal,
   }) => ({
     name,
     price,
@@ -68,7 +89,11 @@ const ordersResponse = data => ({
  * @private
  */
 const _generateTotals = ({
-  iva, re, total, taxBase, rate,
+  iva,
+  re,
+  total,
+  taxBase,
+  rate,
 }) => ({
   iva,
   re,
@@ -85,8 +110,20 @@ const _generateTotals = ({
  * nameProvider: *, products: *}}
  */
 const standardResponse = ({
-  _id, provider, nameProvider, products, date, nOrder, invoice, iva, re, total, taxBase, rate,
-  note, hasCanal,
+  _id,
+  provider,
+  nameProvider,
+  products,
+  date,
+  nOrder,
+  invoice,
+  iva,
+  re,
+  total,
+  taxBase,
+  rate,
+  note,
+  hasCanal,
 }) => ({
   _id,
   provider,
@@ -111,7 +148,14 @@ const standardResponse = ({
  * @return {{date: *, nameProvider: *}}
  */
 const basicResponse = ({
-  _id, date, note, iva, re, total, taxBase, rate,
+  _id,
+  date,
+  note,
+  iva,
+  re,
+  total,
+  taxBase,
+  rate,
 }) => ({
   _id,
   date,
@@ -132,7 +176,12 @@ const basicResponse = ({
  * @return {{totals: {total: Number, re: Number, iva: Number}, products: *}}
  */
 const productsResponse = ({
-  products, iva, re, total, taxBase, rate,
+  products,
+  iva,
+  re,
+  total,
+  taxBase,
+  rate,
 }) => ({
   products,
   totals: _generateTotals({
