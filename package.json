@@ -24,7 +24,7 @@
     "bcrypt": "^5.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
-    "carbone": "^2.1.1",
+    "carbone": "^3.1.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
