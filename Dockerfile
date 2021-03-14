@@ -5,11 +5,11 @@ RUN mkdir -p /home/node/app/ /var/log \
 
 WORKDIR /home/node/app
 
-COPY package.json package-lock.json ./
-
 USER node
 
 ENV TZ Europe/Madrid
+
+COPY package.json package-lock.json ./
 
 RUN npm install
 
