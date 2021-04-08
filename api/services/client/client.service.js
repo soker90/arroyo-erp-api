@@ -1,14 +1,28 @@
-const { ClientModel } = require('arroyo-erp-models');
+const {
+  ClientModel,
+  ClientInvoiceModel,
+} = require('arroyo-erp-models');
 
 const ClientInvoiceService = require('../clientInvoice');
 /**
  * Return all providers
  * @return {Promise<{data: any}>}
  */
-const clients = () => ClientModel.find({}, 'name _id note')
-  .collation({ locale: 'es' })
-  .sort({ name: 1 })
-  .lean();
+const clients = async () => {
+  const client = await ClientModel.find({}, 'name _id note')
+    .collation({ locale: 'es' })
+    .sort({ name: 1 })
+    .lean();
+  const count = await ClientInvoiceModel.aggregate([
+    {
+      $group: {
+        _id: '$client',
+        count: { $count: 1 },
+      },
+    },
+  ])
+    .exec();
+};
 
 /**
  * Create product
