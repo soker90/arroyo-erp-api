@@ -11,7 +11,7 @@ class ClientsController {
     clientService,
     errorHandler,
     clientValidator,
-    clientAdapter
+    clientAdapter,
   }) {
     this.clientService = clientService;
     this.errorHandler = errorHandler;
