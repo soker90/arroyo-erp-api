@@ -6,13 +6,14 @@ const _countByMonthAndProvider = year => {
   const nextYear = Number(year) + 1;
   const end = new Date(nextYear.toString());
 
+  // 43200000 es medio dia, para que coja el dia 1 de cada mes
   const aggregatorOpts = [
     {
       $match: {
         invoice: { $exists: false },
         date: {
-          $gte: start.getTime(),
-          $lt: end.getTime(),
+          $gte: start.getTime() - 43200000,
+          $lt: end.getTime() - 43200000,
         },
       },
     },
@@ -22,7 +23,7 @@ const _countByMonthAndProvider = year => {
           _id: {
             provider: '$provider',
             nameProvider: '$nameProvider',
-            month: { $month: { $add: [new Date(0), '$date'] } },
+            month: { $month: { $add: [new Date(0), { $add: ['$date', 43200000] }] } },
           },
           count: { $sum: 1 },
         },
