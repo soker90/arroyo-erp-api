@@ -3,11 +3,12 @@ const errorHandler = require('../../../../components/error-handlers');
 
 const ClientController = require('./client.controller');
 
-module.exports = ({ clientService }, { clientValidator }) => {
+module.exports = ({ clientService }, { clientValidator }, { clientAdapter }) => {
   const clientController = new ClientController({
     errorHandler,
     clientService,
     clientValidator,
+    clientAdapter,
   });
 
   return [{

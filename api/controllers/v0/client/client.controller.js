@@ -11,10 +11,12 @@ class ClientsController {
     clientService,
     errorHandler,
     clientValidator,
+    clientAdapter,
   }) {
     this.clientService = clientService;
     this.errorHandler = errorHandler;
     this.clientValidator = clientValidator;
+    this.clientAdapter = clientAdapter;
   }
 
   _handleError(res, error) {
@@ -40,6 +42,7 @@ class ClientsController {
     logService.logInfo('[clients] - Lista de clientes');
     Promise.resolve(req.query)
       .then(this.clientService.clients)
+      .then(this.clientAdapter.clientsResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

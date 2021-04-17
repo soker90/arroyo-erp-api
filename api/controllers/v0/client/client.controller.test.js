@@ -119,7 +119,7 @@ describe('ClientController', () => {
           });
 
           test('Devuelve un array con un elemento', () => {
-            expect(JSON.parse(response.text).length)
+            expect(response.body.length)
               .toBe(1);
           });
 

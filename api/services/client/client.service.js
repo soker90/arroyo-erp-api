@@ -1,14 +1,41 @@
-const { ClientModel } = require('arroyo-erp-models');
+const {
+  ClientModel,
+  ClientInvoiceModel,
+} = require('arroyo-erp-models');
 
 const ClientInvoiceService = require('../clientInvoice');
 /**
  * Return all providers
  * @return {Promise<{data: any}>}
  */
-const clients = () => ClientModel.find({}, 'name _id note')
-  .collation({ locale: 'es' })
-  .sort({ name: 1 })
-  .lean();
+const clients = async () => {
+  const currentYearDate = new Date(`${new Date().getFullYear()}`);
+  const clientList = await ClientModel.find({});
+  const invoices = await ClientInvoiceModel.aggregate([
+    {
+      $match: {
+        date: {
+          $gte: currentYearDate.getTime() - 43200000,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: '$client',
+        invoices: { $sum: 1 },
+      },
+    },
+    {
+      $sort: {
+        name: 1,
+      },
+    },
+  ])
+    .collation({ locale: 'es' })
+    .exec();
+
+  return { clients: clientList, invoices };
+};
 
 /**
  * Create product
