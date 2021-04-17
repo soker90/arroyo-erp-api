@@ -18,7 +18,7 @@ const invoices = ({
       $lt: end,
     },
   }, '_id nameClient total date nInvoice')
-    .sort({ date: -1 })
+    .sort({ nInvoice: -1 })
     .lean();
 };
 
