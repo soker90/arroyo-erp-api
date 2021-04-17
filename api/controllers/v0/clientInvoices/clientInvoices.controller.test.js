@@ -414,11 +414,11 @@ describe('ClientInvoicesController', () => {
         test('Devuelve las facturas', () => {
           expect(response.body.length)
             .toBe(2);
-          expect(response.body[1].date)
+          expect(response.body[0].date)
             .toBe(invoiceMock.date);
-          expect(response.body[1].total)
+          expect(response.body[0].total)
             .toBe(invoiceMock.total);
-          expect(response.body[1].nInvoice)
+          expect(response.body[0].nInvoice)
             .toBe(invoiceMock.nInvoice);
         });
       });
