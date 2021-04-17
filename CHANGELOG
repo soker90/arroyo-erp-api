@@ -1,6 +1,7 @@
 #
   - Corregido el error del contador de albaranes, no sumaba bien los albaranes con la fecha del primer dia del trimestre
-  
+  - Añadido número de facturas del año en el listado de clientes
+
 # [1.1.1] - 16/03/2021
   - Actualización de librerias
 

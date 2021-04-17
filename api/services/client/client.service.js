@@ -8,19 +8,32 @@ const ClientInvoiceService = require('../clientInvoice');
  * Return all providers
  * @return {Promise<{data: any}>}
  */
-const clients = async () => {
-  const client = await ClientModel.find({}, 'name _id note')
-    .collation({ locale: 'es' })
-    .sort({ name: 1 })
-    .lean();
-  const count = await ClientInvoiceModel.aggregate([
+const clients = () => {
+  const currentYearDate = new Date(`${new Date().getFullYear()}`);
+  return ClientInvoiceModel.aggregate([
+    {
+      $match: {
+        date: {
+          $gte: currentYearDate.getTime() - 43200000,
+        },
+      },
+    },
     {
       $group: {
-        _id: '$client',
-        count: { $count: 1 },
+        _id: {
+          _id: '$client',
+          name: '$nameClient',
+        },
+        invoices: { $sum: 1 },
+      },
+    },
+    {
+      $sort: {
+        name: 1,
       },
     },
   ])
+    .collation({ locale: 'es' })
     .exec();
 };
 
