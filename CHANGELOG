@@ -1,4 +1,4 @@
-#
+# [1.2.0] - 18/04/2021
   - Corregido el error del contador de albaranes, no sumaba bien los albaranes con la fecha del primer dia del trimestre
   - Añadido número de facturas del año en el listado de clientes
   - Corregido el orden de facturas en el libro de clientes
