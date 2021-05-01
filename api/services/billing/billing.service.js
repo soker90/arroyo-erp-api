@@ -75,7 +75,7 @@ const remove = invoice => {
 const billings = ({ year }) => {
   logService.logInfo(`[billings] - Facturación del año ${year}`);
 
-  return BillingModel.find({ year }, 'trimesters provider annual')
+  return BillingModel.find({ year })
     .populate('provider', 'businessName name', ProviderModel)
     .sort({ 'provider.name': 1 });
 };

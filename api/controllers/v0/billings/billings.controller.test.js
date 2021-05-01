@@ -1,15 +1,15 @@
 const supertest = require('supertest');
 const {
-  mongoose,
-  ProviderModel,
-  BillingModel,
-} = require('arroyo-erp-models');
+        mongoose,
+        ProviderModel,
+        BillingModel,
+      } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-  billingErrors,
-} = require('../../../../errors');
+        billingErrors,
+      } = require('../../../../errors');
 
 const providerMock = {
   name: 'Auuu',
@@ -32,6 +32,13 @@ const billingMock = {
     0,
     2000.63,
     1000,
+  ],
+  invoicesTrimester3: [
+    {},
+    {},
+  ],
+  invoicesTrimester0: [
+    {},
   ],
 };
 
@@ -133,7 +140,10 @@ describe('BillingsController', () => {
             provider = providerCreated;
           }));
 
-        before(() => BillingModel.create({ ...billingMock, provider: provider._id })
+        before(() => BillingModel.create({
+          ...billingMock,
+          provider: provider._id,
+        })
           .then(billingCreated => {
             billing = billingCreated;
           }));
@@ -155,6 +165,12 @@ describe('BillingsController', () => {
 
         test('Los datos son correctos', () => {
           const responseData = response.body[0];
+
+          const invoices1 = billingMock.invoicesTrimester0?.length ?? 0;
+          const invoices2 = billingMock.invoicesTrimester1?.length ?? 0;
+          const invoices3 = billingMock.invoicesTrimester2?.length ?? 0;
+          const invoices4 = billingMock.invoicesTrimester3?.length ?? 0;
+
           expect(responseData.annual)
             .toBe(billing.annual);
           expect(responseData.businessName)
@@ -163,12 +179,22 @@ describe('BillingsController', () => {
             .toBe(provider.name);
           expect(responseData.trimester1)
             .toBe(billing.trimesters[0]);
+          expect(responseData.invoices1)
+            .toBe(invoices1);
           expect(responseData.trimester2)
             .toBe(billing.trimesters[1]);
+          expect(responseData.invoices2)
+            .toBe(invoices2);
           expect(responseData.trimester3)
             .toBe(billing.trimesters[2]);
+          expect(responseData.invoices3)
+            .toBe(invoices3);
           expect(responseData.trimester4)
             .toBe(billing.trimesters[3]);
+          expect(responseData.invoices4)
+            .toBe(invoices4);
+          expect(responseData.annualInvoices)
+            .toBe(invoices1 + invoices2 + invoices3 + invoices4);
         });
       });
     });
@@ -244,7 +270,10 @@ describe('BillingsController', () => {
             provider = providerCreated;
           }));
 
-        before(() => BillingModel.create({ ...billingMock, provider: provider._id }));
+        before(() => BillingModel.create({
+          ...billingMock,
+          provider: provider._id,
+        }));
 
         beforeAll(done => {
           supertest(app)
@@ -273,7 +302,10 @@ describe('BillingsController', () => {
             provider = providerCreated;
           }));
 
-        before(() => BillingModel.create({ ...billingMock, provider: provider._id }));
+        before(() => BillingModel.create({
+          ...billingMock,
+          provider: provider._id,
+        }));
 
         beforeAll(done => {
           supertest(app)

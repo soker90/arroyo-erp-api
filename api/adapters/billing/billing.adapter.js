@@ -9,15 +9,31 @@ const billingsResponse = billings => billings.map(({
   provider,
   trimesters,
   annual,
-}) => ({
-  name: provider?.name,
-  businessName: provider?.businessName,
-  trimester1: trimesters[0],
-  trimester2: trimesters[1],
-  trimester3: trimesters[2],
-  trimester4: trimesters[3],
-  annual,
-}))
+  invoicesTrimester0,
+  invoicesTrimester1,
+  invoicesTrimester2,
+  invoicesTrimester3,
+}) => {
+  const invoices1 = invoicesTrimester0?.length ?? 0;
+  const invoices2 = invoicesTrimester1?.length ?? 0;
+  const invoices3 = invoicesTrimester2?.length ?? 0;
+  const invoices4 = invoicesTrimester3?.length ?? 0;
+
+  return {
+    name: provider?.name,
+    businessName: provider?.businessName,
+    trimester1: trimesters[0],
+    invoices1,
+    trimester2: trimesters[1],
+    invoices2,
+    trimester3: trimesters[2],
+    invoices3,
+    trimester4: trimesters[3],
+    invoices4,
+    annual,
+    annualInvoices: invoices1 + invoices2 + invoices3 + invoices4,
+  };
+})
   .sort(orderByProvider);
 
 module.exports = {
