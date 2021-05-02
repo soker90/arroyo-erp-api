@@ -11,33 +11,23 @@ class ClientInvoicesController {
     invoiceService,
     paymentService,
     errorHandler,
-    invoiceAdapter,
     invoiceValidator,
-    billingService,
-    providerValidator,
-    deliveryOrderService,
     autoIncrementService,
     clientValidator,
     clientInvoiceService,
     clientInvoiceValidator,
     clientInvoiceAdapter,
-    deliveryOrderValidator,
     productService,
   }) {
     this.invoiceService = invoiceService;
     this.errorHandler = errorHandler;
-    this.invoiceAdapter = invoiceAdapter;
     this.paymentService = paymentService;
     this.invoiceValidator = invoiceValidator;
-    this.billingService = billingService;
-    this.providerValidator = providerValidator;
-    this.deliveryOrderService = deliveryOrderService;
     this.autoIncrementService = autoIncrementService;
     this.clientValidator = clientValidator;
     this.clientInvoiceService = clientInvoiceService;
     this.clientInvoiceValidator = clientInvoiceValidator;
     this.clientInvoiceAdapter = clientInvoiceAdapter;
-    this.deliveryOrderValidator = deliveryOrderValidator;
     this.productService = productService;
   }
 
@@ -71,7 +61,6 @@ class ClientInvoicesController {
     Promise.resolve(req.params)
       .tap(this.clientInvoiceValidator.validateId)
       .then(this.clientInvoiceService.invoice)
-      // .then(this.invoiceAdapter.fullResponse)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
