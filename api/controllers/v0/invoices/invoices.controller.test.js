@@ -1,5 +1,3 @@
-import { TALON_PAYMENT } from '../../../../../arroyo-erp-client/src/constants';
-
 const supertest = require('supertest');
 const {
   mongoose,
