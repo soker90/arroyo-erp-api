@@ -110,9 +110,10 @@ const editBody = ({
   body: {
     data,
     totals,
+    payment,
   },
 }) => {
-  if (!data && !totals) throw new invoiceErrors.InvoiceParamsMissing();
+  if (!data && !totals && !payment) throw new invoiceErrors.InvoiceParamsMissing();
 };
 
 const isRemovable = async ({ id }) => {

@@ -1,26 +1,28 @@
+import { TALON_PAYMENT } from '../../../../../arroyo-erp-client/src/constants';
+
 const supertest = require('supertest');
 const {
-        mongoose,
-        InvoiceModel,
-        DeliveryOrderModel,
-        ProviderModel,
-        AutoIncrement,
-        PaymentModel,
-        BillingModel,
-      } = require('arroyo-erp-models');
+  mongoose,
+  InvoiceModel,
+  DeliveryOrderModel,
+  ProviderModel,
+  AutoIncrement,
+  PaymentModel,
+  BillingModel,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-        commonErrors,
-        invoiceErrors,
-        providerErrors,
-      } = require('../../../../errors');
+  commonErrors,
+  invoiceErrors,
+  providerErrors,
+} = require('../../../../errors');
 const {
-        CONCEPT,
-        TYPE_PAYMENT,
-        COLUMNS_INVOICES,
-      } = require('../../../../constants/index');
+  CONCEPT,
+  TYPE_PAYMENT,
+  COLUMNS_INVOICES,
+} = require('../../../../constants/index');
 
 const deliveryOrderMock = {
   provider: '5f14857d3ae0d32b417e8d0c',
@@ -904,6 +906,7 @@ describe('InvoicesController', () => {
           let invoice;
 
           beforeAll(done => {
+            // eslint-disable-next-line no-nested-ternary
             invoice = type.includes('re')
               ? type === 'sin re'
                 ? invoiceWithProvider
@@ -1036,6 +1039,14 @@ describe('InvoicesController', () => {
           taxBase: 3.6,
         };
 
+        const invoicePayment = {
+          paymentDate: 1622488643592,
+          type: 'Talón',
+          numCheque: 'PAG.3423423',
+          paid: true,
+          invoicesOrder: '32 - 45',
+        };
+
         before(() => InvoiceModel.create({
           dateInvoice: Date.now(),
         })
@@ -1065,6 +1076,20 @@ describe('InvoicesController', () => {
             .toBe(invoiceTotals.rate);
           expect(invoiceTotals.taxBase)
             .toBe(invoiceTotals.taxBase);
+        };
+
+        const testPayment = () => {
+          const { payment } = response.body;
+          expect(payment.type)
+            .toBe(invoicePayment.type);
+          expect(payment.paymentDate)
+            .toBe(invoicePayment.paymentDate);
+          expect(payment.paid)
+            .toBe(invoicePayment.paid);
+          expect(payment.invoicesOrder)
+            .toBe(invoicePayment.invoicesOrder);
+          expect(payment.numCheque)
+            .toBe(invoicePayment.numCheque);
         };
 
         describe('El código de factura ya existe', () => {
@@ -1109,13 +1134,14 @@ describe('InvoicesController', () => {
           });
         });
 
-        describe('Se actualiza data y totals', () => {
+        describe('Se actualiza data, totals y payment', () => {
           beforeAll(done => {
             supertest(app)
               .patch(`/invoices/${invoice._id}`)
               .send({
                 data: invoiceData,
                 totals: invoiceTotals,
+                payment: invoicePayment,
               })
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
@@ -1137,6 +1163,10 @@ describe('InvoicesController', () => {
 
           test('Se ha actualizado los totales', () => {
             testTotals();
+          });
+
+          test('Se ha actualizado el pago', () => {
+            testPayment();
           });
         });
 
@@ -1189,6 +1219,32 @@ describe('InvoicesController', () => {
 
           test('Se ha actualizado los totales', () => {
             testTotals();
+          });
+        });
+
+        describe('Se actualiza el pago', () => {
+          beforeAll(done => {
+            supertest(app)
+              .patch(`/invoices/${invoice._id}`)
+              .send({
+                payment: invoicePayment,
+              })
+              .set('Authorization', `Bearer ${token}`)
+              .end((err, res) => {
+                response = res;
+                done();
+              });
+          });
+
+          test('Debería dar un 200', () => {
+            expect(token)
+              .toBeTruthy();
+            expect(response.statusCode)
+              .toBe(200);
+          });
+
+          test('Se ha actualizado el pago', () => {
+            testPayment();
           });
         });
       });
@@ -1860,7 +1916,6 @@ describe('InvoicesController', () => {
             .toBe(200);
         });
       });
-
 
       describe('La petición se procesa correctamente mes 1', () => {
         let response;
