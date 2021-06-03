@@ -16,6 +16,7 @@ describe('NoteController', () => {
     price: '2€',
     amount: '22.3',
     clarification: 'una aclaracion',
+    year: '2020',
   };
 
   const note2Mock = {
@@ -25,6 +26,7 @@ describe('NoteController', () => {
     price: '1,24€',
     amount: '1.23',
     clarification: 'Unas aclaraciones',
+    year: '2020',
   };
 
   describe('GET /notes', () => {
@@ -33,7 +35,7 @@ describe('NoteController', () => {
 
       beforeAll(done => {
         supertest(app)
-          .get('/notes')
+          .get('/notes?year=2010')
           .end((err, res) => {
             response = res;
             done();
@@ -66,7 +68,7 @@ describe('NoteController', () => {
 
         before(done => {
           supertest(app)
-            .get('/notes')
+            .get('/notes?year=2020')
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
               response = res;
@@ -98,7 +100,7 @@ describe('NoteController', () => {
 
           before(done => {
             supertest(app)
-              .get('/notes')
+              .get('/notes?year=2020')
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
                 response = res;

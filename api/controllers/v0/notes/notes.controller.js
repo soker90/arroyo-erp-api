@@ -36,7 +36,7 @@ class NotesController {
    */
   notes(req, res) {
     logService.logInfo('[notes]  - Lista de notas');
-    Promise.resolve(req)
+    Promise.resolve(req.query)
       .then(this.noteService.notes)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
@@ -57,6 +57,7 @@ class NotesController {
   create(req, res) {
     logService.logInfo('[create]  - Crea una nota');
     Promise.resolve(req.body)
+      .tap(this.noteValidator.validateYear)
       .tap(this.noteValidator.validateNote)
       .then(this.noteService.create)
       .then(this.noteService.notes)

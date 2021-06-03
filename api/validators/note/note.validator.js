@@ -1,6 +1,9 @@
 /* eslint-disable camelcase */
 const { NoteModel } = require('arroyo-erp-models');
-const { noteErrors, commonErrors } = require('../../../errors');
+const {
+  noteErrors,
+  commonErrors,
+} = require('../../../errors');
 
 /**
  * Check if exist id
@@ -28,15 +31,23 @@ const validateIdParam = ({ params }) => validateId(params);
 const _isInvalidDate = date => !date || typeof date !== 'number';
 
 /**
- * Validate params for confirm invoice
- * @param {String} type
- * @param {String} id
- * @returns {Promise<void>}
+ * Validate params for create note
+ * @param {string} concept
+ * @param {number} date
+ * @param {string} year
+ * @return {Promise<void>}
  */
-const validateNote = async ({ concept, date }) => {
+const validateNote = async ({
+  concept,
+  date,
+}) => {
   if (!concept) throw new commonErrors.MissingParamsError();
   if (_isInvalidDate(date)) throw new commonErrors.DateNotValid();
 };
+const validateYear = ({ year }) => {
+  if (!year) throw new commonErrors.MissingParamsError();
+};
+
 const validateNoteBody = ({ body }) => validateNote(body);
 
 module.exports = {
@@ -44,4 +55,5 @@ module.exports = {
   validateId,
   validateIdParam,
   validateNoteBody,
+  validateYear,
 };

@@ -14,10 +14,17 @@ const logService = new LogService(TYPE);
  * @param {string} price
  * @param {string} amount
  * @param {string} clarification
+ * @param {string} year
  * @return {Promise<string>}
  */
 const create = async ({
-  date, concept, quantity, price, amount, clarification,
+  date,
+  concept,
+  quantity,
+  price,
+  amount,
+  clarification,
+  year,
 }) => {
   logService.logInfo('[create note] - Creando note');
 
@@ -28,17 +35,20 @@ const create = async ({
     price,
     amount,
     clarification,
+    year,
   });
 
   logService.logInfo('[create note] - Nota creada', noteData);
   noteData.save();
+
+  return { year };
 };
 
 /**
  *Devuelve todas las notas
  * @returns {*}
  */
-const notes = () => NoteModel.find({});
+const notes = ({ year }) => NoteModel.find({ year });
 
 /**
  * Devuelve una nota
@@ -65,8 +75,14 @@ const deleteNote = ({ id }) => NoteModel.deleteOne({ _id: id });
  * @return {Promise<string>}
  */
 const edit = async ({
-  params: { id }, body: {
-    date, concept, quantity, price, amount, clarification,
+  params: { id },
+  body: {
+    date,
+    concept,
+    quantity,
+    price,
+    amount,
+    clarification,
   },
 }) => {
   logService.logInfo('[edit note] - Editando nota ', id);
