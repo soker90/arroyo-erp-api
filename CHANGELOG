@@ -2,6 +2,7 @@
   - Añadido al endpoint de editar factura, la posibilidad de editar la información de pago
   - Añadidas plantillas para facturas de cliente de 2 y 3 hojas
   - Añadidos 3 decimales a los pesos en kilos y eliminados los decimales en los pesos en unidades
+  - Añadido año en las notas permanentes
 
 # [1.2.1] - 02/05/2021
   - Añadido número de facturas trimestrales a la facturación
