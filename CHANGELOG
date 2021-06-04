@@ -4,6 +4,7 @@
   - Añadidos 3 decimales a los pesos en kilos y eliminados los decimales en los pesos en unidades
   - Añadido año en las notas permanentes
   - Añadido contados de pagos en efectivo por trimestres
+  - Añadida lista de cheques pagados por años
 
 # [1.2.1] - 02/05/2021
   - Añadido número de facturas trimestrales a la facturación

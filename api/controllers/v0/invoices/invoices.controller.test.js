@@ -2204,4 +2204,137 @@ describe('InvoicesController', () => {
       });
     });
   });
+
+  describe('GET /invoices/cheques', () => {
+    const PATH = '/invoices/cheques';
+    afterAll(() => testDB.cleanAll());
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      beforeAll(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El año no es válido', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .get(`${PATH}?year=error`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.status)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.ParamNotValidError().message);
+        });
+      });
+
+      describe('No hay facturas', () => {
+        let response;
+
+        before(() => InvoiceModel.create(invoiceExpenseCreate2));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(`${PATH}?year=2020`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.body.cheques.length)
+            .toBe(0);
+          expect(response.body.count)
+            .toBe(0);
+        });
+      });
+
+      describe('Hay una factura con los datos correctos', () => {
+        let response;
+
+        before(() => InvoiceModel.create(invoiceMock));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(`${PATH}?year=2020`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.body.cheques.length)
+            .toBe(1);
+          expect(response.body.cheques[0].total)
+            .toBe(invoiceMock.total);
+          expect(response.body.cheques[0].nameProvider)
+            .toBe(invoiceMock.nameProvider);
+          expect(response.body.cheques[0].nOrder)
+            .toBe(invoiceMock.nOrder);
+          expect(response.body.cheques[0].payment.paymentDate)
+            .toBe(invoiceMock.payment.paymentDate);
+          expect(response.body.cheques[0].payment.numCheque)
+            .toBe(invoiceMock.payment.numCheque);
+          expect(response.body.count)
+            .toBe(1);
+        });
+      });
+    });
+  });
 });
