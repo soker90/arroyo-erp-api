@@ -114,9 +114,11 @@ const invoiceExpenseCreate2 = {
   dateRegister: 1597410180000,
   total: 12.5,
   provider: '5f14857d3ae0d32b417e8d0c',
-  type: 'Efectivo',
-  paymentDate: 1597410180000,
-  paid: true,
+  payment: {
+    type: 'Efectivo',
+    paymentDate: 1597410180000,
+    paid: true,
+  },
 };
 
 describe('InvoicesController', () => {
@@ -2063,6 +2065,141 @@ describe('InvoicesController', () => {
 
           expect(response.statusCode)
             .toBe(204);
+        });
+      });
+    });
+  });
+
+  describe('GET /invoices/cash/:year', () => {
+    const PATH = year => `/invoices/cash/${year}`;
+    afterAll(() => testDB.cleanAll());
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH(2020))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      beforeAll(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El año no es válido', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH('dfsdf'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.status)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.ParamNotValidError().message);
+        });
+      });
+
+      describe('Las sumas son 0', () => {
+        let response;
+
+        before(() => InvoiceModel.create(invoiceExpenseCreate));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH(2020))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Los resultados son 0', () => {
+          expect(response.body['1'])
+            .toBe(0);
+          expect(response.body['2'])
+            .toBe(0);
+          expect(response.body['3'])
+            .toBe(0);
+          expect(response.body['4'])
+            .toBe(0);
+          expect(response.body.total)
+            .toBe(0);
+        });
+      });
+
+      describe('Las sumas es correcta', () => {
+        let response;
+
+        before(() => InvoiceModel.create(invoiceExpenseCreate2));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH(2020))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Los resultados son 0', () => {
+          expect(response.body['1'])
+            .toBe(0);
+          expect(response.body['2'])
+            .toBe(0);
+          expect(response.body['3'])
+            .toBe(invoiceExpenseCreate2.total);
+          expect(response.body['4'])
+            .toBe(0);
+          expect(response.body.total)
+            .toBe(invoiceExpenseCreate2.total);
         });
       });
     });

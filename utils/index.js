@@ -25,11 +25,15 @@ const isNumber = num => typeof num === 'number';
 
 const formatDate = date => new Date(date).toLocaleDateString('es-ES');
 
+const calcQuarter = month => parseInt((month - 1) / 3, 10) + 1;
+
+
 module.exports = {
   roundNumber,
   replaceArrayElement,
   isEmptyObject,
   isNumber,
   formatDate,
+  calcQuarter,
   ...payments,
 };

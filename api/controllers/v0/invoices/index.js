@@ -133,5 +133,15 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'get',
+    domain: 'invoices',
+    path: '/cash/:year',
+    handler: invoicesController.inCash,
+    bindTo: invoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };

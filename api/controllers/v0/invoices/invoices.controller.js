@@ -189,6 +189,15 @@ class InvoicesController {
       .then(() => res.status(204).send())
       .catch(this._handleError.bind(this, res));
   }
+
+  inCash(req, res) {
+    logService.logInfo('[inovice]  - Devuelve el dinero en efectivo pagado');
+    Promise.resolve(req.params)
+      .tap(this.invoiceValidator.isValidYear)
+      .then(this.invoiceService.inCash)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = InvoicesController;
