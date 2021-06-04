@@ -291,6 +291,7 @@ describe('NoteController', () => {
             .send({
               date: 'incorrecto',
               concept: 'mensaje',
+              year: '2020',
             })
             .end((err, res) => {
               response = res;
@@ -318,6 +319,7 @@ describe('NoteController', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
               concept: 'mensaje',
+              year: '2020',
             })
             .end((err, res) => {
               response = res;
