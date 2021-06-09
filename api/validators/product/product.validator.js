@@ -43,7 +43,7 @@ const validateFields = ({
   re,
   price,
 }) => {
-  if (price) {
+  if (price || price === 0) {
     validateFieldsCreateByClients({
       name,
       price,
