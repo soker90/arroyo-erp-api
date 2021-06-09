@@ -41,10 +41,9 @@ const validateFields = ({
   name,
   iva,
   re,
-  provider,
   price,
 }) => {
-  if (!provider) {
+  if (price) {
     validateFieldsCreateByClients({
       name,
       price,
