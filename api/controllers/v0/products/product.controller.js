@@ -102,6 +102,16 @@ class ProductController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  delete(req, res) {
+    logService.logInfo('[products] - Delete product');
+    Promise.resolve(req.params)
+      .tap(this.productValidator.validateId)
+      .tap(this.productService.delete)
+      .then(this.productService.products)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = ProductController;

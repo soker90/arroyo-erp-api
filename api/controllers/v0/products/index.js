@@ -67,5 +67,15 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'delete',
+    domain: 'products',
+    path: '/:id',
+    handler: productController.delete,
+    bindTo: productController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };

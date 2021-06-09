@@ -6,6 +6,7 @@
   - Añadido contador de pagos en efectivo por trimestres
   - Añadida lista de cheques pagados por años
   - Reducido el número de lineas de las facturas de cliente al exportarlas
+  - Añadido endpoint para eliminar productos (pensado solo para borrar productos de clientes)
 
 # [1.2.1] - 02/05/2021
   - Añadido número de facturas trimestrales a la facturación

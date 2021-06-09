@@ -1,11 +1,17 @@
 const supertest = require('supertest');
 const {
-  mongoose, ProductModel, ProviderModel, PriceModel,
+  mongoose,
+  ProductModel,
+  ProviderModel,
+  PriceModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
-const { providerErrors, productErrors } = require('../../../../errors');
+const {
+  providerErrors,
+  productErrors,
+} = require('../../../../errors');
 
 const productMock = {
   code: '3333',
@@ -110,7 +116,10 @@ describe('ProductController', () => {
         let response;
         let product;
 
-        before(() => ProductModel.create({ productMock, provider: undefined })
+        before(() => ProductModel.create({
+          productMock,
+          provider: undefined,
+        })
           .then(productCreated => {
             product = productCreated;
           }));
@@ -914,11 +923,147 @@ describe('ProductController', () => {
         });
 
         test('Devuelve los datos correctos', () => {
-          expect(response.body[0].name).toBe(productClient.name);
-          expect(response.body[0].price).toBe(productClient.price);
+          expect(response.body[0].name)
+            .toBe(productClient.name);
+          expect(response.body[0].price)
+            .toBe(productClient.price);
+        });
+      });
+    });
+  });
+  describe('DELETE /products', () => {
+    const PATH = id => `/products/${id}`;
+    afterAll(() => testDB.cleanAll());
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      before(done => {
+        supertest(app)
+          .delete(PATH('5f1ac206dbcc4879c9c14c54'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Existe el token', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No existe el producto', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .delete(PATH('5f1ac206dbcc4879c9c14c54'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductNotFound().message);
         });
       });
 
+      describe('Se elimina un producto', () => {
+        let response;
+        let product;
+
+        before(() => ProductModel.create(productMock)
+          .then(productCreated => {
+            product = productCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH(product._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('La respuesta es correcta', () => {
+          expect(response.body.length)
+            .toBe(0);
+        });
+      });
+
+      describe('Elimina el producto correcto', () => {
+        let response;
+        let product2;
+        let product;
+
+        before(() => ProductModel.create(productMock)
+          .then(productCreated => {
+            product2 = productCreated;
+          }));
+
+        before(async () => {
+          const mock2 = {
+            ...product2,
+          };
+          delete mock2.provider;
+
+          await ProductModel.create(mock2)
+            .then(productCreated => {
+              product = productCreated;
+            });
+        });
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH(product2._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', async () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('El producto restante es el corercto', () => {
+          expect(response.body[0]._id)
+            .toBe(product._id.toString());
+        });
+      });
     });
   });
 });
