@@ -7,6 +7,7 @@
   - Añadida lista de cheques pagados por años
   - Reducido el número de lineas de las facturas de cliente al exportarlas
   - Añadido endpoint para eliminar productos (pensado solo para borrar productos de clientes)
+  - Corregido error por el que no se pueden modificar los productos de cliente
 
 # [1.2.1] - 02/05/2021
   - Añadido número de facturas trimestrales a la facturación

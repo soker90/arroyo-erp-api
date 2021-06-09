@@ -21,6 +21,13 @@ const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
 const validateProductBody = ({ body: { product } }) => _checkId(product);
 
+const validateFieldsCreateByClients = ({
+  name,
+  price,
+}) => {
+  if (!name || typeof price !== 'number') throw new productErrors.ProductMissingParams();
+};
+
 /**
  * Validate params
  * @param {number} code
@@ -34,7 +41,16 @@ const validateFields = ({
   name,
   iva,
   re,
+  provider,
+  price,
 }) => {
+  if (!provider) {
+    validateFieldsCreateByClients({
+      name,
+      price,
+    });
+    return;
+  }
   if (!name || typeof iva !== 'number' || typeof re !== 'number') throw new productErrors.ProductMissingParams();
 };
 
@@ -73,13 +89,6 @@ const validateCodeDuplicateEdit = async ({
       });
     }
   }
-};
-
-const validateFieldsCreateByClients = ({
-  name,
-  price,
-}) => {
-  if (!name || typeof price !== 'number') throw new productErrors.ProductMissingParams();
 };
 
 module.exports = {
