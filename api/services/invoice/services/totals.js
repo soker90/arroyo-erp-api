@@ -1,10 +1,9 @@
 const { InvoiceModel } = require('arroyo-erp-models');
 
 const { calcQuarter } = require('../../../../utils');
-const { TYPE_PAYMENT } = require('../../../../constants/payments');
 const { roundNumber } = require('../../../../utils');
 
-const _sumByMonth = year => {
+const _sumByMonth = (year, type) => {
   const start = new Date(year);
   const nextYear = Number(year) + 1;
   const end = new Date(nextYear.toString());
@@ -13,7 +12,7 @@ const _sumByMonth = year => {
   const aggregatorOpts = [
     {
       $match: {
-        'payment.type': TYPE_PAYMENT.CASH,
+        'payment.type': type,
         dateRegister: {
           $gte: start.getTime() - 43200000,
           $lt: end.getTime() - 43200000,
@@ -37,12 +36,15 @@ const _sumByMonth = year => {
 
 /**
  * Cuenta los albaranes sin factura del año dado
- * @return {Promise<[]>}
+ * @return {Promise<{'1': number, '2': number, total: number, '3': number, '4': number}>}
  */
-const inCash = async ({ year }) => {
-  const cashInfo = await _sumByMonth(year);
+const totals = async ({
+  year,
+  type,
+}) => {
+  const sumByMonth = await _sumByMonth(year, type);
 
-  const cashSum = {
+  const totalsSum = {
     1: 0,
     2: 0,
     3: 0,
@@ -50,15 +52,15 @@ const inCash = async ({ year }) => {
     total: 0,
   };
 
-  cashInfo.forEach(monthSum => {
+  sumByMonth.forEach(monthSum => {
     const quarter = calcQuarter(monthSum._id.month);
 
     const sum = roundNumber(monthSum.sum);
-    cashSum[quarter] += sum;
-    cashSum.total += sum;
+    totalsSum[quarter] += sum;
+    totalsSum.total += sum;
   });
 
-  return cashSum;
+  return totalsSum;
 };
 
-module.exports = inCash;
+module.exports = totals;

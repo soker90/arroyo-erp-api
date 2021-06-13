@@ -11,7 +11,7 @@ const expenseCreate = require('./services/expenseCreate');
 const exportOds = require('./services/export');
 const invoiceDelete = require('./services/invoiceDelete');
 const swap = require('./services/swap');
-const inCash = require('./services/inCash');
+const totals = require('./services/totals');
 const cheques = require('./services/cheques');
 
 /**
@@ -34,6 +34,6 @@ module.exports = {
   exportOds,
   invoiceDelete,
   swap,
-  inCash,
+  totals,
   cheques,
 };

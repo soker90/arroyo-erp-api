@@ -41,6 +41,16 @@ module.exports = (
         authMiddleware,
       ],
     }, {
+      method: 'get',
+      domain: 'invoices',
+      path: '/totals',
+      handler: invoicesController.totals,
+      bindTo: invoicesController,
+      skipVersion: true,
+      middlewares: [
+        authMiddleware,
+      ],
+    }, {
       method: 'post',
       domain: 'invoices',
       path: '/',
@@ -139,16 +149,6 @@ module.exports = (
       domain: 'invoices',
       path: '/swap/:a/:b',
       handler: invoicesController.swap,
-      bindTo: invoicesController,
-      skipVersion: true,
-      middlewares: [
-        authMiddleware,
-      ],
-    }, {
-      method: 'get',
-      domain: 'invoices',
-      path: '/cash/:year',
-      handler: invoicesController.inCash,
       bindTo: invoicesController,
       skipVersion: true,
       middlewares: [

@@ -11,10 +11,12 @@ class DashboardController {
     reminderService,
     errorHandler,
     reminderValidator,
+    dashboardService,
   }) {
     this.reminderService = reminderService;
     this.errorHandler = errorHandler;
     this.reminderValidator = reminderValidator;
+    this.dashboardService = dashboardService;
   }
 
   _handleError(res, error) {
@@ -35,8 +37,8 @@ class DashboardController {
   dashboard(req, res) {
     logService.logInfo('[inicio] - Datos del panel de inicio');
     Promise.resolve(req.query)
-      .then(this.reminderService.reminders)
-      .then(data => res.send({ reminders: data }))
+      .then(this.dashboardService.dashboard)
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 

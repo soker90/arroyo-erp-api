@@ -3,11 +3,15 @@ const errorHandler = require('../../../../components/error-handlers');
 
 const DashboardController = require('./dashboard.controller');
 
-module.exports = ({ reminderService }, { reminderValidator }) => {
+module.exports = ({
+  reminderService,
+  dashboardService,
+}, { reminderValidator }) => {
   const dashboardController = new DashboardController({
-    errorHandler,
     reminderService,
+    errorHandler,
     reminderValidator,
+    dashboardService,
   });
 
   return [{

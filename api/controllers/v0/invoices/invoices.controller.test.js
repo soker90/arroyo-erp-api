@@ -2070,8 +2070,8 @@ describe('InvoicesController', () => {
     });
   });
 
-  describe('GET /invoices/cash/:year', () => {
-    const PATH = year => `/invoices/cash/${year}`;
+  describe('GET /invoices/totals', () => {
+    const PATH = year => `/invoices/totals?year=${year}&type=Efectivo`;
     afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;

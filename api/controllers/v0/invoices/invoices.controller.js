@@ -190,11 +190,11 @@ class InvoicesController {
       .catch(this._handleError.bind(this, res));
   }
 
-  inCash(req, res) {
-    logService.logInfo('[inovice]  - Devuelve el dinero en efectivo pagado');
-    Promise.resolve(req.params)
+  totals(req, res) {
+    logService.logInfo('[totals]  - Devuelve el dinero pagado con un modo de pago');
+    Promise.resolve(req.query)
       .tap(this.invoiceValidator.isValidYear)
-      .then(this.invoiceService.inCash)
+      .then(this.invoiceService.totals)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
