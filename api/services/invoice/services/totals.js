@@ -4,7 +4,7 @@ const { calcQuarter } = require('../../../../utils');
 const { roundNumber } = require('../../../../utils');
 
 const _sumByMonth = (year, type) => {
-  const start = new Date(year);
+  const start = new Date(`${year}`);
   const nextYear = Number(year) + 1;
   const end = new Date(nextYear.toString());
 
