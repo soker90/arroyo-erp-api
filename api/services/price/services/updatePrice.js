@@ -111,6 +111,7 @@ const updatePrice = async ({
         diff: doProduct.diff,
         deliveryOrder: deliveryOrder._id,
         date: deliveryOrder.date,
+        cost,
       }, { upsert: true });
     }
   }
