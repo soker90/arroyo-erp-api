@@ -1,5 +1,7 @@
 /* eslint-disable nonblock-statement-body-position */
 const TelegramBot = require('node-telegram-bot-api');
+const nodeHtmlToImage = require('node-html-to-image');
+
 const {
   ProductModel,
   PriceChangeModel,
@@ -7,6 +9,7 @@ const {
 
 const LogService = require('../../log.service');
 const { roundNumber } = require('../../../../utils');
+const { TABLE_TEMPLATE } = require('../templates/table');
 
 const TYPE = 'PriceService';
 
@@ -28,22 +31,31 @@ const sendToTelegram = async ({
   const prices = await PriceChangeModel.find({ _id: { $in: ids } })
     .populate('product', null, ProductModel);
 
-  let message = '--------------------------------------------------------------------\n'
-    + '| Producto | Proveedor | Precio | Diferencia\n';
-
-  prices.forEach(price => {
+  const pricesForTemplate = prices.map(price => {
     const pricePrev = price.price - price.diff;
     const priceWithRate = pricePrev + (price.product.rate || 0);
     const costPrev = pricePrev + (priceWithRate * (price.product.iva + price.product.re));
-    const diff = roundNumber(costPrev - price.product.cost);
-    const row = '--------------------------------------------------------------------\n'
-      + `| ${price.product.name} | ${price.product.nameProvider} | ${price.cost} | ${diff}\n`;
-    message += row;
+    const diff = roundNumber(price.product.cost - costPrev);
+
+    return {
+      product: price.product.name,
+      provider: price.product.nameProvider,
+      price: price.cost,
+      diff,
+      upHidden: diff < 0 ? 'hidden' : '',
+      downHidden: diff > 0 ? 'hidden' : '',
+    };
   });
 
-  message += '--------------------------------------------------------------------';
+  const pricesImage = await nodeHtmlToImage({
+    html: TABLE_TEMPLATE,
+    content: { prices: pricesForTemplate },
+  });
 
-  bot.sendMessage(process.env.ARROYO_CHAT_ID_TELEGRAM, message);
+  bot.sendPhoto(process.env.ARROYO_CHAT_ID_TELEGRAM, pricesImage, {}, {
+    caption: 'Caption text',
+    contentType: 'image/png',
+  });
 };
 
 module.exports = sendToTelegram;

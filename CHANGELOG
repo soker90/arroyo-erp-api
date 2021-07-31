@@ -1,3 +1,6 @@
+# [1.3.3] - 31/07/2021
+  - Mejoradas las tablas de precios que se envían por telegram
+
 # [1.3.2] - 21/07/2021
   - El precio de coste del producto ahora se guarda en el modelo de cambio de precio
 
