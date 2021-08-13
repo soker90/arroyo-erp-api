@@ -41,7 +41,7 @@ const sendToTelegram = async ({
     message += row;
   });
 
-  bot.sendMessage(-1001387803762, message);
+  bot.sendMessage(process.env.ARROYO_CHAT_ID_TELEGRAM, message);
 };
 
 module.exports = sendToTelegram;
