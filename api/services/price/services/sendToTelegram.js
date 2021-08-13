@@ -37,7 +37,7 @@ const sendToTelegram = async ({
     const costPrev = pricePrev + (priceWithRate * (price.product.iva + price.product.re));
     const diff = roundNumber(price.product.cost - costPrev);
 
-    const row = `${price.product.name} (${price.product.nameProvider}) | PVP: ${price.cost}€ | ${diff < 0 ? '↓' : '↑'} ${diff}\n*****\n`;
+    const row = `${price.product.name} (${price.product.nameProvider}) | Coste: ${price.cost}€ | ${diff < 0 ? '↓' : '↑'} ${diff}\n*****\n`;
     message += row;
   });
 
