@@ -108,7 +108,7 @@ const updatePrice = async ({
         product: doProduct.product,
         productName: doProduct.name,
         price: doProduct.price,
-        diff: doProduct.diff,
+        diff: roundNumber(cost - lastPrice.cost),
         deliveryOrder: deliveryOrder._id,
         date: deliveryOrder.date,
         cost,

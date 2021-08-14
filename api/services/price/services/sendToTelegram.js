@@ -7,7 +7,6 @@ const {
 } = require('arroyo-erp-models');
 
 const LogService = require('../../log.service');
-const { roundNumber } = require('../../../../utils');
 
 const TYPE = 'PriceService';
 
@@ -32,12 +31,7 @@ const sendToTelegram = async ({
   let message = '****** Cambios de precio ******\n';
 
   prices.forEach(price => {
-    const pricePrev = price.price - price.diff;
-    const priceWithRate = pricePrev + (price.product.rate || 0);
-    const costPrev = pricePrev + (priceWithRate * (price.product.iva + price.product.re));
-    const diff = roundNumber(price.product.cost - costPrev);
-
-    const row = `${price.product.name} (${price.product.nameProvider}) | Coste: ${price.cost}€ | ${diff < 0 ? '↓' : '↑'} ${diff}\n*****\n`;
+    const row = `${price.product.name} (${price.product.nameProvider}) | Coste: ${price.cost}€ | ${price.diff < 0 ? '↓' : '↑'} ${price.diff}\n*****\n`;
     message += row;
   });
 
