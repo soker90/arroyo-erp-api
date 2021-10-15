@@ -45,7 +45,7 @@
     "jest": "^27.0.6",
     "jest-circus": "^27.0.5",
     "jest-sonar-reporter": "^2.0.0",
-    "mongodb-memory-server": "6.9.6",
+    "mongodb-memory-server": "7.4.4",
     "nock": "^13.1.1",
     "supertest": "^6.1.6"
   },
