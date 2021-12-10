@@ -30,7 +30,7 @@
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "lodash.unionwith": "^4.6.0",
-    "node-telegram-bot-api": "^0.54.0",
+    "node-telegram-bot-api": "^0.56.0",
     "nodemon": "^2.0.15"
   },
   "engines": {
@@ -38,14 +38,14 @@
   },
   "devDependencies": {
     "eslint": "^8.4.1",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb": "^19.0.2",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^25.3.0",
     "jest": "^27.4.4",
-    "jest-circus": "^27.0.5",
+    "jest-circus": "^27.4.4",
     "jest-sonar-reporter": "^2.0.0",
-    "mongodb-memory-server": "6.9.6",
+    "mongodb-memory-server": "^8.0.4",
     "nock": "^13.2.1",
     "supertest": "^6.1.6"
   },
