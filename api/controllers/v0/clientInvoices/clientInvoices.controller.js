@@ -239,6 +239,15 @@ class ClientInvoicesController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  billing(req, res) {
+    logService.logInfo('[billing] - Billing of client');
+    Promise.resolve(req.query)
+      .tap(this.invoiceValidator.isValidYear)
+      .then(this.clientInvoiceService.billing)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = ClientInvoicesController;
