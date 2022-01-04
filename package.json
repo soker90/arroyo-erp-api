@@ -20,14 +20,14 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^9.1.4",
-    "arroyo-erp-models": "^1.0.6",
+    "arroyo-erp-models": "^1.0.7",
     "bcrypt": "^5.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.1",
     "carbone": "^3.2.3",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "helmet": "^4.6.0",
+    "express": "^4.17.2",
+    "helmet": "^5.0.1",
     "jsonwebtoken": "^8.5.1",
     "lodash.unionwith": "^4.6.0",
     "node-telegram-bot-api": "^0.56.0",
@@ -37,15 +37,15 @@
     "node": "16.x"
   },
   "devDependencies": {
-    "eslint": "^8.4.1",
-    "eslint-config-airbnb": "^19.0.2",
+    "eslint": "^8.6.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-jest": "^25.3.0",
-    "jest": "^27.4.4",
-    "jest-circus": "^27.4.4",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jest": "^25.3.4",
+    "jest": "^27.4.5",
+    "jest-circus": "^27.4.5",
     "jest-sonar-reporter": "^2.0.0",
-    "mongodb-memory-server": "^8.0.4",
+    "mongodb-memory-server": "^8.1.0",
     "nock": "^13.2.1",
     "supertest": "^6.1.6"
   },
@@ -65,5 +65,10 @@
     "collectCoverageFrom": [],
     "coveragePathIgnorePatterns": [],
     "testRunner": "jest-circus/runner"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "4.4.10"
+    }
   }
 }
