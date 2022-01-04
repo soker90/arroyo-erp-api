@@ -233,7 +233,7 @@ describe('ClientInvoicesController', () => {
         describe('Sin facturas', () => {
           before(done => {
             supertest(app)
-              .get(`${PATH}?client=${client._id}`)
+              .get(`${PATH}?client=${client._id}&limit=10`)
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
                 response = res;
@@ -2220,4 +2220,6 @@ describe('ClientInvoicesController', () => {
       });
     });
   });
+
+  //TODO billing
 });
