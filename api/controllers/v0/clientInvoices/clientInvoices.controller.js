@@ -245,6 +245,7 @@ class ClientInvoicesController {
     Promise.resolve(req.query)
       .tap(this.invoiceValidator.isValidYear)
       .then(this.clientInvoiceService.billing)
+      .then(this.clientInvoiceAdapter.billingAdapter)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

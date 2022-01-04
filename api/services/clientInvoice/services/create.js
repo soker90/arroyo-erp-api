@@ -12,6 +12,7 @@ const create = async ({ client }) => {
   const newInvoice = await new ClientInvoiceModel({
     client,
     nameClient: clientData.name,
+    businessName: clientData.businessName,
   }).save();
 
   return {

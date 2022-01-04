@@ -8,7 +8,11 @@ const payments = require('./payment');
  * @param {number} index
  * @returns {Array}
  */
-const replaceArrayElement = ({ array, element, index }) => {
+const replaceArrayElement = ({
+  array,
+  element,
+  index,
+}) => {
   const newArray = array.slice();
   newArray[index] = element;
   return newArray;
@@ -27,6 +31,8 @@ const formatDate = date => new Date(date).toLocaleDateString('es-ES');
 
 const calcQuarter = month => parseInt((month - 1) / 3, 10) + 1;
 
+// Datetime menos medio dia
+const getTime = date => date.getTime() - 43200000;
 
 module.exports = {
   roundNumber,
@@ -35,5 +41,6 @@ module.exports = {
   isNumber,
   formatDate,
   calcQuarter,
+  getTime,
   ...payments,
 };
