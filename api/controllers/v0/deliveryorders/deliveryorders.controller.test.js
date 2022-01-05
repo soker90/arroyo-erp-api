@@ -137,7 +137,7 @@ describe('DeliveryOrderController', () => {
 
         before(done => {
           supertest(app)
-            .get('/deliveryorders')
+            .get('/deliveryorders?limit=10')
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
               response = res;

@@ -44,8 +44,8 @@ const _getInInvoices = ({
     ...(canal && { 'products.canal': canal }),
   })
     .sort({ date: -1 })
-    .skip(parseInt(offset, 10))
-    .limit(parseInt(limit, 10))
+    .skip(parseInt(offset, 10) || 0)
+    .limit(parseInt(limit, 10) || 10)
 );
 
 /**
