@@ -17,7 +17,7 @@ const portProperty = [].concat(port);
 /* istanbul ignore next */
 const hosts = hostProperty.reduce((s, h, i) => `${s}${i > 0 ? ',' : ''}${h}:${portProperty[i] || portProperty[0]}`, '');
 
-const uri = process.env.MONGODB || `mongodb://${userPass}${hosts}/${dataBaseName}?authSource=admin`;
+const uri = process.env.MONGODB || `mongodb://${userPass}${hosts}/${dataBaseName}`;
 const options = mongoOptions || {};
 options.useNewUrlParser = true;
 
