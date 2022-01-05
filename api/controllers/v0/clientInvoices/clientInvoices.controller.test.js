@@ -2221,5 +2221,156 @@ describe('ClientInvoicesController', () => {
     });
   });
 
-  //TODO billing
+  describe('GET /client/invoices/billing', () => {
+    const PATH = '/client/invoices/billing';
+    before(() => testDB.clean());
+
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      let client;
+
+      before(() => ClientModel.create({ name: 'Cliente' })
+        .then(clientCreated => {
+          client = clientCreated;
+        }));
+
+      describe('El año no es válido', () => {
+        let response;
+        before(done => {
+          supertest(app)
+            .get(`${PATH}?year=asd`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.status)
+            .toBe(400);
+        });
+
+        test('No devuelve facturas', () => {
+          expect(response.body.message)
+            .toBe(new commonErrors.ParamNotValidError().message);
+        });
+      });
+
+      describe('Sin facturas', () => {
+        let response;
+        before(done => {
+          supertest(app)
+            .get(`${PATH}?year=2020`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('No devuelve facturas', () => {
+          expect(response.body.length)
+            .toBe(0);
+        });
+      });
+
+      describe('Dispone de facturas', () => {
+        let response;
+        const CLIENT_NAME = 'test';
+        before(() => ClientInvoiceModel.create({
+          client: client._id,
+          date: 1609355546762,
+          businessName: CLIENT_NAME,
+        }));
+
+        before(() => ClientInvoiceModel.create({
+          ...invoiceMock,
+          client: client._id,
+          businessName: CLIENT_NAME,
+        }));
+
+        before(done => {
+          supertest(app)
+            .get(`${PATH}?year=2020`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Devuelve las facturas', () => {
+          const clientData = response.body[0];
+          expect(clientData.annual)
+            .toBe(295.74);
+          expect(clientData.annualInvoices)
+            .toBe(1);
+          expect(clientData.client)
+            .toBe(client._id.toString());
+          expect(clientData.name)
+            .toBe(CLIENT_NAME);
+          expect(clientData.invoices1)
+            .toBe(0);
+          expect(clientData.invoices2)
+            .toBe(0);
+          expect(clientData.invoices3)
+            .toBe(1);
+          expect(clientData.invoices4)
+            .toBe(0);
+          expect(clientData.annualInvoices)
+            .toBe(1);
+          expect(clientData.trimester1)
+            .toBe(0);
+          expect(clientData.trimester2)
+            .toBe(0);
+          expect(clientData.trimester3)
+            .toBe(295.74);
+          expect(clientData.trimester4)
+            .toBe(0);
+        });
+      });
+    });
+  });
 });

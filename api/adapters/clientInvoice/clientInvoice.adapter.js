@@ -28,6 +28,7 @@ const conditionalDataTotalsResponse = ({
 const initBillingData = client => ({
   client: client._id.client,
   name: client._id.businessName ?? client._id.name,
+  trimester1: 0,
   invoices1: 0,
   trimester2: 0,
   invoices2: 0,
