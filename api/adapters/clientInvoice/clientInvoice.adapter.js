@@ -1,3 +1,4 @@
+const { orderByProvider } = require('../../services/billing/utils');
 /**
  * Devuelve los totales de la factura
  * @param invoice
@@ -27,7 +28,8 @@ const conditionalDataTotalsResponse = ({
 
 const initBillingData = client => ({
   client: client._id.client,
-  name: client._id.businessName ?? client._id.name,
+  name: client._id.name,
+  businessName: client._id.businessName,
   trimester1: 0,
   invoices1: 0,
   trimester2: 0,
@@ -54,7 +56,7 @@ const billingAdapter = billingData => {
     billing[clientId].annualInvoices += clientTrimester.count;
   });
 
-  return Object.values(billing);
+  return Object.values(billing).sort(orderByProvider);
 };
 
 module.exports = {

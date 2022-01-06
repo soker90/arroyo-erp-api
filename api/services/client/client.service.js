@@ -34,7 +34,32 @@ const clients = async () => {
     .collation({ locale: 'es' })
     .exec();
 
-  return { clients: clientList, invoices };
+  const invoicesPending = await ClientInvoiceModel.aggregate([
+    {
+      $match: {
+        nInvoice: { $exists: false },
+      },
+    },
+    {
+      $group: {
+        _id: '$client',
+        invoices: { $sum: 1 },
+      },
+    },
+    {
+      $sort: {
+        name: 1,
+      },
+    },
+  ])
+    .collation({ locale: 'es' })
+    .exec();
+
+  return {
+    clients: clientList,
+    invoices,
+    invoicesPending,
+  };
 };
 
 /**

@@ -2,6 +2,7 @@
   - Añadida facturación de clientes
   - Actualización de librerias
   - Mejoras para tests
+  - Añadido numero de facturas pendientes al endpoint de listado de clientes
 
 # [1.3.5] - 15/08/2021
   - Ahora se guarda la diferencia de precio con impuestos en el modelo de cambio de precios

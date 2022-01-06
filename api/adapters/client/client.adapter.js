@@ -7,6 +7,7 @@
 const clientsResponse = ({
   clients,
   invoices,
+  invoicesPending,
 }) => clients.map(({
   name,
   _id,
@@ -14,6 +15,7 @@ const clientsResponse = ({
   _id,
   name,
   invoices: invoices.find(client => client?._id === _id.toString())?.invoices || 0,
+  pending: invoicesPending.find(client => client?._id === _id.toString())?.invoices || 0,
 }));
 
 module.exports = {
