@@ -259,6 +259,14 @@ class ClientInvoicesController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  payments(req, res) {
+    logService.logInfo('[payments] - Listado de facturas de clientes pendiente de pago');
+    Promise.resolve(req.query)
+      .then(this.clientInvoiceService.payments)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = ClientInvoicesController;
