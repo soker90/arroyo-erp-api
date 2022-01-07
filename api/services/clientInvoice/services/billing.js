@@ -55,7 +55,7 @@ const billing = ({
           {
             _id: {
               client: '$client',
-              name: '$nameClient', // legacy
+              name: '$nameClient',
               businessName: '$businessName',
               trimester: '$trimester',
             },

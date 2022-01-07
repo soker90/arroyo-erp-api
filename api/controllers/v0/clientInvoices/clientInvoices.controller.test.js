@@ -2313,17 +2313,20 @@ describe('ClientInvoicesController', () => {
 
       describe('Dispone de facturas', () => {
         let response;
+        const CLIENT_BUSINESS_NAME = 'bus_test';
         const CLIENT_NAME = 'test';
         before(() => ClientInvoiceModel.create({
           client: client._id,
           date: 1609355546762,
-          businessName: CLIENT_NAME,
+          businessName: CLIENT_BUSINESS_NAME,
+          nameClient: CLIENT_NAME,
         }));
 
         before(() => ClientInvoiceModel.create({
           ...invoiceMock,
           client: client._id,
-          businessName: CLIENT_NAME,
+          businessName: CLIENT_BUSINESS_NAME,
+          nameClient: CLIENT_NAME,
         }));
 
         before(done => {
@@ -2351,6 +2354,8 @@ describe('ClientInvoicesController', () => {
             .toBe(client._id.toString());
           expect(clientData.name)
             .toBe(CLIENT_NAME);
+          expect(clientData.businessName)
+            .toBe(CLIENT_BUSINESS_NAME);
           expect(clientData.invoices1)
             .toBe(0);
           expect(clientData.invoices2)
