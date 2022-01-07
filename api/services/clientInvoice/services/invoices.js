@@ -17,6 +17,7 @@ const invoices = ({
       $gte: start,
       $lt: end,
     },
+    nInvoice: { $exists: true },
   }, '_id nameClient total date nInvoice paymentType paymentDate paid')
     .sort({ nInvoice: -1 })
     .lean();
