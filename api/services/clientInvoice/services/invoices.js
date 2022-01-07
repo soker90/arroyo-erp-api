@@ -17,7 +17,7 @@ const invoices = ({
       $gte: start,
       $lt: end,
     },
-  }, '_id nameClient total date nInvoice')
+  }, '_id nameClient total date nInvoice paymentType paymentDate paid')
     .sort({ nInvoice: -1 })
     .lean();
 };

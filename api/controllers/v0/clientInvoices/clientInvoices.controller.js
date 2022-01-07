@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 
 const LogService = require('../../../services/log.service');
+const applyPayment = require('../../../services/clientInvoice/services/applyPayment');
 
 const TYPE = 'ClientInvoiceController';
 
@@ -260,10 +261,13 @@ class ClientInvoicesController {
       .catch(this._handleError.bind(this, res));
   }
 
-  payments(req, res) {
-    logService.logInfo('[payments] - Listado de facturas de clientes pendiente de pago');
-    Promise.resolve(req.query)
-      .then(this.clientInvoiceService.payments)
+  applyPayment(req, res) {
+    logService.logInfo('[applyPayment] - Añade información del pago a la factura');
+    Promise.resolve(req)
+      .tap(this.clientInvoiceValidator.validateIdParam)
+      .tap(this.clientInvoiceValidator.isValidPaymentBody)
+      .then(this.clientInvoiceService.applyPayment)
+      .then(this.clientInvoiceService.invoices)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

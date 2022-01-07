@@ -2,6 +2,7 @@
 const {
   ClientInvoiceModel,
   AutoIncrement,
+  InvoiceModel,
 } = require('arroyo-erp-models');
 const {
   invoiceErrors,
@@ -9,6 +10,7 @@ const {
   deliveryOrderErrors,
 } = require('../../../errors');
 const { isNumber } = require('../../../utils');
+const { TYPE_PAYMENT } = require('../../../constants');
 
 /**
  * Check if exist id
@@ -114,6 +116,16 @@ const validateProduct = ({
     throw new invoiceErrors.InvoiceParamsMissing();
 };
 
+const isValidPaymentBody = ({
+  body: {
+    paymentType,
+    paymentDate,
+  },
+}) => {
+  if (!paymentType) throw new invoiceErrors.InvoiceParamsMissing();
+  if (paymentDate && typeof paymentDate !== 'number') throw new commonErrors.DateNotValid();
+};
+
 module.exports = {
   validateId,
   validateIdParam,
@@ -125,4 +137,5 @@ module.exports = {
   validateDeliveryOrderParam,
   validateProduct,
   isValidForConfirmed,
+  isValidPaymentBody,
 };

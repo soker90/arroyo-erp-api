@@ -97,10 +97,10 @@ module.exports = (
     ],
   },
   {
-    method: 'get',
+    method: 'patch',
     domain: 'client/invoices',
-    path: '/payments',
-    handler: clientInvoicesController.payments,
+    path: '/payments/:id',
+    handler: clientInvoicesController.applyPayment,
     bindTo: clientInvoicesController,
     skipVersion: true,
     middlewares: [

@@ -3,7 +3,7 @@
   - Actualización de librerias
   - Mejoras para tests
   - Añadido numero de facturas sin numero de factura al endpoint de listado de clientes
-  - Anadido listado de facturas de clientes sin pagar
+  - Marcar facturas de clientes como pagadas
 
 # [1.3.5] - 15/08/2021
   - Ahora se guarda la diferencia de precio con impuestos en el modelo de cambio de precios
