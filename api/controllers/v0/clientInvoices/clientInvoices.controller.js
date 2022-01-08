@@ -1,7 +1,6 @@
 const Promise = require('bluebird');
 
 const LogService = require('../../../services/log.service');
-const applyPayment = require('../../../services/clientInvoice/services/applyPayment');
 
 const TYPE = 'ClientInvoiceController';
 
@@ -268,6 +267,15 @@ class ClientInvoicesController {
       .tap(this.clientInvoiceValidator.isValidPaymentBody)
       .then(this.clientInvoiceService.applyPayment)
       .then(this.clientInvoiceService.invoices)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  invoicesExport(req, res) {
+    logService.logInfo('[invoicesExport]  - Export all invoices of clients to the book');
+    Promise.resolve(req.query)
+      .tap(this.clientInvoiceValidator.isValidYear)
+      .then(this.clientInvoiceService.invoicesExport)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

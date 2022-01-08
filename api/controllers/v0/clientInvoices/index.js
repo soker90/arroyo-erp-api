@@ -54,7 +54,19 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
-  }, {
+  },
+  {
+    method: 'get',
+    domain: 'client/invoices',
+    path: '/export',
+    handler: clientInvoicesController.invoicesExport,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
+  {
     method: 'patch',
     domain: 'client/invoices',
     path: '/:id',
