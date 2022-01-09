@@ -281,7 +281,7 @@ describe('ClientInvoicesController', () => {
 
           test('Devuelve las facturas', () => {
             expect(response.body.count)
-              .toBe(2);
+              .toBe(1);
             expect(response.body.invoices[0].date)
               .toBe(invoiceMock.date);
             expect(response.body.invoices[0].total)
