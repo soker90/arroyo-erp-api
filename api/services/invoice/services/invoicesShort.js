@@ -14,7 +14,10 @@ const invoicesShort = async ({
     ...(provider && { provider }),
   };
 
-  const invoices = await InvoiceModel.find(filter, '_id nOrder nInvoice dateInvoice total payment.type payment.paid mailSend')
+  const invoices = await InvoiceModel.find({
+    ...filter,
+    nOrder: { $exists: true },
+  }, '_id nOrder nInvoice dateInvoice total payment.type payment.paid mailSend')
     .sort({
       dateRegister: -1,
       nOrder: -1,
@@ -23,14 +26,26 @@ const invoicesShort = async ({
     .limit(Number(limit || 10))
     .lean();
 
-  invoices.sort(a => (a.nOrder ? 0 : -1));
+  const invoicesInProgress = await InvoiceModel.find(
+    {
+      ...filter,
+      nOrder: { $exists: false },
+    },
+    '_id nOrder nInvoice dateInvoice total payment.type payment.paid mailSend'
+  )
+    .lean();
 
-  const count = await InvoiceModel.countDocuments(filter);
+  const count = await InvoiceModel.countDocuments({
+    ...filter,
+    nOrder: { $exists: true },
+  });
 
   return {
-    invoices,
+    invoices: [
+      ...invoicesInProgress,
+      ...invoices,
+    ],
     count,
   };
 };
-
 module.exports = invoicesShort;

@@ -1,3 +1,6 @@
+# [1.4.1] - 09/01/2022
+  - Ahora las facturas en progreso se muestran al principio de la lista del cliente/provedor
+
 # [1.4.0] - 08/01/2022
   - Añadida facturación de clientes
   - Actualización de librerias
