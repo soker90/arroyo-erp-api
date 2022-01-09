@@ -1,5 +1,5 @@
 const { ClientInvoiceModel } = require('arroyo-erp-models');
-// TODO: https://stackoverflow.com/questions/31084446/how-can-i-sort-into-that-nulls-are-last-ordered-in-mongodb
+
 /**
  * Devuelve las facturas del cliente
  * @param {Object} params
