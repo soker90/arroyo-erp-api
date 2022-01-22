@@ -61,7 +61,8 @@ const note = ({ id }) => NoteModel.findOne({ _id: id });
  * @param {String} id
  * @returns {Promise<void>}
  */
-const deleteNote = ({ id }) => NoteModel.deleteOne({ _id: id });
+const deleteNote = ({ id }) => NoteModel.findOneAndDelete({ _id: id })
+  .then(({ year }) => ({ year }));
 
 /**
  * Edita un nota
