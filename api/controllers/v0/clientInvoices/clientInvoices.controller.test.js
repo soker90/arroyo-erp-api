@@ -257,7 +257,7 @@ describe('ClientInvoicesController', () => {
         describe('Dispone de facturas', () => {
           before(() => ClientInvoiceModel.create({
             client: client._id,
-            date: new Date().getTime(),
+            date: new Date('2020').getTime(),
           }));
           before(() => ClientInvoiceModel.create({
             ...invoiceMock,
@@ -266,7 +266,7 @@ describe('ClientInvoicesController', () => {
 
           before(done => {
             supertest(app)
-              .get(`${PATH}?client=${client._id}&offset=1&limit=1`)
+              .get(`${PATH}?client=${client._id}&offset=0&limit=1`)
               .set('Authorization', `Bearer ${token}`)
               .end((err, res) => {
                 response = res;
@@ -282,11 +282,11 @@ describe('ClientInvoicesController', () => {
           test('Devuelve las facturas', () => {
             expect(response.body.count)
               .toBe(1);
-            expect(response.body.invoices[0].date)
+            expect(response.body.invoices[1].date)
               .toBe(invoiceMock.date);
-            expect(response.body.invoices[0].total)
+            expect(response.body.invoices[1].total)
               .toBe(invoiceMock.total);
-            expect(response.body.invoices[0].nInvoice)
+            expect(response.body.invoices[1].nInvoice)
               .toBe(invoiceMock.nInvoice);
           });
         });
