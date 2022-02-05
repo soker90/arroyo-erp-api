@@ -1,6 +1,6 @@
 {
   "name": "arroyo-erp-api",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "API for Arroyo Erp",
   "main": "index.js",
   "scripts": {
@@ -42,11 +42,11 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jest": "^26.0.0",
-    "jest": "^27.4.7",
-    "jest-circus": "^27.4.6",
+    "jest": "^27.5.0",
+    "jest-circus": "^27.5.0",
     "jest-sonar-reporter": "^2.0.0",
-    "mongodb-memory-server": "^8.2.0",
-    "nock": "^13.2.2",
+    "mongodb-memory-server": "^8.3.0",
+    "nock": "^13.2.4",
     "supertest": "^6.2.2"
   },
   "jest": {

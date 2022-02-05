@@ -1,3 +1,6 @@
+# [1.4.2] - 05/02/2022
+  - Al eliminar una nota devuelve la lista con las notas restantes
+
 # [1.4.1] - 09/01/2022
   - Ahora las facturas en progreso se muestran al principio de la lista del cliente/provedor
 
