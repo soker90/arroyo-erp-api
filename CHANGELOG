@@ -1,3 +1,7 @@
+# [1.4.3] - 09/02/2022
+  - Corregida fecha erronea de pago, cuando no existe fecha, en el libro descargado de clientes
+  - Eliminada columna de codigo en la plantilla del libro de facturas de proveedores
+
 # [1.4.2] - 05/02/2022
   - Al eliminar una nota devuelve la lista con las notas restantes
 

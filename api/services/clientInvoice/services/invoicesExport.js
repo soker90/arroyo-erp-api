@@ -6,11 +6,11 @@ const {
 const { formatDate } = require('../../../../utils');
 
 const _invoicesAdapter = invoices => invoices.map(invoice => ({
-  fechaFactura: formatDate(invoice.date),
+  fechaFactura: invoice.date ? formatDate(invoice.date) : '',
   nFactura: invoice.nInvoice,
   nombreCliente: invoice.businessName,
   tipo: invoice?.paymentType,
-  fechaPago: formatDate(invoice?.paymentDate),
+  fechaPago: invoice?.paymentDate ? formatDate(invoice?.paymentDate) : '',
   total: invoice?.total,
   cif: invoice?.client?.cif,
 }));
