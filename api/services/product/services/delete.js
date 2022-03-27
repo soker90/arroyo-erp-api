@@ -5,7 +5,7 @@ const { ProductModel } = require('arroyo-erp-models');
  * @param {string} id
  */
 const deleteProduct = ({
-  id,
-}) => ProductModel.deleteOne({ _id: id });
+  id, provider,
+}) => ProductModel.deleteOne({ _id: id, provider });
 
 module.exports = deleteProduct;

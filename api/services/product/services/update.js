@@ -15,8 +15,9 @@ const update = ({
     re,
     profit,
     price,
+    provider,
   },
-}) => ProductModel.findOneAndUpdate({ _id: params.id }, {
+}) => ProductModel.findOneAndUpdate({ _id: params.id, provider }, {
   code,
   name,
   ...(rate !== undefined && { rate }),

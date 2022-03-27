@@ -1,3 +1,6 @@
+# [1.4.4] - 27/03/2022
+  - Corregido fallo por el que, al actualizar el precio un producto de cliente con el mismo nombre que otro de un proveedor, actualizaba los dos precios
+
 # [1.4.3] - 09/02/2022
   - Corregida fecha erronea de pago, cuando no existe fecha, en el libro descargado de clientes
   - Eliminada columna de codigo en la plantilla del libro de facturas de proveedores
