@@ -589,6 +589,7 @@ describe('ProductController', () => {
                 iva: product2Mock.iva,
                 re: product2Mock.re,
                 rate: product2Mock.rate,
+                provider: productMock.provider,
               })
               .end((err, res) => {
                 response = res;
