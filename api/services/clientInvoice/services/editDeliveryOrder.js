@@ -1,4 +1,7 @@
-const { ClientInvoiceModel } = require('arroyo-erp-models');
+const {
+  ClientInvoiceModel,
+  PriceModel,
+} = require('arroyo-erp-models');
 
 /**
  * Create invoice
@@ -17,6 +20,10 @@ const editDeliveryOrder = async ({
     _id: id,
     'deliveryOrders._id': deliveryOrder,
   }, { $set: { 'deliveryOrders.$.date': date } });
+  await PriceModel.updateMany({
+    invoice: id,
+    deliveryOrder,
+  }, { $set: { date } });
 };
 
 module.exports = editDeliveryOrder;

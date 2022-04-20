@@ -21,6 +21,7 @@ const addProduct = ({
     weight,
     unit,
     price,
+    productId,
   },
 }) => {
   const total = roundNumber(weight * price);
@@ -35,6 +36,7 @@ const addProduct = ({
         unit,
         price,
         total,
+        productId,
       },
     },
   }, { new: true });

@@ -1,6 +1,6 @@
 {
   "name": "arroyo-erp-api",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "description": "API for Arroyo Erp",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@hapi/boom": "^9.1.4",
-    "arroyo-erp-models": "^1.1.0",
+    "arroyo-erp-models": "^1.2.1",
     "bcrypt": "^5.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.20.0",
@@ -45,7 +45,7 @@
     "jest": "^27.5.1",
     "jest-circus": "^27.5.1",
     "jest-sonar-reporter": "^2.0.0",
-    "mongodb-memory-server": "^8.4.2",
+    "mongodb-memory-server": "^8.5.0",
     "nock": "^13.2.4",
     "supertest": "^6.2.2"
   },

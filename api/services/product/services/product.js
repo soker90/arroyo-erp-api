@@ -1,5 +1,8 @@
 /* eslint-disable nonblock-statement-body-position */
-const { PriceModel, ProductModel } = require('arroyo-erp-models');
+const {
+  PriceModel,
+  ProductModel,
+} = require('arroyo-erp-models');
 
 /**
  * Get dates and prices of the product
@@ -10,13 +13,19 @@ const _getPricesOfProduct = product => PriceModel.find({ product })
   .sort({ date: -1 })
   .limit(25)
   .then(prices => prices.map(({
-    date, price, cost, sale, deliveryOrder,
+    date,
+    price,
+    cost,
+    sale,
+    deliveryOrder,
+    invoice,
   }) => ({
     date,
     price,
     cost,
     sale,
     deliveryOrder,
+    invoice,
   })));
 
 /**

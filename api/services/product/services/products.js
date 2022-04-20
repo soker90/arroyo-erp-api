@@ -7,9 +7,8 @@ const { ProductModel } = require('arroyo-erp-models');
  * @return {Promise<{data: any}>}
  */
 const products = ({ provider }) => {
-  const filter = {
-    provider: provider || { $exists: false },
-  };
+  const filter = (provider && { provider })
+    || { $or: [{ provider: { $exists: false } }, { provider: null }] };
 
   return ProductModel
     .find(filter)
