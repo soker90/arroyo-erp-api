@@ -1,4 +1,4 @@
-# [1.5.0]
+# [1.5.0] - 21/04/2022
   - Añadido histórico de precios de productos de cliente, al modificar el albarán del cliente.
   - Añadida posibilidad de tener un campo con el iban en la factura solo para algunos clientes
 
