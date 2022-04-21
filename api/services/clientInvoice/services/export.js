@@ -67,6 +67,7 @@ const _invoicesAdapter = invoice => {
     cp: invoice.client.postalCode,
     provincia: invoice.client.province,
     cif: invoice.client.cif,
+    mostrarIban: invoice.client.transfer,
     filas: filasAll.slice(0, 48),
     filas2: filasAll.slice(49, 97),
     filas3: filasAll.slice(98, 200),
