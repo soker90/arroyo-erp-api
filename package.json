@@ -30,7 +30,7 @@
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
     "lodash.unionwith": "^4.6.0",
-    "node-telegram-bot-api": "^0.56.0",
+    "node-telegram-bot-api": "^0.57.0",
     "nodemon": "^2.0.15"
   },
   "engines": {
