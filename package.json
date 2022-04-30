@@ -64,7 +64,10 @@
     "collectCoverage": true,
     "collectCoverageFrom": [],
     "coveragePathIgnorePatterns": [],
-    "testRunner": "jest-circus/runner"
+    "testRunner": "jest-circus/runner",
+    "fakeTimers": {
+      "enableGlobally": true
+    }
   },
   "config": {
     "mongodbMemoryServer": {
