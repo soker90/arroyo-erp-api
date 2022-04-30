@@ -42,7 +42,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.1.5",
-    "jest": "^27.5.1",
+    "jest": "^28.0.3",
     "jest-circus": "^27.5.1",
     "jest-sonar-reporter": "^2.0.0",
     "mongodb-memory-server": "^8.5.2",
@@ -65,6 +65,9 @@
     "collectCoverageFrom": [],
     "coveragePathIgnorePatterns": [],
     "testRunner": "jest-circus/runner"
+  },
+  "fakeTimers": {
+    "enableGlobally": true
   },
   "config": {
     "mongodbMemoryServer": {

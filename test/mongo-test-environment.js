@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
-const NodeEnvironment = require('jest-environment-node');
+const NodeEnvironment = require('jest-environment-node').default;
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 class MongoDbEnvironment extends NodeEnvironment {
-  constructor(config) {
-    super(config);
+  constructor(config, context) {
+    super(config, context);
     this.mongod = null;
   }
 
