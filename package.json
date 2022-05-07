@@ -43,7 +43,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.1.5",
     "jest": "^28.0.3",
-    "jest-circus": "^28.0.3",
+    "jest-circus": "^28.1.0",
     "jest-sonar-reporter": "^2.0.0",
     "mongodb-memory-server": "^8.5.2",
     "nock": "^13.2.4",
