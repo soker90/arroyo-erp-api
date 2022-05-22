@@ -15,7 +15,7 @@ const config = {
     loki: {
       isActive: true,
       user: process.env.GRAFANA_LOGGER_USER || 'test',
-      job: 'arroyo-erp',
+      job: process.env.GRAFANA_LOGGER_JOB || 'test',
       host: 'https://logs-prod-eu-west-0.grafana.net',
       password: process.env.GRAFANA_LOGGER_PASSWORD || 'test',
     }
