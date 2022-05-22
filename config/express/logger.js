@@ -1,12 +1,18 @@
+const {
+  createLogger,
+  format,
+  transports,
+} = require('winston');
 const LokiTransport = require('winston-loki');
 const morgan = require('morgan');
-import { createLogger, format, transports } from 'winston';
+const config = require('..');
 
-import config from '../';
+const {
+  combine,
+  prettyPrint,
+} = format;
 
-const { combine, prettyPrint } = format;
-
-function initLogger(app) {
+function loggerMiddleware(app) {
   const transportList = [
     new transports.Console({
       silent: process.env.LOG !== '1',
@@ -14,13 +20,13 @@ function initLogger(app) {
         format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
         format.colorize({ all: true }),
         format.printf(
-          (info) => `${info.timestamp} ${info.level}: ${info.message}`,
+          info => `${info.timestamp} ${info.level}: ${info.message}`,
         ),
-      )
-    })
+      ),
+    }),
   ];
 
-  if (process.env.NODE_ENV === 'prod') {
+  if (process.env.NODE_ENV === 'production') {
     transportList.push(new LokiTransport({
       format: prettyPrint(),
       host: config.logger.loki.host,
@@ -36,23 +42,25 @@ function initLogger(app) {
   });
 
   const morganOptions = {
-    write: function (message) {
+    write(message) {
       logger.info(message);
-    }
+    },
   };
 
+  /* eslint-disable no-console */
   function initLogger(req, res, next) {
-    console.log = (args) => logger.info.call(logger, args);
-    console.info = (args) => logger.info.call(logger, args);
-    console.warn = (args) => logger.warn.call(logger, args);
-    console.error = (args) => logger.error.call(logger, args);
-    console.debug = (args) => logger.debug.call(logger, args);
+    console.log = args => logger.info.call(logger, args);
+    console.info = args => logger.info.call(logger, args);
+    console.warn = args => logger.warn.call(logger, args);
+    console.error = args => logger.error.call(logger, args);
+    console.debug = args => logger.debug.call(logger, args);
 
     next();
   }
 
   app.use(morgan('tiny', { stream: morganOptions }));
   app.use(initLogger);
+  console.log('[server] Loaded logger middleware');
 }
 
-module.exports = initLogger;
+module.exports = loggerMiddleware;

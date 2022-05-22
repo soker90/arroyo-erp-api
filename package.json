@@ -30,8 +30,11 @@
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
     "lodash.unionwith": "^4.6.0",
+    "morgan": "^1.10.0",
     "node-telegram-bot-api": "^0.57.0",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "winston": "^3.7.2",
+    "winston-loki": "^6.0.5"
   },
   "engines": {
     "node": "16.x"
