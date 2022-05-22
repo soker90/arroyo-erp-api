@@ -11,6 +11,15 @@ const config = {
     host: [process.env.DATABASE_HOST || '127.0.0.1'],
     dataBaseName: process.env.DATABASE_NAME || 'arroyoErp',
   },
+  logger: {
+    loki: {
+      isActive: true,
+      user: process.env.GRAFANA_LOGGER_USER || 'test',
+      job: 'arroyo-erp',
+      host: 'https://logs-prod-eu-west-0.grafana.net',
+      password: process.env.GRAFANA_LOGGER_PASSWORD || 'test',
+    }
+  }
 };
 
 module.exports = config;
