@@ -77,5 +77,15 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'get',
+    domain: 'products',
+    path: '/last-delivery-order/:id',
+    handler: productController.getLastDeliveryOrder,
+    bindTo: productController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };

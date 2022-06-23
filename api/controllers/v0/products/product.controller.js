@@ -112,6 +112,15 @@ class ProductController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  getLastDeliveryOrder(req, res) {
+    logService.logInfo('[getLastDeliveryOrder] - Get last delivery order');
+    Promise.resolve(req.params)
+      .tap(this.productValidator.validateId)
+      .then(this.productService.getLastDeliveryOrder)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = ProductController;

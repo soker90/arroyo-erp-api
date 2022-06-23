@@ -4,6 +4,7 @@ const {
   ProductModel,
   ProviderModel,
   PriceModel,
+  DeliveryOrderModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
@@ -42,6 +43,34 @@ const product2Mock = {
 const productClient = {
   name: 'Product 9',
   price: 22.5,
+};
+
+const deliveryOrderMock = {
+  provider: '5f14857d3ae0d32b417e8d0c',
+  nameProvider: 'Primero',
+  date: 1596632580000.0,
+  total: 75.48,
+  iva: 6.8,
+  rate: 0.5,
+  re: 0.68,
+  taxBase: 68,
+  hasCanal: true,
+  products: [
+    {
+      code: '',
+      product: '5f188ec1deae8d5c1b549336',
+      price: 8,
+      quantity: 8,
+      name: 'yiuyi',
+      taxBase: 68,
+      rate: 0.5,
+      iva: 6.8,
+      re: 0.68,
+      total: 75.48,
+      canal: '33s',
+
+    },
+  ],
 };
 
 describe('ProductController', () => {
@@ -1060,6 +1089,102 @@ describe('ProductController', () => {
         test('El producto restante es el corercto', () => {
           expect(response.body[0]._id)
             .toBe(product._id.toString());
+        });
+      });
+    });
+  });
+  describe('GET /products/last-delivery-order/:id', () => {
+    const PATH = id => `/products/last-delivery-order/${id}`;
+    afterAll(() => testDB.cleanAll());
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      before(done => {
+        supertest(app)
+          .get(PATH('5e41b4e1e6dabb35ee94f1d0'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Existe el token', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El id no existe', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .get(PATH('5e41b4e1e6dabb35ee94f1d0'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductNotFound().message);
+        });
+      });
+
+      describe('Devuelve el producto correctamente', () => {
+        let response;
+        let deliveryOrder;
+        let product;
+
+        before(async () => {
+          product = await ProductModel.create(productMock);
+          deliveryOrderMock.products[0].product = product._id.toString();
+
+          await DeliveryOrderModel.create({ ...deliveryOrderMock, date: Date.now() });
+          deliveryOrder = await DeliveryOrderModel
+            .create({ ...deliveryOrderMock, date: Date.now() + 5000 });
+        });
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH(product._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('La información es correcta', () => {
+          expect(response.body.deliveryOrder).toBe(deliveryOrder._id.toString());
         });
       });
     });
