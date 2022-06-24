@@ -16,14 +16,12 @@ const _getPricesOfProduct = product => PriceModel.find({ product })
     date,
     price,
     cost,
-    sale,
     deliveryOrder,
     invoice,
   }) => ({
     date,
     price,
     cost,
-    sale,
     deliveryOrder,
     invoice,
   })));

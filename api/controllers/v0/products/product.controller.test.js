@@ -37,7 +37,6 @@ const product2Mock = {
   price: 3,
   cost: 3.33,
   sale: 3.73,
-  profit: 12.3,
 };
 
 const productClient = {
@@ -395,13 +394,13 @@ describe('ProductController', () => {
           });
         });
 
-        describe('No se envía profit', () => {
+        describe('No se envía sale', () => {
           let response;
 
           before(done => {
             const product = { ...productMock };
             delete product.nameProvider;
-            delete product.profit;
+            delete product.sale;
             supertest(app)
               .post('/products')
               .set('Authorization', `Bearer ${token}`)
@@ -648,7 +647,7 @@ describe('ProductController', () => {
               .toBe(product2Mock.rate);
             expect(response.body.re)
               .toBe(product2Mock.re);
-            expect(response.body.profit)
+            expect(response.body.sale)
               .toBeFalsy();
           });
         });
@@ -788,8 +787,8 @@ describe('ProductController', () => {
             .toBe(product.re);
           expect(json.rate)
             .toBe(product.rate);
-          expect(json.profit)
-            .toBe(product.profit);
+          expect(json.sale)
+            .toBe(product.sale);
           expect(response.body.prices)
             .toEqual([]);
         });
@@ -802,14 +801,12 @@ describe('ProductController', () => {
           date: 1612031252249,
           price: 3,
           cost: 4,
-          sale: 4.5,
         };
 
         const price2 = {
           date: 1612031263616,
           price: 4.1,
           cost: 4.6,
-          sale: 5.1,
         };
 
         before(async () => {
@@ -851,8 +848,6 @@ describe('ProductController', () => {
               .toBe(mock.price);
             expect(price.cost)
               .toBe(mock.cost);
-            expect(price.sale)
-              .toBe(mock.sale);
           };
 
           reviewPrice(response.body.prices[1], price1);

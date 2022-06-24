@@ -13,7 +13,7 @@ const update = ({
     rate,
     iva,
     re,
-    profit,
+    sale,
     price,
     provider,
   },
@@ -23,7 +23,7 @@ const update = ({
   ...(rate !== undefined && { rate }),
   ...(iva !== undefined && { iva }),
   ...(re !== undefined && { re }),
-  ...(profit !== undefined && { profit }),
+  ...(sale !== undefined && { sale }),
   ...(price !== undefined && { price }),
 }, { new: true });
 
