@@ -1,3 +1,8 @@
+# [1.7.0] - 24/06/2022
+  - Eliminado profit de producto
+  - Eliminado sale de precios
+  - Añadido sale a los productos
+
 # [1.6.0] - 24/06/2022
   - Nuevo endpoint que devuelve el último albarán en el que apareció un producto.
 
