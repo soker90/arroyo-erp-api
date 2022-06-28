@@ -6,6 +6,6 @@ const { DeliveryOrderModel } = require('arroyo-erp-models');
  */
 const lastProductViewer = ({ id }) => DeliveryOrderModel.findOne(
   { 'products.product': id },
-).sort({ date: -1 }).then(({ _id }) => ({ deliveryOrder: _id }));
+).sort({ date: -1 }).then(deliveryOrder => ({ deliveryOrder: deliveryOrder?._id }));
 
 module.exports = lastProductViewer;
