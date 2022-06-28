@@ -1,6 +1,6 @@
 {
   "name": "arroyo-erp-api",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "API for Arroyo Erp",
   "main": "index.js",
   "scripts": {
