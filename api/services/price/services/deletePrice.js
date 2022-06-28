@@ -23,7 +23,6 @@ const deletePrice = async ({
     await ProductModel.updateOne({ _id: productId }, {
       price: lastPrice?.price,
       cost: lastPrice?.cost,
-      sale: lastPrice?.sale,
     });
   }
 };

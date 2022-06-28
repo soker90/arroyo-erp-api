@@ -6,7 +6,7 @@ const { ProductModel, ProviderModel } = require('arroyo-erp-models');
  * @return {Promise<string>}
  */
 const create = async ({
-  code, name, rate, iva, re, provider, profit,
+  code, name, rate, iva, re, provider, sale,
 }) => {
   const providerData = await ProviderModel.findOne({ _id: provider });
 
@@ -16,7 +16,7 @@ const create = async ({
     ...(rate && { rate }),
     iva,
     re,
-    ...(profit && { profit }),
+    sale,
     ...(provider && { provider }),
     nameProvider: providerData.name,
   }).save();

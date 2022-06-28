@@ -29,25 +29,6 @@ const getLastPrice = product => PriceModel.find({ product })
   .sort({ date: -1 })
   .limit(1);
 
-/**
- * Calcula el precio con impuestos y el precio de venta del producto
- * @param doProduct
- * @return {Promise<{sale: (number|*), cost: (number|*)}>}
- */
-const calcCostSale = async doProduct => {
-  const productData = await ProductModel.findOne({ _id: doProduct.product });
-  const cost = roundNumber(doProduct.total / doProduct.quantity);
-
-  const sale = productData.profit
-    ? roundNumber(cost * productData.profit + cost)
-    : undefined;
-
-  return {
-    cost,
-    sale,
-  };
-};
-
 const isPriceChanges = (doProduct, lastPrice) => (
   roundNumber(doProduct.price, 3) !== roundNumber(lastPrice?.price, 3)
   && doProduct.price !== 0
@@ -69,10 +50,7 @@ const updatePrice = async ({
   if (isPriceChanges(doProduct, lastPrice)) {
     logService.logInfo(`[update price] - Actualizando precio de ${doProduct.name} ${doProduct.product}`);
 
-    const {
-      cost,
-      sale,
-    } = await calcCostSale(doProduct);
+    const cost = roundNumber(doProduct.total / doProduct.quantity);
 
     // Añade el precio a la collection de precios
     await PriceModel.updateOne({
@@ -84,7 +62,6 @@ const updatePrice = async ({
       product: doProduct.product,
       price: doProduct.price,
       cost,
-      ...(sale !== undefined && { sale }),
     }, { upsert: true });
 
     const isNewestOrder = deliveryOrder.date > (lastPrice?.date || 0)
@@ -95,7 +72,6 @@ const updatePrice = async ({
       await ProductModel.updateOne({ _id: doProduct.product }, {
         price: doProduct.price,
         cost,
-        ...(sale !== undefined && { sale }),
       });
     }
 
