@@ -9,7 +9,7 @@ USER node
 
 ENV TZ Europe/Madrid
 
-COPY package.json package-lock.json ./
+COPY --chown=node:node package.json package-lock.json ./
 
 RUN npm install
 
