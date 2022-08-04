@@ -1,3 +1,6 @@
+# [1.8.0] - 04/08/2022
+  - Ahora getLastDeliveryOrder devuelve el último y penúltimo albarán en el que aparece el producto
+
 # [1.7.1] - 29/06/2022
   - Corregido get de último albarán cuando no hay albaranes
 

@@ -1149,9 +1149,10 @@ describe('ProductController', () => {
         });
       });
 
-      describe('Devuelve el producto correctamente', () => {
+      describe('Devuelve los albaranes del producto correctamente', () => {
         let response;
         let deliveryOrder;
+        let deliveryOrderNextToLast;
         let product;
 
         before(async () => {
@@ -1160,7 +1161,9 @@ describe('ProductController', () => {
 
           await DeliveryOrderModel.create({ ...deliveryOrderMock, date: Date.now() });
           deliveryOrder = await DeliveryOrderModel
-            .create({ ...deliveryOrderMock, date: Date.now() + 5000 });
+            .create({ ...deliveryOrderMock, date: Date.now() + 180000 });
+          deliveryOrderNextToLast = await DeliveryOrderModel
+            .create({ ...deliveryOrderMock, date: Date.now() + 150000 });
         });
 
         beforeAll(done => {
@@ -1179,7 +1182,8 @@ describe('ProductController', () => {
         });
 
         test('La información es correcta', () => {
-          expect(response.body.deliveryOrder).toBe(deliveryOrder._id.toString());
+          expect(response.body.last).toBe(deliveryOrder._id.toString());
+          expect(response.body.nextToLast).toBe(deliveryOrderNextToLast._id.toString());
         });
       });
     });
