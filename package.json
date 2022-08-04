@@ -7,7 +7,8 @@
     "start": "NODE_ENV=production NTBA_FIX_319=1000 node ./bin/www",
     "dev": "NODE_ENV=dev NTBA_FIX_319=1000 nodemon ./bin/www",
     "test": "NODE_ENV=test NTBA_FIX_319=1000 jest --detectOpenHandles --coverage",
-    "lint": "eslint '**/*.js'"
+    "lint": "eslint '**/*.js'",
+    "publish": "docker build . -t soker90/arroyo-erp-api:latest -f ./Dockerfile && docker push soker90/arroyo-erp-api:latest"
   },
   "pre-push": [
     "test",
