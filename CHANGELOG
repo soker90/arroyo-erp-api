@@ -1,3 +1,6 @@
+# [1.8.1] - 22/08/2022
+  - Corregida la ordenación de los productos de clientes
+
 # [1.8.0] - 04/08/2022
   - Ahora getLastDeliveryOrder devuelve el último y penúltimo albarán en el que aparece el producto
 

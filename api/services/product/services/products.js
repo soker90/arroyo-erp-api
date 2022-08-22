@@ -13,6 +13,10 @@ const products = ({ provider }) => {
   return ProductModel
     .find(filter)
     .select('_id name code price cost sale price iva')
+    .collation({
+      locale: 'es',
+      numericOrdering: true,
+    })
     .sort({
       code: 1,
       name: 1,
