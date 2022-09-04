@@ -4,6 +4,7 @@ const {
 } = require('arroyo-erp-models');
 
 const ClientInvoiceService = require('../clientInvoice');
+const { orderByName } = require('../../../utils');
 /**
  * Return all providers
  * @return {Promise<{data: any}>}
@@ -11,6 +12,7 @@ const ClientInvoiceService = require('../clientInvoice');
 const clients = async () => {
   const currentYearDate = new Date(`${new Date().getFullYear()}`);
   const clientList = await ClientModel.find({});
+  clientList.sort(orderByName);
   const invoices = await ClientInvoiceModel.aggregate([
     {
       $match: {

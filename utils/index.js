@@ -1,5 +1,6 @@
 const roundNumber = require('./roundNumber');
 const payments = require('./payment');
+const orderByName = require('./orderByName');
 
 /**
  * Genera un nuevo array con el elemento del índice dado reemplazado
@@ -43,4 +44,5 @@ module.exports = {
   calcQuarter,
   getTime,
   ...payments,
+  orderByName,
 };
