@@ -9,6 +9,7 @@ const { formatDate } = require('../../../../utils');
 const INVOICE_1_TEMPLATE = './templates/factura-1-hoja.ods';
 const INVOICE_2_TEMPLATE = './templates/factura-2-hojas.ods';
 const INVOICE_3_TEMPLATE = './templates/factura-3-hojas.ods';
+const INVOICE_4_TEMPLATE = './templates/factura-4-hojas.ods';
 
 const UNITS_WITHOUT_DECIMALS = ['ud', 'uds'];
 
@@ -70,7 +71,8 @@ const _invoicesAdapter = invoice => {
     mostrarIban: invoice.client.transfer,
     filas: filasAll.slice(0, 48),
     filas2: filasAll.slice(49, 97),
-    filas3: filasAll.slice(98, 200),
+    filas3: filasAll.slice(98, 145),
+    filas4: filasAll.slice(146, 250),
     nFilas: filasAll.length,
     base: invoice.taxBase,
     iva: invoice.iva,
@@ -90,7 +92,8 @@ const _getInvoice = async id => {
 const _getTemplate = ({ nFilas }) => {
   if (nFilas < 51) return INVOICE_1_TEMPLATE;
   if (nFilas < 101) return INVOICE_2_TEMPLATE;
-  return INVOICE_3_TEMPLATE;
+  if (nFilas < 151) return INVOICE_3_TEMPLATE;
+  return INVOICE_4_TEMPLATE;
 };
 
 /* istanbul ignore next */
