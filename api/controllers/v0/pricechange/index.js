@@ -55,16 +55,6 @@ module.exports = ({ priceService }, { priceChangeValidator }) => {
   }, {
     method: 'post',
     domain: 'pricechanges',
-    path: '/send',
-    handler: priceChangeController.send,
-    bindTo: priceChangeController,
-    skipVersion: true,
-    middlewares: [
-      authMiddleware,
-    ],
-  }, {
-    method: 'post',
-    domain: 'pricechanges',
     path: '/deletemany',
     handler: priceChangeController.deleteManyChanges,
     bindTo: priceChangeController,

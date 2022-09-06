@@ -30,8 +30,7 @@
     "express": "^4.18.1",
     "helmet": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
-    "lodash.unionwith": "^4.6.0",
-    "node-telegram-bot-api": "^0.59.0"
+    "lodash.unionwith": "^4.6.0"
   },
   "engines": {
     "node": "16.x"
@@ -46,8 +45,8 @@
     "jest-circus": "^29.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "mongodb-memory-server": "^8.9.1",
-    "nodemon": "^2.0.19",
     "nock": "^13.2.9",
+    "nodemon": "^2.0.19",
     "supertest": "^6.2.4"
   },
   "jest": {

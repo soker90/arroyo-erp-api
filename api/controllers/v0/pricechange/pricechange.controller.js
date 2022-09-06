@@ -79,18 +79,6 @@ class PriceChangeController {
   }
 
   /**
-   * Changes prices to telegram
-   */
-  send(req, res) {
-    logService.logInfo('[send] - Enviar a telegram');
-    Promise.resolve(req.body)
-      .tap(this.priceChangeValidator.validateIds)
-      .then(this.priceService.sendToTelegram)
-      .then(data => res.send(data))
-      .catch(this._handleError.bind(this, res));
-  }
-
-  /**
    * Change to read/unread
    */
   deleteManyChanges(req, res) {

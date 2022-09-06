@@ -7,7 +7,6 @@ const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 
-jest.mock('../../../services/price/services/sendToTelegram');
 const {
   priceChangeErrors,
 } = require('../../../../errors');
@@ -237,7 +236,7 @@ describe('PriceChangeController', () => {
     });
   });
 
-  describe('DELETE /notes/:id', () => {
+  describe('DELETE /pricechanges/:id', () => {
     const PATH = id => `/pricechanges/${id}`;
 
     before(() => testDB.clean());
@@ -417,101 +416,6 @@ describe('PriceChangeController', () => {
         test('Devuelve un array con un elemento', () => {
           expect(response.body.count)
             .toBe(1);
-        });
-      });
-    });
-  });
-
-  describe('POST /pricechanges/send', () => {
-    const PATH = '/pricechanges/send';
-    describe('Usuario no autenticado', () => {
-      let response;
-
-      beforeAll(done => {
-        supertest(app)
-          .post(PATH)
-          .end((err, res) => {
-            response = res;
-            done();
-          });
-      });
-
-      test('Debería dar un 401', () => {
-        expect(response.statusCode)
-          .toBe(401);
-      });
-    });
-
-    describe('Usuario autenticado', () => {
-      let token;
-      before(done => {
-        requestLogin()
-          .then(res => {
-            token = res;
-            done();
-          });
-      });
-
-      let priceChange;
-
-      beforeAll(() => PriceChangeModel.create(priceChangeMock)
-        .then(priceChangeCreated => {
-          priceChange = priceChangeCreated;
-        }));
-
-      test('Se ha autenticado el usuario', () => {
-        expect(token)
-          .toBeTruthy();
-      });
-
-      describe('Los ids no son válidos', () => {
-        let response;
-
-        before(done => {
-          supertest(app)
-            .post(PATH)
-            .set('Authorization', `Bearer ${token}`)
-            .send({ ids: ['5f567000685de0559bf930f8', priceChange._id] })
-            .end((err, res) => {
-              response = res;
-              done();
-            });
-        });
-
-        test('Debería dar un 404', () => {
-          expect(response.status)
-            .toBe(404);
-        });
-
-        test('El mensaje de error es correcto', () => {
-          expect(response.body.message)
-            .toEqual(new priceChangeErrors.ElementsNotFound().message);
-        });
-      });
-
-      describe('Se envían los cambios de precio', () => {
-        let response;
-        let priceChange2;
-
-        before(() => PriceChangeModel.create(priceChangeMock)
-          .then(priceCreated => {
-            priceChange2 = priceCreated;
-          }));
-
-        before(done => {
-          supertest(app)
-            .post(PATH)
-            .set('Authorization', `Bearer ${token}`)
-            .send({ ids: [priceChange2._id] })
-            .end((err, res) => {
-              response = res;
-              done();
-            });
-        });
-
-        test('Debería dar un 200', () => {
-          expect(response.status)
-            .toBe(200);
         });
       });
     });

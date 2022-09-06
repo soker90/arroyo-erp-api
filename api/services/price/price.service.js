@@ -4,7 +4,6 @@ const {
 
 const updatePrice = require('./services/updatePrice');
 const deletePrice = require('./services/deletePrice');
-const sendToTelegram = require('./services/sendToTelegram');
 const deleteManyPricesChange = require('./services/deleteManyPricesChange');
 
 const priceChangeRead = ({
@@ -39,6 +38,5 @@ module.exports = {
   priceChangeRead,
   priceChangeDelete,
   priceChangesUnreadCount,
-  sendToTelegram,
   deleteManyPricesChange,
 };
