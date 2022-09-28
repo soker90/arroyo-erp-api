@@ -27,9 +27,9 @@ const _getProviderProducts = async provider => {
 };
 
 const exportOds = async ({
-  provider,
+  id,
 }) => {
-  const data = await _getProviderProducts(provider);
+  const data = await _getProviderProducts(id);
 
   let productsFile = null;
   let error = null;
