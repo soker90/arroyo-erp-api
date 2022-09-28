@@ -1,3 +1,6 @@
+# [1.9.0] - 28/09/2022
+  - Añadido endpoint para descargar el listado de productos de un proveedor con su precio y beneficio
+
 # [1.8.3] - 05/09/2022
   - Añadida 4 página para facturas de clientes
 

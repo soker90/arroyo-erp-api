@@ -4,14 +4,14 @@ const {
   ProductModel,
   ProviderModel,
   PriceModel,
-  DeliveryOrderModel,
+  DeliveryOrderModel, BillingModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
   providerErrors,
-  productErrors,
+  productErrors, billingErrors,
 } = require('../../../../errors');
 
 const productMock = {
@@ -1184,6 +1184,100 @@ describe('ProductController', () => {
         test('La información es correcta', () => {
           expect(response.body.last).toBe(deliveryOrder._id.toString());
           expect(response.body.nextToLast).toBe(deliveryOrderNextToLast._id.toString());
+        });
+      });
+    });
+  });
+
+  describe('GET /products/export-provider', () => {
+    const PATH = provider => `/products/export-provider/${provider}`;
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH())
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      beforeAll(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El proveedor no existe', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH('5f1ac206dbcc4879c9c14c54'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.status)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new providerErrors.ProviderIdNotFound().message);
+        });
+      });
+
+      describe('La petición se procesa correctamente', () => {
+        let response;
+        let provider;
+
+        before(() => ProviderModel.create({ name: 'test' })
+          .then(providerCreated => {
+            provider = providerCreated;
+          }));
+
+        before(() => ProductModel.create({
+          ...productMock,
+          provider: provider._id,
+        }));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH(provider._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
         });
       });
     });

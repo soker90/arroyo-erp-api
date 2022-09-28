@@ -3,24 +3,27 @@ const {
   ProductModel,
   ProviderModel,
 } = require('arroyo-erp-models');
+const { roundNumber } = require('../../../../utils');
 
 const _productsAdapter = products => products.map(product => ({
   nombre: product.name,
   precio: product.price,
   coste: product.cost,
   pvp: product.sale,
+  beneficio: roundNumber(product.sale - product.cost),
+  beneficioPor: ((product.sale - product.cost) / product.sale),
 }));
 
 const _getProviderProducts = async provider => {
   const products = await ProductModel.find({
     provider,
-  }, 'trimesters provider annual');
+  }, 'name price cost sale');
 
-  const providerData = await ProviderModel.findOne({ _id: provider });
+  const providerData = await ProviderModel.findOne({ _id: provider }, 'name');
 
   return {
     nombre: providerData.name,
-    fecha: Date.toLocaleString(),
+    fecha: new Date().toLocaleString('es-ES', { dateStyle: 'short' }),
     products: _productsAdapter(products),
 
   };
