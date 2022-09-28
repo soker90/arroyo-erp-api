@@ -124,7 +124,7 @@ class ProductController {
 
   export(req, res) {
     logService.logInfo('[export] - Exportar el listado de productos y sus precios de un proveedor');
-    Promise.resolve(req.query)
+    Promise.resolve(req.params)
       .tap(this.providerValidator.validateId)
       .then(this.productService.exportOds)
       .then(data => res.send(data))
