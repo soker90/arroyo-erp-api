@@ -121,6 +121,15 @@ class ProductController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  export(req, res) {
+    logService.logInfo('[export] - Exportar el listado de productos y sus precios de un proveedor');
+    Promise.resolve(req.query)
+      .tap(this.providerValidator.validateId)
+      .then(this.productService.exportOds)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = ProductController;

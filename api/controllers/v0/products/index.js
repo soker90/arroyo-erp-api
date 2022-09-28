@@ -87,5 +87,15 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'get',
+    domain: 'products',
+    path: '/export-provider/:id',
+    handler: productController.export,
+    bindTo: productController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };
