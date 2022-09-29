@@ -1,3 +1,6 @@
+# [1.9.1] - 29/09/2022
+  - En el ods de productos ahora se ordenan por nombre
+
 # [1.9.0] - 28/09/2022
   - Añadido endpoint para descargar el listado de productos de un proveedor con su precio y beneficio
 

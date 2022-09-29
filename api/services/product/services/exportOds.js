@@ -17,7 +17,9 @@ const _productsAdapter = products => products.map(product => ({
 const _getProviderProducts = async provider => {
   const products = await ProductModel.find({
     provider,
-  }, 'name price cost sale');
+  }, 'name price cost sale').sort({
+    name: 1,
+  });
 
   const providerData = await ProviderModel.findOne({ _id: provider }, 'name');
 
