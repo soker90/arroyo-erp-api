@@ -69,10 +69,10 @@ const _invoicesAdapter = invoice => {
     provincia: invoice.client.province,
     cif: invoice.client.cif,
     mostrarIban: invoice.client.transfer,
-    filas: filasAll.slice(0, 48),
-    filas2: filasAll.slice(49, 97),
-    filas3: filasAll.slice(98, 145),
-    filas4: filasAll.slice(146, 250),
+    filas: filasAll.slice(0, 43),
+    filas2: filasAll.slice(44, 87),
+    filas3: filasAll.slice(88, 131),
+    filas4: filasAll.slice(132, 250),
     nFilas: filasAll.length,
     base: invoice.taxBase,
     iva: invoice.iva,
@@ -90,9 +90,9 @@ const _getInvoice = async id => {
 
 /* istanbul ignore next */
 const _getTemplate = ({ nFilas }) => {
-  if (nFilas < 42) return INVOICE_1_TEMPLATE;
-  if (nFilas < 92) return INVOICE_2_TEMPLATE;
-  if (nFilas < 142) return INVOICE_3_TEMPLATE;
+  if (nFilas < 45) return INVOICE_1_TEMPLATE;
+  if (nFilas < 89) return INVOICE_2_TEMPLATE;
+  if (nFilas < 133) return INVOICE_3_TEMPLATE;
   return INVOICE_4_TEMPLATE;
 };
 
