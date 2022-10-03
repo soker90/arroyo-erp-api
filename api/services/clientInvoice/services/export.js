@@ -90,9 +90,9 @@ const _getInvoice = async id => {
 
 /* istanbul ignore next */
 const _getTemplate = ({ nFilas }) => {
-  if (nFilas < 51) return INVOICE_1_TEMPLATE;
-  if (nFilas < 101) return INVOICE_2_TEMPLATE;
-  if (nFilas < 151) return INVOICE_3_TEMPLATE;
+  if (nFilas < 46) return INVOICE_1_TEMPLATE;
+  if (nFilas < 96) return INVOICE_2_TEMPLATE;
+  if (nFilas < 146) return INVOICE_3_TEMPLATE;
   return INVOICE_4_TEMPLATE;
 };
 
