@@ -90,14 +90,15 @@ const update = ({
 const client = async ({ id }) => {
   const clientData = await ClientModel.findOne({ _id: id })
     .lean();
-  const invoices = await ClientInvoiceService.invoicesShort({
-    client: id,
-    limit: 10,
-  });
+  // const invoices = await ClientInvoiceService.invoicesShort({
+  //   client: id,
+  //   limit: 10,
+  // });
 
+  // TODO
   return {
     client: clientData,
-    ...invoices,
+    // ...invoices,
   };
 };
 
