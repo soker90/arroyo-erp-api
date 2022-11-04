@@ -69,8 +69,8 @@ class ClientsController {
       .tap(this.clientValidator.validateIdParam)
       .tap(this.clientValidator.fieldsValidBody)
       .then(this.clientService.update)
-      .then(() => res.status(204)
-        .send())
+      .then(data => res.status(200)
+        .send(data))
       .catch(this._handleError.bind(this, res));
   }
 
