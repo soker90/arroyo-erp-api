@@ -3,7 +3,6 @@ const {
   ClientInvoiceModel,
 } = require('arroyo-erp-models');
 
-const ClientInvoiceService = require('../clientInvoice');
 const { orderByName } = require('../../../utils');
 /**
  * Return all providers
@@ -19,6 +18,7 @@ const clients = async () => {
         date: {
           $gte: currentYearDate.getTime() - 43200000,
         },
+        nInvoice: { $exists: true },
       },
     },
     {
@@ -79,7 +79,7 @@ const update = ({
   params,
   body,
 }) => (
-  ClientModel.findOneAndUpdate({ _id: params.id }, { $set: body })
+  ClientModel.findOneAndUpdate({ _id: params.id }, { $set: body }, { new: true })
 );
 
 /**
@@ -90,15 +90,8 @@ const update = ({
 const client = async ({ id }) => {
   const clientData = await ClientModel.findOne({ _id: id })
     .lean();
-  const invoices = await ClientInvoiceService.invoicesShort({
-    client: id,
-    limit: 10,
-  });
 
-  return {
-    client: clientData,
-    ...invoices,
-  };
+  return clientData;
 };
 
 module.exports = {

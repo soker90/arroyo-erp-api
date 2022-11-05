@@ -373,7 +373,28 @@ describe('ClientController', () => {
 
           test('Debería dar un 204', () => {
             expect(response.status)
-              .toBe(204);
+              .toBe(200);
+          });
+
+          test('Devuelve los datos correctos', () => {
+            expect(response.body._id)
+              .toEqual(client._id.toString());
+            expect(response.body.address)
+              .toEqual(clientMock.address);
+            expect(response.body.businessName)
+              .toEqual(clientMock.businessName);
+            expect(response.body.cif)
+              .toEqual(clientMock.cif);
+            expect(response.body.city)
+              .toEqual(clientMock.city);
+            expect(response.body.email)
+              .toEqual(clientMock.email);
+            expect(response.body.phone)
+              .toEqual(clientMock.phone);
+            expect(response.body.postalCode)
+              .toEqual(clientMock.postalCode);
+            expect(response.body.province)
+              .toEqual(clientMock.province);
           });
         });
       });
@@ -466,23 +487,23 @@ describe('ClientController', () => {
           });
 
           test('Devuelve los datos correctos', () => {
-            expect(response.body.client._id)
+            expect(response.body._id)
               .toEqual(client._id.toString());
-            expect(response.body.client.address)
+            expect(response.body.address)
               .toEqual(client.address);
-            expect(response.body.client.businessName)
+            expect(response.body.businessName)
               .toEqual(client.businessName);
-            expect(response.body.client.cif)
+            expect(response.body.cif)
               .toEqual(client.cif);
-            expect(response.body.client.city)
+            expect(response.body.city)
               .toEqual(client.city);
-            expect(response.body.client.email)
+            expect(response.body.email)
               .toEqual(client.email);
-            expect(response.body.client.phone)
+            expect(response.body.phone)
               .toEqual(client.phone);
-            expect(response.body.client.postalCode)
+            expect(response.body.postalCode)
               .toEqual(client.postalCode);
-            expect(response.body.client.province)
+            expect(response.body.province)
               .toEqual(client.province);
           });
         });
