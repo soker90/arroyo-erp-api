@@ -18,6 +18,7 @@ const clients = async () => {
         date: {
           $gte: currentYearDate.getTime() - 43200000,
         },
+        nInvoice: { $exists: true },
       },
     },
     {
