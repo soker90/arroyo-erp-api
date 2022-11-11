@@ -10,6 +10,8 @@ const logService = new LogService(TYPE);
 
 const merge = require('./services/merge');
 const confirm = require('./services/confirm');
+const payments = require('./services/payments');
+const exportOds = require('./services/export');
 
 /**
  * Create payment
@@ -33,16 +35,6 @@ const create = async invoice => {
   } else
     logService.logInfo(`[create payment] - La factura ${invoice._id} ya está pagada`);
 };
-
-// TODO Ordenar conforme sea necesario
-/**
- *Devuelve todos los pagos no abonados
- * @returns {*}
- */
-const payments = () => PaymentModel.find({
-  paid: { $exists: false },
-  $or: [{ merged: { $exists: false } }, { merged: false }],
-});
 
 /**
  * Elimina el pago fusionado y elimina el tag merged a los antiguos pagos
@@ -78,4 +70,5 @@ module.exports = {
   merge,
   divide,
   remove,
+  exportOds,
 };

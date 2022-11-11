@@ -1,6 +1,7 @@
-# [2.0.0]
+# [2.0.0] - 11/11/2022
   - El get de /client ahora solo envía la información del cliente, sin sus facturas
   - En el listado de clientes ahora se envía el número de facturas confirmadas en vez de las facturas totales del cliente
+  - Creado endpoint para exportar los pagos a ods
 
 # [1.9.5] - 03/10/2022
   - Añadido código de producto a la descarga del listado de productos del cliente

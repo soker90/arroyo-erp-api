@@ -30,7 +30,7 @@ class PaymentsController {
     case 'PaymentIdNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
-    /* istanbul ignore next */
+      /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
       break;
@@ -76,6 +76,14 @@ class PaymentsController {
       .tap(this.paymentValidator.isMerged)
       .tap(this.paymentService.divide)
       .then(this.paymentService.payments)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  export(req, res) {
+    logService.logInfo('[export]  - Exporta lista de pagos a ods');
+    Promise.resolve(req.query)
+      .then(this.paymentService.exportOds)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }

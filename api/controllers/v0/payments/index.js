@@ -3,7 +3,10 @@ const errorHandler = require('../../../../components/error-handlers');
 
 const PaymentController = require('./payments.controller');
 
-module.exports = ({ paymentService }, { paymentValidator, productValidator }) => {
+module.exports = ({ paymentService }, {
+  paymentValidator,
+  productValidator,
+}) => {
   const paymentsController = new PaymentController({
     paymentService,
     errorHandler,
@@ -49,6 +52,17 @@ module.exports = ({ paymentService }, { paymentValidator, productValidator }) =>
     domain: 'payments',
     path: '/divide/:id',
     handler: paymentsController.divide,
+    bindTo: paymentsController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
+  {
+    method: 'get',
+    domain: 'payments',
+    path: '/export',
+    handler: paymentsController.export,
     bindTo: paymentsController,
     skipVersion: true,
     middlewares: [
