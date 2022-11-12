@@ -9,7 +9,7 @@ const _paymentsAdapter = payments => payments.map(payment => ({
   proveedor: payment.provider,
   tipo: payment.type,
   importe: payment.amount,
-  fechaCobro: payment.paymentDate,
+  fechaCobro: formatDate(payment.paymentDate),
 }));
 
 /* istanbul ignore next */
