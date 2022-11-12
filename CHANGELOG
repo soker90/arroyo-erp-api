@@ -1,3 +1,6 @@
+# [2.0.1] - 12/11/2022
+  - Corregido el formato de fecha de pago del archivo ODS de pagos
+  
 # [2.0.0] - 11/11/2022
   - El get de /client ahora solo envía la información del cliente, sin sus facturas
   - En el listado de clientes ahora se envía el número de facturas confirmadas en vez de las facturas totales del cliente
