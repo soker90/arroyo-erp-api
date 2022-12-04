@@ -129,9 +129,16 @@ class ClientInvoicesController {
       .catch(this._handleError.bind(this, res));
   }
 
-  /**
-   * Edit the delivery order of the client invoice
-   */
+  getDeliveryOrder(req, res) {
+    logService.logInfo('[getDeliveryOrder]  - Devuelve un albarán de cliente');
+    Promise.resolve(req.params)
+      .tap(this.clientInvoiceValidator.validateDeliveryOrder)
+      .then(this.clientInvoiceService.getDeliveryOrder)
+      .then(data => res
+        .send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
   addDeliveryOrder(req, res) {
     logService.logInfo('[addDeliveryOrder]  - Añade un albarán a la factura');
     Promise.resolve(req.params)

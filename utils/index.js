@@ -1,6 +1,8 @@
+const arrays = require('./arrays');
 const roundNumber = require('./roundNumber');
 const payments = require('./payment');
 const orderByName = require('./orderByName');
+// eslint-disable-next-line import/no-self-import
 
 /**
  * Genera un nuevo array con el elemento del índice dado reemplazado
@@ -44,5 +46,6 @@ module.exports = {
   calcQuarter,
   getTime,
   ...payments,
+  ...arrays,
   orderByName,
 };

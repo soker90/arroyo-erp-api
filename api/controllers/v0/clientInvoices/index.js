@@ -230,5 +230,15 @@ module.exports = (
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'get',
+    domain: 'client/invoices',
+    path: '/deliveryorders/:deliveryOrder',
+    handler: clientInvoicesController.getDeliveryOrder,
+    bindTo: clientInvoicesController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };

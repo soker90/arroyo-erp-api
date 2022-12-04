@@ -14,6 +14,7 @@ const billingExport = require('./services/billingExport');
 const applyPayment = require('./services/applyPayment');
 const invoicesExport = require('./services/invoicesExport');
 
+const getDeliveryOrder = require('./services/getDeliveryOrder');
 const addDeliveryOrder = require('./services/addDeliveryOrder');
 const editDeliveryOrder = require('./services/editDeliveryOrder');
 const deleteDeliveryOrder = require('./services/deleteDeliveryOrder');
@@ -36,6 +37,7 @@ module.exports = {
   invoicesShort,
   invoiceEdit,
   invoiceDelete,
+  getDeliveryOrder,
   addDeliveryOrder,
   editDeliveryOrder,
   deleteDeliveryOrder,
