@@ -1,3 +1,6 @@
+# [2.0.2] - 04/01/2023
+  - Corregido: En las facturas de clientes no mostraba el último producto de cada página, al exportarla, cuando había mas de una página
+
 # [2.0.1] - 12/11/2022
   - Corregido el formato de fecha de pago del archivo ODS de pagos
   
