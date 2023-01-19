@@ -130,6 +130,14 @@ class ProductController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  wrongPrice(req, res) {
+    logService.logInfo('[wrongPrice] - Get wrong prices');
+    Promise.resolve()
+      .then(this.productService.wrongPrices)
+      .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = ProductController;

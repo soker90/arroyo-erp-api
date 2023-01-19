@@ -4,14 +4,14 @@ const {
   ProductModel,
   ProviderModel,
   PriceModel,
-  DeliveryOrderModel, BillingModel,
+  DeliveryOrderModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
   providerErrors,
-  productErrors, billingErrors,
+  productErrors,
 } = require('../../../../errors');
 
 const productMock = {
@@ -1278,6 +1278,118 @@ describe('ProductController', () => {
             .toBeTruthy();
           expect(response.statusCode)
             .toBe(200);
+        });
+      });
+    });
+  });
+
+  describe('GET /products/wrong', () => {
+    const PATH = '/products/wrong';
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .get(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      beforeAll(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No hay productos con precio equivocado', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Devuelve un array vacío', () => {
+          expect(response.body.length)
+            .toBe(0);
+        });
+      });
+
+      describe('Hay productos con precios erróneos', () => {
+        let response;
+        let product;
+        const BAD_PRICE = 4;
+        const GOOD_PRICE = 10;
+
+        before(() => ProductModel.create({
+          ...productMock,
+          price: BAD_PRICE,
+        }).then(productCreated => {
+          product = productCreated;
+        }));
+
+        before(() => PriceModel.create({
+          product: product._id,
+          date: 1610665200000.0,
+          price: GOOD_PRICE,
+          productName: product.name,
+        }));
+
+        beforeAll(done => {
+          supertest(app)
+            .get(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Debería devolver el producto correctamente', () => {
+          const productResponse = response.body[0];
+          expect(productResponse.badPrice)
+            .toBe(BAD_PRICE);
+          expect(productResponse.goodPrice)
+            .toBe(GOOD_PRICE);
+          expect(productResponse.date).toBe(1610665200000);
+          expect(productResponse.id).toBe(product._id.toString());
+          expect(productResponse.name).toBe(product.name);
+          expect(productResponse.provider).toBe(product.nameProvider);
         });
       });
     });

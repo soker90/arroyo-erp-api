@@ -50,6 +50,16 @@ module.exports = (
   }, {
     method: 'get',
     domain: 'products',
+    path: '/wrong',
+    handler: productController.wrongPrice,
+    bindTo: productController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
+    method: 'get',
+    domain: 'products',
     path: '/:id',
     handler: productController.product,
     bindTo: productController,

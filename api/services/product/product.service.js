@@ -9,6 +9,7 @@ const updatePrice = require('./services/updatePrice');
 const deleteProduct = require('./services/delete');
 const getLastDeliveryOrder = require('./services/getLastDeliveryOrder');
 const exportOds = require('./services/exportOds');
+const wrongPrices = require('./services/wrongPrices');
 
 module.exports = {
   products,
@@ -20,4 +21,5 @@ module.exports = {
   delete: deleteProduct,
   getLastDeliveryOrder,
   exportOds,
+  wrongPrices,
 };
