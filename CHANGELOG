@@ -1,3 +1,6 @@
+# [2.1.1] - 20/01/2023
+  - Corregido eliminar producto de proveedores, ahora elimina el histórico de precios también
+  
 # [2.1.0] - 19/01/2023
   - Añadida api que devuelve los productos en los que no coincide el precio guardado con el del último albarán
 
