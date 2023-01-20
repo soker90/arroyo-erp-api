@@ -25,4 +25,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: soker90/arroyo-erp-api:latest
+          tags: |
+            soker90/arroyo-erp-api:latest
+            soker90/arroyo-erp-api:${{ github.event.release.tag_name }}
