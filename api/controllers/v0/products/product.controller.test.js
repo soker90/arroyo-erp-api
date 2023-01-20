@@ -1048,23 +1048,28 @@ describe('ProductController', () => {
         let response;
         let product2;
         let product;
+        let provider;
 
-        before(() => ProductModel.create(productMock)
+        before(() => ProviderModel.create({ name: 'test' })
+          .then(providerCreated => {
+            provider = providerCreated;
+          }));
+
+        before(() => ProductModel.create({
+          ...productMock,
+          provider: provider._id,
+        })
           .then(productCreated => {
             product2 = productCreated;
           }));
 
-        before(async () => {
-          const mock2 = {
-            ...product2,
-          };
-          delete mock2.provider;
-
-          await ProductModel.create(mock2)
-            .then(productCreated => {
-              product = productCreated;
-            });
-        });
+        before(() => ProductModel.create({
+          ...product2Mock,
+          provider: provider._id,
+        })
+          .then(productCreated => {
+            product = productCreated;
+          }));
 
         beforeAll(done => {
           supertest(app)
@@ -1084,6 +1089,74 @@ describe('ProductController', () => {
         test('El producto restante es el corercto', () => {
           expect(response.body[0]._id)
             .toBe(product._id.toString());
+        });
+      });
+
+      describe('Elimina los precios del producto', () => {
+        let response;
+        let product2;
+        let product;
+        let provider;
+        let priceValid;
+
+        before(() => ProviderModel.create({ name: 'test' })
+          .then(providerCreated => {
+            provider = providerCreated;
+          }));
+
+        before(() => ProductModel.create({
+          ...productMock,
+          provider: provider._id,
+        })
+          .then(productCreated => {
+            product2 = productCreated;
+          }));
+
+        before(() => ProductModel.create({
+          ...product2Mock,
+          provider: provider._id,
+        })
+          .then(productCreated => {
+            product = productCreated;
+          }));
+
+        before(() => PriceModel.create({
+          product: product._id,
+        }));
+
+        before(() => PriceModel.create({
+          product: product._id,
+        }));
+
+        before(() => PriceModel.create({
+          product: product2._id,
+        })
+          .then(priceCreated => {
+            priceValid = priceCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH(product._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', async () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Se borran los precios del producto', async () => {
+          const prices = await PriceModel.find({});
+
+          expect(prices.length)
+            .toBe(1);
+          expect(prices[0]._id.toString())
+            .toBe(priceValid._id.toString());
         });
       });
     });
@@ -1159,11 +1232,20 @@ describe('ProductController', () => {
           product = await ProductModel.create(productMock);
           deliveryOrderMock.products[0].product = product._id.toString();
 
-          await DeliveryOrderModel.create({ ...deliveryOrderMock, date: Date.now() });
+          await DeliveryOrderModel.create({
+            ...deliveryOrderMock,
+            date: Date.now(),
+          });
           deliveryOrder = await DeliveryOrderModel
-            .create({ ...deliveryOrderMock, date: Date.now() + 180000 });
+            .create({
+              ...deliveryOrderMock,
+              date: Date.now() + 180000,
+            });
           deliveryOrderNextToLast = await DeliveryOrderModel
-            .create({ ...deliveryOrderMock, date: Date.now() + 150000 });
+            .create({
+              ...deliveryOrderMock,
+              date: Date.now() + 150000,
+            });
         });
 
         beforeAll(done => {
@@ -1182,8 +1264,10 @@ describe('ProductController', () => {
         });
 
         test('La información es correcta', () => {
-          expect(response.body.last).toBe(deliveryOrder._id.toString());
-          expect(response.body.nextToLast).toBe(deliveryOrderNextToLast._id.toString());
+          expect(response.body.last)
+            .toBe(deliveryOrder._id.toString());
+          expect(response.body.nextToLast)
+            .toBe(deliveryOrderNextToLast._id.toString());
         });
       });
     });
@@ -1352,9 +1436,10 @@ describe('ProductController', () => {
         before(() => ProductModel.create({
           ...productMock,
           price: BAD_PRICE,
-        }).then(productCreated => {
-          product = productCreated;
-        }));
+        })
+          .then(productCreated => {
+            product = productCreated;
+          }));
 
         before(() => PriceModel.create({
           product: product._id,
@@ -1386,10 +1471,14 @@ describe('ProductController', () => {
             .toBe(BAD_PRICE);
           expect(productResponse.goodPrice)
             .toBe(GOOD_PRICE);
-          expect(productResponse.date).toBe(1610665200000);
-          expect(productResponse.id).toBe(product._id.toString());
-          expect(productResponse.name).toBe(product.name);
-          expect(productResponse.provider).toBe(product.nameProvider);
+          expect(productResponse.date)
+            .toBe(1610665200000);
+          expect(productResponse.id)
+            .toBe(product._id.toString());
+          expect(productResponse.name)
+            .toBe(product.name);
+          expect(productResponse.provider)
+            .toBe(product.nameProvider);
         });
       });
     });
