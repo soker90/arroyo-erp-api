@@ -5,7 +5,7 @@ const {
 } = require('arroyo-erp-models');
 const { formatDate } = require('../../../../utils');
 
-const _invoicesAdapter = invoices => invoices.map(invoice => ({
+const _invoicesAdapter = invoices => invoices.map((invoice, nOrder) => ({
   fechaFactura: invoice.date ? formatDate(invoice.date) : '',
   nFactura: invoice.nInvoice,
   nombreCliente: invoice.businessName,
@@ -13,6 +13,7 @@ const _invoicesAdapter = invoices => invoices.map(invoice => ({
   fechaPago: invoice?.paymentDate ? formatDate(invoice?.paymentDate) : '',
   total: invoice?.total,
   cif: invoice?.client?.cif,
+  nOrden: nOrder + 1,
 }));
 
 const _getDates = year => {
@@ -45,7 +46,7 @@ const _getInvoices = async ({
 
   const invoices = await ClientInvoiceModel.find(searchParams)
     .populate('client', null, ClientModel)
-    .sort({ nOrder: 1 })
+    .sort({ nInvoice: 1 })
     .lean();
 
   return _invoicesAdapter(invoices);
