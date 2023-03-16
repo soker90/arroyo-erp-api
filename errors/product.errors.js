@@ -60,10 +60,23 @@ class ProductCodeExists extends Error {
   }
 }
 
+class PriceNotFound extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'El precio no existe en el producto') {
+    super(msg);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports = {
   ProductMissingParams,
   ProductMissingUpdate,
   ProductNotFound,
   ProviderNotFound,
   ProductCodeExists,
+  PriceNotFound,
 };

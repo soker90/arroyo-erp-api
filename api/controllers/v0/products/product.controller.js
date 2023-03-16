@@ -9,6 +9,7 @@ const logService = new LogService(TYPE);
 class ProductController {
   constructor({
     productService,
+    priceService,
     errorHandler,
     providerValidator,
     productValidator,
@@ -17,6 +18,7 @@ class ProductController {
     this.errorHandler = errorHandler;
     this.providerValidator = providerValidator;
     this.productValidator = productValidator;
+    this.priceService = priceService;
   }
 
   _handleError(res, error) {
@@ -28,6 +30,7 @@ class ProductController {
     case 'ProductNotFound':
     case 'ProviderNotFound':
     case 'ProviderIdNotFound':
+    case 'PriceNotFound':
       this.errorHandler.sendNotFound(res)(error);
       break;
     case 'ProductCodeExists':
@@ -136,6 +139,15 @@ class ProductController {
     Promise.resolve()
       .then(this.productService.wrongPrices)
       .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  deletePrice(req, res) {
+    logService.logInfo('[deletePrice] - Delete price');
+    Promise.resolve(req.params)
+      .tap(this.productValidator.validatePrice)
+      .then(this.priceService.deletePriceById)
+      .then(() => res.status(204).send())
       .catch(this._handleError.bind(this, res));
   }
 }

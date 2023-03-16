@@ -5,6 +5,7 @@ const {
 const updatePrice = require('./services/updatePrice');
 const deletePrice = require('./services/deletePrice');
 const deleteManyPricesChange = require('./services/deleteManyPricesChange');
+const deletePriceById = require('./services/deletePriceById');
 
 const priceChangeRead = ({
   params: { id },
@@ -39,4 +40,5 @@ module.exports = {
   priceChangeDelete,
   priceChangesUnreadCount,
   deleteManyPricesChange,
+  deletePriceById,
 };
