@@ -84,4 +84,20 @@ describe('ProductErrors', () => {
       expect(err.message).toEqual('CustomMessage');
     });
   });
+
+  describe('ProductCodeExists', () => {
+    test('should exist and extend from Error', () => {
+      expect(new ProductErrors.ProductCodeExists()).toBeInstanceOf(Error);
+    });
+
+    test('should define a default message', () => {
+      const err = new ProductErrors.PriceNotFound();
+      expect(err.message).toEqual('El precio no existe en el producto');
+    });
+
+    test('should allow passing a custom message', () => {
+      const err = new ProductErrors.ProductCodeExists('CustomMessage');
+      expect(err.message).toEqual('CustomMessage');
+    });
+  });
 });
