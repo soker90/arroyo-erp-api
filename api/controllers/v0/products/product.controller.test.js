@@ -1275,7 +1275,7 @@ describe('ProductController', () => {
 
   describe('GET /products/export-provider', () => {
     const PATH = provider => `/products/export-provider/${provider}`;
-    afterEach(() => testDB.cleanAll());
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -1370,7 +1370,7 @@ describe('ProductController', () => {
 
   describe('GET /products/wrong', () => {
     const PATH = '/products/wrong';
-    afterEach(() => testDB.cleanAll());
+    afterAll(() => testDB.cleanAll());
 
     describe('Usuario no autenticado', () => {
       let response;
@@ -1489,7 +1489,7 @@ describe('ProductController', () => {
 
   describe('DELETE /products/:id/prices/:priceId', () => {
     const PATH = (id, priceId) => `/products/${id}/prices/${priceId}`;
-    afterEach(() => testDB.cleanAll());
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
