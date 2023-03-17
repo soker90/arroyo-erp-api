@@ -1624,9 +1624,9 @@ describe('ProductController', () => {
 
         test('No debería existir el precio', async () => {
           const prices = await PriceModel.find({});
-          const existPrice = prices.some(priceDb => priceDb._id.toString() === price._id.toString());
+          const exist = prices.some(priceDb => priceDb._id.toString() === price._id.toString());
 
-          expect(existPrice)
+          expect(exist)
             .toBe(false);
           expect(prices.length)
             .toBe(1);
