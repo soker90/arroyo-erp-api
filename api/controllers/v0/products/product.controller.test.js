@@ -13,7 +13,6 @@ const {
   providerErrors,
   productErrors,
 } = require('../../../../errors');
-const { afterEach, beforeAll} = require('jest-circus');
 
 const productMock = {
   code: '3333',
