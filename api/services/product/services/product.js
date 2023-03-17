@@ -18,12 +18,14 @@ const _getPricesOfProduct = product => PriceModel.find({ product })
     cost,
     deliveryOrder,
     invoice,
+    _id,
   }) => ({
     date,
     price,
     cost,
     deliveryOrder,
     invoice,
+    id: _id,
   })));
 
 /**
