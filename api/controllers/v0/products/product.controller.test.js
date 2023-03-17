@@ -1275,6 +1275,7 @@ describe('ProductController', () => {
 
   describe('GET /products/export-provider', () => {
     const PATH = provider => `/products/export-provider/${provider}`;
+    afterAll(() => testDB.cleanAll());
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -1369,6 +1370,8 @@ describe('ProductController', () => {
 
   describe('GET /products/wrong', () => {
     const PATH = '/products/wrong';
+    afterAll(() => testDB.cleanAll());
+
     describe('Usuario no autenticado', () => {
       let response;
 
@@ -1479,6 +1482,154 @@ describe('ProductController', () => {
             .toBe(product.name);
           expect(productResponse.provider)
             .toBe(product.nameProvider);
+        });
+      });
+    });
+  });
+
+  describe('DELETE /products/:id/prices/:priceId', () => {
+    const PATH = (id, priceId) => `/products/${id}/prices/${priceId}`;
+    afterAll(() => testDB.cleanAll());
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      before(done => {
+        supertest(app)
+          .delete(PATH('5f1ac206dbcc4879c9c14c54', '5f1ac206dbcc4879c9c14c54'))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      before(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Existe el token', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No existe el producto', () => {
+        let response;
+
+        before(done => {
+          supertest(app)
+            .delete(PATH('5f1ac206dbcc4879c9c14c54', '5f1ac206dbcc4879c9c14c54'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.ProductNotFound().message);
+        });
+      });
+
+      describe('No existe el precio', () => {
+        let response;
+        let product;
+
+        before(() => ProductModel.create(productMock)
+          .then(productCreated => {
+            product = productCreated;
+          }));
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH(product._id, '5f1ac206dbcc4879c9c14c54'))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 404', () => {
+          expect(response.statusCode)
+            .toBe(404);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new productErrors.PriceNotFound().message);
+        });
+      });
+
+      describe('Elimina el precio del producto', () => {
+        let response;
+        let product;
+        let provider;
+        let price;
+
+        before(() => ProviderModel.create({ name: 'test' })
+          .then(providerCreated => {
+            provider = providerCreated;
+          }));
+
+        before(() => ProductModel.create({
+          ...product2Mock,
+          provider: provider._id,
+        })
+          .then(productCreated => {
+            product = productCreated;
+          }));
+
+        before(() => PriceModel.create({
+          product: product._id,
+        }).then(priceCreated => {
+          price = priceCreated;
+        }));
+
+        before(() => PriceModel.create({
+          product: product._id,
+        }));
+
+        beforeAll(done => {
+          supertest(app)
+            .delete(PATH(product._id, price._id))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 204', async () => {
+          expect(response.statusCode)
+            .toBe(204);
+        });
+
+        test('No debería existir el precio', async () => {
+          const prices = await PriceModel.find({});
+          const exist = prices.some(priceDb => priceDb._id.toString() === price._id.toString());
+
+          expect(exist)
+            .toBe(false);
+          expect(prices.length)
+            .toBe(1);
         });
       });
     });

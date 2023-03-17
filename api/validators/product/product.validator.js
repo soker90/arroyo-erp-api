@@ -1,5 +1,6 @@
 /* eslint-disable nonblock-statement-body-position  */
 const { ProductModel } = require('arroyo-erp-models');
+const { PriceModel } = require('arroyo-erp-models/models');
 const { productErrors } = require('../../../errors');
 
 /**
@@ -20,6 +21,11 @@ const _checkId = async id => {
 const validateId = ({ id }) => _checkId(id);
 const validateIdParam = ({ params }) => validateId(params);
 const validateProductBody = ({ body: { product } }) => _checkId(product);
+const validatePrice = async ({ id, priceId }) => {
+  await _checkId(id);
+  const priceExist = await PriceModel.exists({ _id: priceId, product: id });
+  if (!priceExist) throw new productErrors.PriceNotFound();
+};
 
 const validateFieldsCreateByClients = ({
   name,
@@ -99,4 +105,5 @@ module.exports = {
   validateCodeDuplicate,
   validateCodeDuplicateEdit,
   validateFieldsCreateByClients,
+  validatePrice,
 };

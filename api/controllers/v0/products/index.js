@@ -4,7 +4,7 @@ const errorHandler = require('../../../../components/error-handlers');
 const ProductController = require('./product.controller');
 
 module.exports = (
-  { productService },
+  { productService, priceService },
   {
     providerValidator,
     productValidator,
@@ -13,6 +13,7 @@ module.exports = (
   const productController = new ProductController({
     errorHandler,
     productService,
+    priceService,
     providerValidator,
     productValidator,
   });
@@ -102,6 +103,17 @@ module.exports = (
     domain: 'products',
     path: '/export-provider/:id',
     handler: productController.export,
+    bindTo: productController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  },
+  {
+    method: 'delete',
+    domain: 'products',
+    path: '/:id/prices/:priceId',
+    handler: productController.deletePrice,
     bindTo: productController,
     skipVersion: true,
     middlewares: [
