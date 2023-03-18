@@ -10,20 +10,18 @@ const logService = new LogService(TYPE);
 
 const addPrice = async ({
   params,
-  body: {
-    sale,
-  },
+  body,
 }) => {
   const lastPrice = await ProductPvpModel.findOne({ product: params.id })
     .sort({ _id: -1 });
-  if (sale !== lastPrice.price) {
+  if (body?.sale && body?.sale !== lastPrice.price) {
     await ProductPvpModel.create({
       product: params.id,
-      price: sale,
+      price: body.sale,
       date: Date.now(),
     });
 
-    logService.logInfo(`Actualizado precio de ${params.id} a ${sale}`);
+    logService.logInfo(`Actualizado precio de ${params.id} a ${body.sale}`);
   }
 };
 
