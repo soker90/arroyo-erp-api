@@ -4,7 +4,7 @@ const errorHandler = require('../../../../components/error-handlers');
 const ProductController = require('./product.controller');
 
 module.exports = (
-  { productService, priceService },
+  { productService, priceService, productPvpService },
   {
     providerValidator,
     productValidator,
@@ -14,6 +14,7 @@ module.exports = (
     errorHandler,
     productService,
     priceService,
+    productPvpService,
     providerValidator,
     productValidator,
   });

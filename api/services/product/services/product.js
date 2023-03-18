@@ -2,6 +2,7 @@
 const {
   PriceModel,
   ProductModel,
+  ProductPvpModel,
 } = require('arroyo-erp-models');
 
 /**
@@ -9,25 +10,14 @@ const {
  * @param product
  * @returns {*|Promise<void>|PromiseLike<any>|Promise<any>}
  */
-const _getPricesOfProduct = product => PriceModel.find({ product })
+const _getPricesOfProduct = product => PriceModel.find({ product }, 'date price cost deliveryOrder invoice')
+  .sort({ date: -1 })
+  .limit(25);
+
+const _getPriceSaleOfProduct = product => ProductPvpModel.find({ product }, 'date price')
   .sort({ date: -1 })
   .limit(25)
-  .then(prices => prices.map(({
-    date,
-    price,
-    cost,
-    deliveryOrder,
-    invoice,
-    _id,
-  }) => ({
-    date,
-    price,
-    cost,
-    deliveryOrder,
-    invoice,
-    id: _id,
-  })));
-
+  .exec();
 /**
  * Return the product
  * @param {string} id
@@ -36,6 +26,7 @@ const _getPricesOfProduct = product => PriceModel.find({ product })
 const product = async ({ id }) => ({
   product: await ProductModel.findOne({ _id: id }),
   prices: await _getPricesOfProduct(id),
+  pvps: await _getPriceSaleOfProduct(id),
 });
 
 module.exports = product;

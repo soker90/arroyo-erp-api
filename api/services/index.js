@@ -10,6 +10,7 @@ const NoteService = require('./note');
 const PaymentService = require('./payment');
 const PriceService = require('./price');
 const ProductService = require('./product');
+const ProductPvpService = require('./productpvp');
 const ProviderService = require('./provider');
 const ReminderService = require('./reminder');
 
@@ -26,6 +27,7 @@ module.exports = {
   paymentService: PaymentService,
   priceService: PriceService,
   productService: ProductService,
+  productPvpService: ProductPvpService,
   providerService: ProviderService,
   reminderService: ReminderService,
 };

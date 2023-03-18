@@ -9,6 +9,7 @@ const logService = new LogService(TYPE);
 class ProductController {
   constructor({
     productService,
+    productPvpService,
     priceService,
     errorHandler,
     providerValidator,
@@ -19,6 +20,7 @@ class ProductController {
     this.providerValidator = providerValidator;
     this.productValidator = productValidator;
     this.priceService = priceService;
+    this.productPvpService = productPvpService;
   }
 
   _handleError(res, error) {
@@ -92,6 +94,7 @@ class ProductController {
       .tap(this.productValidator.validateIdParam)
       .tap(this.productValidator.validateFieldsBody)
       .tap(this.productValidator.validateCodeDuplicateEdit)
+      .tap(this.productPvpService.addPrice)
       .then(this.productService.update)
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));

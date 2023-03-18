@@ -1,5 +1,6 @@
-# [2.2.0] 
+# [2.2.0] - 18/03/2023
   - Añadido endpoint para eliminar un precio de un producto
+  - Añadido pvp service, añade al modelo de ProductPvp el precio de venta al público de un product cuando este cambia y ahora devuelve el histórico junto con la información del producto
 
 # [2.1.3] - 02/03/2023
   - Añadido campo payment.paymentDate a la petición invoice short
