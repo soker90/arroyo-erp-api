@@ -14,7 +14,7 @@ const addPrice = async ({
 }) => {
   const lastPrice = await ProductPvpModel.findOne({ product: params.id })
     .sort({ _id: -1 });
-  if (body?.sale && body?.sale !== lastPrice.price) {
+  if (body?.sale && body?.sale !== lastPrice?.price) {
     await ProductPvpModel.create({
       product: params.id,
       price: body.sale,

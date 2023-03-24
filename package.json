@@ -1,6 +1,6 @@
 {
   "name": "arroyo-erp-api",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "API for Arroyo Erp",
   "main": "index.js",
   "scripts": {
@@ -46,7 +46,7 @@
     "jest-sonar-reporter": "^2.0.0",
     "mongodb-memory-server": "^8.12.1",
     "nock": "^13.3.0",
-    "nodemon": "^2.0.21",
+    "nodemon": "^2.0.22",
     "supertest": "^6.3.3"
   },
   "jest": {
