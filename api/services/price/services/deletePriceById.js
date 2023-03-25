@@ -10,7 +10,7 @@ const deletePriceById = async ({
   await PriceModel.deleteOne({ _id: priceId, product: id });
 
   const prices = await PriceModel.find({ product: id })
-    .sort({ nOrder: -1 })
+    .sort({ date: -1 })
     .limit(1);
   const lastPrice = prices?.[0];
   await ProductModel.updateOne({ _id: id }, {

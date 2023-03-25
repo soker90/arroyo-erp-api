@@ -15,7 +15,7 @@ const _getPricesOfProduct = product => PriceModel.find({ product }, 'date price 
   .limit(25);
 
 const _getPriceSaleOfProduct = product => ProductPvpModel.find({ product }, 'date price')
-  .sort({ date: -1 })
+  .sort({ date: 1 })
   .limit(25)
   .exec();
 /**

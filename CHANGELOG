@@ -1,5 +1,7 @@
-# [2.2.1]
+# [2.2.1] - 25/03/2023
   - Arreglado el error al introducir un nuevo PVP de un producto
+  - Al eliminar un precio del producto establece como último precio el anterior
+  - El histórico de pvps del producto se devuelve de mas nuevo a más viejo
 
 # [2.2.0] - 18/03/2023
   - Añadido endpoint para eliminar un precio de un producto
