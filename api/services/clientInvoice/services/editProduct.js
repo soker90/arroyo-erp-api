@@ -11,7 +11,7 @@ const roundNumber = require('../../../../utils/roundNumber');
  * @param {string} unit
  * @param {number} price
  */
-const editDeliveryOrder = ({
+const editDeliveryOrder = async ({
   params: {
     id,
     deliveryOrder,
@@ -25,22 +25,26 @@ const editDeliveryOrder = ({
   },
 }) => {
   const total = roundNumber(weight * price);
-  return ClientInvoiceModel.findOneAndUpdate({
+
+  const clientInvoice = await ClientInvoiceModel.findOne({
     _id: id,
     'deliveryOrders._id': deliveryOrder,
     'deliveryOrders.products._id': product,
-  }, {
-    $set: {
-      'deliveryOrders.$[i].products.$[j].name': name,
-      'deliveryOrders.$[i].products.$[j].weight': weight,
-      'deliveryOrders.$[i].products.$[j].unit': unit,
-      'deliveryOrders.$[i].products.$[j].price': price,
-      'deliveryOrders.$[i].products.$[j].total': total,
-    },
-  }, {
-    new: true,
-    arrayFilters: [{ 'i._id': deliveryOrder }, { 'j._id': product }],
   });
+
+  const productIndex = clientInvoice.deliveryOrders.id(deliveryOrder)
+    .products
+    .findIndex(productDO => productDO._id.toString() === product);
+
+  clientInvoice.deliveryOrders.id(deliveryOrder).products[productIndex] = {
+    name,
+    weight,
+    unit,
+    price,
+    total,
+  };
+
+  return clientInvoice.save();
 };
 
 module.exports = editDeliveryOrder;

@@ -1,3 +1,6 @@
+# [2.2.2] - 04/04/2023
+  - Corregida la edición de productos en las facturas de clientes
+
 # [2.2.1] - 25/03/2023
   - Arreglado el error al introducir un nuevo PVP de un producto
   - Al eliminar un precio del producto establece como último precio el anterior
