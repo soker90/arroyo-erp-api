@@ -3,6 +3,8 @@ const errorHandler = require('../../../../components/error-handlers');
 
 const ClientInvoiceController = require('./clientInvoices.controller');
 
+const DOMAIN = 'client/invoices';
+
 module.exports = (
   {
     invoiceService,
@@ -35,7 +37,7 @@ module.exports = (
 
   return [{
     method: 'post',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/',
     handler: clientInvoicesController.create,
     bindTo: clientInvoicesController,
@@ -46,7 +48,7 @@ module.exports = (
   },
   {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/',
     handler: clientInvoicesController.invoices,
     bindTo: clientInvoicesController,
@@ -57,7 +59,7 @@ module.exports = (
   },
   {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/export',
     handler: clientInvoicesController.invoicesExport,
     bindTo: clientInvoicesController,
@@ -68,7 +70,7 @@ module.exports = (
   },
   {
     method: 'patch',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id',
     handler: clientInvoicesController.edit,
     bindTo: clientInvoicesController,
@@ -78,7 +80,7 @@ module.exports = (
     ],
   }, {
     method: 'delete',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id',
     handler: clientInvoicesController.delete,
     bindTo: clientInvoicesController,
@@ -88,7 +90,7 @@ module.exports = (
     ],
   }, {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/short',
     handler: clientInvoicesController.invoicesShort,
     bindTo: clientInvoicesController,
@@ -99,7 +101,7 @@ module.exports = (
   },
   {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/billing',
     handler: clientInvoicesController.billing,
     bindTo: clientInvoicesController,
@@ -110,7 +112,7 @@ module.exports = (
   },
   {
     method: 'patch',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/payments/:id',
     handler: clientInvoicesController.applyPayment,
     bindTo: clientInvoicesController,
@@ -121,7 +123,7 @@ module.exports = (
   },
   {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/billing/export',
     handler: clientInvoicesController.billingExport,
     bindTo: clientInvoicesController,
@@ -132,7 +134,7 @@ module.exports = (
   },
   {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id',
     handler: clientInvoicesController.invoice,
     bindTo: clientInvoicesController,
@@ -142,7 +144,7 @@ module.exports = (
     ],
   }, {
     method: 'post',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id/deliveryOrder',
     handler: clientInvoicesController.addDeliveryOrder,
     bindTo: clientInvoicesController,
@@ -152,7 +154,7 @@ module.exports = (
     ],
   }, {
     method: 'patch',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id/deliveryOrder/:deliveryOrder',
     handler: clientInvoicesController.editDeliveryOrder,
     bindTo: clientInvoicesController,
@@ -162,7 +164,7 @@ module.exports = (
     ],
   }, {
     method: 'delete',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id/deliveryOrder/:deliveryOrder',
     handler: clientInvoicesController.deleteDeliveryOrder,
     bindTo: clientInvoicesController,
@@ -172,7 +174,7 @@ module.exports = (
     ],
   }, {
     method: 'post',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id/deliveryOrder/:deliveryOrder/product',
     handler: clientInvoicesController.addProduct,
     bindTo: clientInvoicesController,
@@ -182,7 +184,7 @@ module.exports = (
     ],
   }, {
     method: 'patch',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id/deliveryOrder/:deliveryOrder/product/:product',
     handler: clientInvoicesController.editProduct,
     bindTo: clientInvoicesController,
@@ -192,7 +194,7 @@ module.exports = (
     ],
   }, {
     method: 'delete',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id/deliveryOrder/:deliveryOrder/product/:product',
     handler: clientInvoicesController.deleteProduct,
     bindTo: clientInvoicesController,
@@ -202,7 +204,7 @@ module.exports = (
     ],
   }, {
     method: 'patch',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/:id/confirm',
     handler: clientInvoicesController.invoiceConfirm,
     bindTo: clientInvoicesController,
@@ -212,7 +214,7 @@ module.exports = (
     ],
   }, {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/export/:id',
     handler: clientInvoicesController.export,
     bindTo: clientInvoicesController,
@@ -222,7 +224,7 @@ module.exports = (
     ],
   }, {
     method: 'get',
-    domain: 'client/invoices',
+    domain: DOMAIN,
     path: '/export/:year/:month',
     handler: clientInvoicesController.export,
     bindTo: clientInvoicesController,
