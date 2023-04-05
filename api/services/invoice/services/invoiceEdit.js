@@ -29,20 +29,13 @@ const _getDataForUpdate = (data, totals, payment) => {
   }
 
   if (totals) {
-    const {
-      total,
-      iva,
-      re,
-      rate,
-      taxBase,
-    } = totals;
     newData = {
       ...newData,
-      total: roundNumber(total),
-      iva: roundNumber(iva),
-      re: roundNumber(re),
-      rate: roundNumber(rate),
-      taxBase: roundNumber(taxBase),
+      total: roundNumber(totals.total),
+      ...(totals.iva !== undefined && { iva: roundNumber(totals.iva) }),
+      ...(totals.re !== undefined && { re: roundNumber(totals.re) }),
+      ...(totals.rate !== undefined && { rate: roundNumber(totals.rate) }),
+      ...(totals.taxBase !== undefined && { taxBase: roundNumber(totals.taxBase) }),
     };
   }
   if (payment) {
