@@ -72,6 +72,19 @@ class PriceNotFound extends Error {
   }
 }
 
+class FixWrongErrorFail extends Error {
+  /**
+   * Create an instance
+   *
+   * @param {string} [msg=user invalid login] Message for the error
+   */
+  constructor(msg = 'No se han podido corregir los precios de los productos') {
+    super(msg);
+    this.name = this.constructor.name;
+    this.code = 500;
+  }
+}
+
 module.exports = {
   ProductMissingParams,
   ProductMissingUpdate,
@@ -79,4 +92,5 @@ module.exports = {
   ProviderNotFound,
   ProductCodeExists,
   PriceNotFound,
+  FixWrongErrorFail,
 };

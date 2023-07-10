@@ -38,6 +38,9 @@ class ProductController {
     case 'ProductCodeExists':
       this.errorHandler.sendConflict(res)(error);
       break;
+    case 'FixWrongErrorFail':
+      this.errorHandler.sendError(res)(error);
+      break;
       /* istanbul ignore next */
     default:
       this.errorHandler.sendError(res)(error);
@@ -142,6 +145,14 @@ class ProductController {
     Promise.resolve()
       .then(this.productService.wrongPrices)
       .then(data => res.send(data))
+      .catch(this._handleError.bind(this, res));
+  }
+
+  fixWrongPrices(req, res) {
+    logService.logInfo('[fixWrongPrice] - Fix wrong prices');
+    Promise.resolve()
+      .then(this.productService.fixWrongPrices)
+      .then(() => res.send())
       .catch(this._handleError.bind(this, res));
   }
 

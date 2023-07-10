@@ -1,3 +1,6 @@
+# [2.3.0] - 10/07/2023
+  - Añadido endpoint para corregir automáticamente los precios de los productos de proveedores
+
 # [2.2.3] - 05/04/2023
   - Corregida edición del total en las facturas de gastos
 
@@ -22,7 +25,7 @@
 
 # [2.1.1] - 20/01/2023
   - Corregido eliminar producto de proveedores, ahora elimina el histórico de precios también
-  
+
 # [2.1.0] - 19/01/2023
   - Añadida api que devuelve los productos en los que no coincide el precio guardado con el del último albarán
 
@@ -31,7 +34,7 @@
 
 # [2.0.1] - 12/11/2022
   - Corregido el formato de fecha de pago del archivo ODS de pagos
-  
+
 # [2.0.0] - 11/11/2022
   - El get de /client ahora solo envía la información del cliente, sin sus facturas
   - En el listado de clientes ahora se envía el número de facturas confirmadas en vez de las facturas totales del cliente
@@ -39,7 +42,7 @@
 
 # [1.9.5] - 03/10/2022
   - Añadido código de producto a la descarga del listado de productos del cliente
-  
+
 # [1.9.2] [1.9.3] [1.9.4] - 03/10/2022
   - Cambiado el número máximo de filas para las facturas de clientes
 

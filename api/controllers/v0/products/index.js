@@ -60,6 +60,16 @@ module.exports = (
       authMiddleware,
     ],
   }, {
+    method: 'patch',
+    domain: 'products',
+    path: '/wrong',
+    handler: productController.fixWrongPrices,
+    bindTo: productController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
+  }, {
     method: 'get',
     domain: 'products',
     path: '/:id',

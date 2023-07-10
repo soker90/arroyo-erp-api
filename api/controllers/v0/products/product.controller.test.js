@@ -1487,6 +1487,116 @@ describe('ProductController', () => {
     });
   });
 
+  describe('PATCH /products/wrong', () => {
+    const PATH = '/products/wrong';
+    afterAll(() => testDB.cleanAll());
+
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .patch(PATH)
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      beforeAll(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('No hay productos con precio equivocado', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.status)
+            .toBe(200);
+        });
+
+        test('Devuelve un array vacío', () => {
+          expect(response.body.length)
+            .toBe(0);
+        });
+      });
+
+      describe('Hay productos con precios erróneos', () => {
+        let response;
+        let product;
+        const BAD_PRICE = 4;
+        const GOOD_PRICE = 10;
+
+        before(() => ProductModel.create({
+          ...productMock,
+          price: BAD_PRICE,
+        })
+          .then(productCreated => {
+            product = productCreated;
+          }));
+
+        before(() => PriceModel.create({
+          product: product._id,
+          date: 1610665200000.0,
+          price: GOOD_PRICE,
+          productName: product.name,
+        }));
+
+        beforeAll(done => {
+          supertest(app)
+            .patch(PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(token)
+            .toBeTruthy();
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Debería devolver el producto correctamente', async () => {
+          const productDb = await ProductModel.findOne({ _id: product._id });
+          const price = await PriceModel.findOne({ product: product._id });
+          expect(productDb.price).toBe(price.price);
+          expect(productDb.price).toBe(GOOD_PRICE);
+        });
+      });
+    });
+  });
+
   describe('DELETE /products/:id/prices/:priceId', () => {
     const PATH = (id, priceId) => `/products/${id}/prices/${priceId}`;
     afterAll(() => testDB.cleanAll());
