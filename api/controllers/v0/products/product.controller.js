@@ -152,7 +152,7 @@ class ProductController {
     logService.logInfo('[fixWrongPrice] - Fix wrong prices');
     Promise.resolve()
       .then(this.productService.fixWrongPrices)
-      .then(() => res.send())
+      .then(() => res.status(204).send())
       .catch(this._handleError.bind(this, res));
   }
 

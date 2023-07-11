@@ -1525,30 +1525,6 @@ describe('ProductController', () => {
           .toBeTruthy();
       });
 
-      describe('No hay productos con precio equivocado', () => {
-        let response;
-
-        beforeAll(done => {
-          supertest(app)
-            .patch(PATH)
-            .set('Authorization', `Bearer ${token}`)
-            .end((err, res) => {
-              response = res;
-              done();
-            });
-        });
-
-        test('Debería dar un 200', () => {
-          expect(response.status)
-            .toBe(200);
-        });
-
-        test('Devuelve un array vacío', () => {
-          expect(response.body.length)
-            .toBe(0);
-        });
-      });
-
       describe('Hay productos con precios erróneos', () => {
         let response;
         let product;
@@ -1584,10 +1560,10 @@ describe('ProductController', () => {
           expect(token)
             .toBeTruthy();
           expect(response.statusCode)
-            .toBe(200);
+            .toBe(204);
         });
 
-        test('Debería devolver el producto correctamente', async () => {
+        test('Debería corregir el precio del producto correctamente', async () => {
           const productDb = await ProductModel.findOne({ _id: product._id });
           const price = await PriceModel.findOne({ product: product._id });
           expect(productDb.price).toBe(price.price);
