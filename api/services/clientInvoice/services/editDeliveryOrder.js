@@ -13,7 +13,7 @@ const editDeliveryOrder = async ({
     deliveryOrder,
   },
   body: {
-    date,
+    date = undefined,
   },
 }) => {
   await ClientInvoiceModel.updateOne({

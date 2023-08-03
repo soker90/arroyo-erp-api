@@ -80,7 +80,7 @@ const isRemovable = async ({ id }) => {
  * @private
  */
 const isValidDate = ({ body: { date } }) => {
-  if (!date || typeof date !== 'number')
+  if (date && typeof date !== 'number')
     throw new commonErrors.DateNotValid();
 };
 

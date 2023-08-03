@@ -1,3 +1,6 @@
+# [2.3.1] - 03/08/2023
+  - Ahora se puede eliminar la fecha de un albarán de cliente
+
 # [2.3.0] - 10/07/2023
   - Añadido endpoint para corregir automáticamente los precios de los productos de proveedores
 
