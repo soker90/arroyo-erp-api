@@ -1282,7 +1282,7 @@ describe('ClientInvoicesController', () => {
         before(() => ClientInvoiceModel.create({
           date: Date.now(),
           deliveryOrders: [{
-            date: null,
+            date: 'abc',
             total: 0,
             products: [],
           }],
