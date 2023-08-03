@@ -1282,7 +1282,7 @@ describe('ClientInvoicesController', () => {
         before(() => ClientInvoiceModel.create({
           date: Date.now(),
           deliveryOrders: [{
-            date: 'abc',
+            date: null,
             total: 0,
             products: [],
           }],
@@ -1294,7 +1294,7 @@ describe('ClientInvoicesController', () => {
         beforeAll(done => {
           supertest(app)
             .patch(PATH(invoice._id, invoice.deliveryOrders[0]._id))
-            .send()
+            .send({date: 'sdf'})
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
               response = res;
