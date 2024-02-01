@@ -47,7 +47,7 @@
     "mongodb-memory-server": "^9.1.6",
     "nock": "^13.5.1",
     "nodemon": "^3.0.3",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.4"
   },
   "jest": {
     "bail": true,
