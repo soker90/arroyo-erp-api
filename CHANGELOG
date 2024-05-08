@@ -1,3 +1,6 @@
+# [2.4.0] - 08/05/2024
+  - Al actualizar los datos de un producto, si cambia su precio de coste, se guarda en el histórico de precios y se actualiza en el producto
+
 # [2.3.1] - 03/08/2023
   - Ahora se puede eliminar la fecha de un albarán de cliente
 
