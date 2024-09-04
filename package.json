@@ -19,6 +19,7 @@
     "nodeJS"
   ],
   "license": "MIT",
+  "packageManager": "pnpm@9.7.1",
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "arroyo-erp-models": "^1.4.1",
