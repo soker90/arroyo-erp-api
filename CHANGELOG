@@ -1,3 +1,8 @@
+# [2.4.1] - 04/09/2024
+  - Actualizado a node 20
+  - Cambiado el gestor de paquetes a pnpm
+  - Actualizadas imagenes de docker
+
 # [2.4.0] - 08/05/2024
   - Al actualizar los datos de un producto, si cambia su precio de coste, se guarda en el histórico de precios y se actualiza en el producto
 

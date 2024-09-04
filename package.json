@@ -1,6 +1,6 @@
 {
   "name": "arroyo-erp-api",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "API for Arroyo Erp",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "lodash.unionwith": "^4.6.0"
   },
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
