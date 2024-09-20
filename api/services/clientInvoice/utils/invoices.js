@@ -38,7 +38,6 @@ const calcDeliveryOrdersData = async deliveryOrdersData => {
     deliveryOrders.push(deliveryOrder);
   }
 
-  console.log(deliveryOrdersData)
   return {
     dataInvoice: {
       total: roundNumber(totalI, 2),
