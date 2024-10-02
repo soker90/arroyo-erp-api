@@ -1,15 +1,15 @@
 const supertest = require('supertest');
 const {
-        mongoose,
-        ProviderModel,
-        BillingModel,
-      } = require('arroyo-erp-models');
+  mongoose,
+  ProviderModel,
+  BillingModel,
+} = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
 const app = require('../../../../index');
 const {
-        billingErrors,
-      } = require('../../../../errors');
+  billingErrors,
+} = require('../../../../errors');
 
 const providerMock = {
   name: 'Auuu',

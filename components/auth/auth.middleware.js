@@ -9,9 +9,7 @@ const { ExpiredToken, InvalidToken } = require('../../errors/user.errors');
  * @param {String} username
  */
 const refreshToken = (res, { user }) => {
-  res.set(
-    'Token', signToken(user),
-  );
+  res.set('Token', signToken(user),);
   res.set('Access-Control-Expose-Headers', '*, Token');
 };
 

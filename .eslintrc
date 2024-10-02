@@ -30,7 +30,7 @@
     "jest/no-disabled-tests": "error",
     "import/prefer-default-export": "off",
     "no-underscore-dangle": "off",
-    "no-console": [2, { "allow": ["warn", "error"] }],
+    "no-console": [2, { "allow": ["warn", "error", "log"] }],
     "import/named": "off",
     "comma-dangle": [
       "error",

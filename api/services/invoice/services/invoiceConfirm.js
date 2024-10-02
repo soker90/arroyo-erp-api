@@ -9,7 +9,9 @@ const { isTypeCash } = require('../../../../utils');
  */
 const _addNOrderToDeliveryOrder = async invoice => {
   const { nOrder } = invoice;
+  // eslint-disable-next-line no-restricted-syntax
   for (const deliveryOrder of invoice.deliveryOrders) {
+    // eslint-disable-next-line no-await-in-loop
     const model = await DeliveryOrderModel
       .findOneAndUpdate({ _id: deliveryOrder }, { nOrder });
     model.save();

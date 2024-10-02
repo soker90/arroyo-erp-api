@@ -28,6 +28,7 @@ const products = async () => {
       product: product._id,
     }).sort({ date: 1 });
 
+    // eslint-disable-next-line no-continue
     if (!prices.length) continue;
 
     const lastPrice = prices[prices.length - 1];

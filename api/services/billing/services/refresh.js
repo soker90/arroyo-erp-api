@@ -12,9 +12,7 @@ const logService = new LogService(TYPE);
  * @param {String} trimester
  * @returns {number}
  */
-const _getSumByTrimesters = (billing, trimester) => billing?.[`invoicesTrimester${trimester}`]?.reduce(
-  (accumulator, currentValue) => roundNumber(accumulator + currentValue.total), 0,
-);
+const _getSumByTrimesters = (billing, trimester) => billing?.[`invoicesTrimester${trimester}`]?.reduce((accumulator, currentValue) => roundNumber(accumulator + currentValue.total), 0,);
 
 /**
  * Devuelve la facturación del año del proveedor

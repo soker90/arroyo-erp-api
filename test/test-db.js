@@ -1,16 +1,11 @@
-const mongooseOpts = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
-
 module.exports = mongoose => {
   async function connect() {
-    await mongoose.connect(__MONGO_URI__, mongooseOpts);
+    await mongoose.connect(global.__MONGO_URI__);
 
     /* istanbul ignore next */
     mongoose.connection.on('error', error => {
       console.error('TEST-DB ERROR', error);
-      mongoose.connect(__MONGO_URI__, mongooseOpts);
+      mongoose.connect(global.__MONGO_URI__);
     });
   }
 

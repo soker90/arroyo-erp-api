@@ -88,8 +88,11 @@ function createBuildRoute(defaultMiddlewares, version) {
  * @return {Array} [{path, route}, {path, route}, {path, route}]
  */
 function buildActualRoutesObject(apiVersion, previousApiVersion) {
-  return unionWith(apiVersion, previousApiVersion,
-    (one, two) => (one.path === two.path))
+  return unionWith(
+    apiVersion,
+    previousApiVersion,
+    (one, two) => (one.path === two.path)
+  )
     // controllers (routes) without "handler" are handled as removed controllers in this version
     .filter(controller => !!controller.route.handler);
 }

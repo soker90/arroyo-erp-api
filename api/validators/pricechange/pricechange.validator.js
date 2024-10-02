@@ -10,6 +10,7 @@ const { priceChangeErrors } = require('../../../errors');
  * @returns {Promise<void>}
  */
 const validateIds = async ({ ids }) => {
+  // eslint-disable-next-line no-restricted-syntax
   for await (const id of ids) {
     const priceExist = await PriceChangeModel.exists({ _id: id });
     if (!priceExist) throw new priceChangeErrors.ElementsNotFound();

@@ -34,6 +34,7 @@ const _countByMonthAndProvider = year => {
     .exec();
 };
 
+// eslint-disable-next-line
 const _getQuarter = month => parseInt((month - 1) / 3) + 1;
 
 const _generateInitialData = deliveryOrder => ({
@@ -56,6 +57,7 @@ const countFree = async ({ year }) => {
 
   deliveryOrderInfo.forEach(deOr => {
     /* istanbul ignore else */
+    // eslint-disable-next-line max-len
     if (!deliveryOrderCount[deOr._id.provider]) deliveryOrderCount[deOr._id.provider] = _generateInitialData(deOr);
 
     const quarter = _getQuarter(deOr._id.month);

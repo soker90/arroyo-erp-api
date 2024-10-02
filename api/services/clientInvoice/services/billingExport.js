@@ -43,6 +43,7 @@ const exportOds = async ({
   const clients = await ClientModel.find({});
 
   const billingAdapted = billingAdapter(billing, clients);
+  // eslint-disable-next-line max-len
   const billingFiltered = short ? billingAdapted.filter(({ anual }) => anual > 3005.06) : billingAdapted;
 
   let billingFile = null;

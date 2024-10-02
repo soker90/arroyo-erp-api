@@ -19,7 +19,9 @@ const _updateInvoices = async ({
     ...paymentData,
     ...(invoices.length > 1 && { invoicesOrder: nOrder }),
   };
+  // eslint-disable-next-line no-restricted-syntax
   for (const invoiceId of invoices)
+  // eslint-disable-next-line no-await-in-loop
     await InvoiceModel.findOneAndUpdate({ _id: invoiceId }, { payment });
 };
 /**

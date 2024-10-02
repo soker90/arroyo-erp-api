@@ -539,7 +539,6 @@ describe('DeliveryOrderController', () => {
 
       describe('Se actualiza los totales del albarán', () => {
         let response;
-        const date = Date.now();
         let deliveryOrder;
         const totals = {
           total: 10,

@@ -67,7 +67,8 @@ const _getDataForUpdate = (data, totals, payment) => {
  * @param {String} id
  * @param {{dateRegister: number, dateInvoice: number, nInvoice: string}} data
  * @param {{total: number, iva: number, re: number, rate: number, taxBase: number}} totals
- * @param {{paymentDate: number, type: string, numCheque: string, paid: boolean, invoicesOrder: string}} payment
+ * @param {{paymentDate: number, type: string, numCheque: string,
+ * paid: boolean, invoicesOrder: string}} payment
  * @returns {*}
  */
 const invoiceEdit = ({

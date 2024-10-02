@@ -22,7 +22,9 @@ const calcDeliveryOrdersData = async deliveryOrdersData => {
   let provider = null;
   const deliveryOrders = [];
 
+  // eslint-disable-next-line no-restricted-syntax
   for (const deliveryOrderId of deliveryOrdersData) {
+    // eslint-disable-next-line no-await-in-loop
     const deliveryOrder = await DeliveryOrderModel.findOne({
       _id: deliveryOrderId,
     });

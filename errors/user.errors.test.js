@@ -21,7 +21,6 @@ describe('UserErrors', () => {
     });
   });
 
-
   describe('UserNotFound', () => {
     test('should exist and extend from Error', () => {
       expect(new UserErrors.UserNotFound()).toBeInstanceOf(Error);

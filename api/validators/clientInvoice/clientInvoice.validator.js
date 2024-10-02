@@ -2,7 +2,6 @@
 const {
   ClientInvoiceModel,
   AutoIncrement,
-  InvoiceModel,
 } = require('arroyo-erp-models');
 const {
   invoiceErrors,
@@ -10,7 +9,6 @@ const {
   deliveryOrderErrors,
 } = require('../../../errors');
 const { isNumber } = require('../../../utils');
-const { TYPE_PAYMENT } = require('../../../constants');
 
 /**
  * Check if exist id

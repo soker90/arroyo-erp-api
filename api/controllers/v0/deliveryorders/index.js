@@ -16,7 +16,8 @@ module.exports = (
     productValidator,
     providerValidator,
     clientValidator,
-  }, { deliveryOrderAdapter },
+  },
+  { deliveryOrderAdapter },
 ) => {
   const deliveryOrderController = new DeliveryOrderController({
     errorHandler,

@@ -10,6 +10,7 @@ const logService = new LogService(TYPE);
  * Decrement invoice nOrder
  * @return {Promise<string>}
  */
+// eslint-disable-next-line consistent-return
 const decrementInvoice = invoice => {
   if (invoice.nOrder) {
     logService.logInfo('[decrementInvoice] - Se decrementa el último número de orden');
@@ -24,6 +25,7 @@ const decrementInvoice = invoice => {
  * @param {ClientInvoiceModel} invoice
  * @return {Promise<string>}
  */
+// eslint-disable-next-line consistent-return
 const decrementClientInvoice = invoice => {
   if (invoice.nInvoice) {
     logService.logInfo('[decrementInvoice] - Se decrementa el último número de factura de cliente');

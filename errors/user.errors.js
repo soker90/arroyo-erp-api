@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 class InvalidLogin extends Error {
   /**
    * Create an instance

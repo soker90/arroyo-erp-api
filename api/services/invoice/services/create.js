@@ -13,8 +13,10 @@ const {
  * @returns {Promise<void>}
  */
 const _addInvoiceToDeliveryOrder = async (invoiceData, deliveryOrders) => {
+  // eslint-disable-next-line no-restricted-syntax
   for (const deliveryOrder of deliveryOrders) {
     deliveryOrder.invoice = invoiceData._id;
+    // eslint-disable-next-line no-await-in-loop
     await deliveryOrder.save();
   }
 };

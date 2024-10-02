@@ -16,7 +16,7 @@ const providerMock = {
   businessName: 'Auu JS',
   cif: '444U',
   type: 'General',
-  hasCanal: true
+  hasCanal: true,
 };
 
 const provider2Mock = {

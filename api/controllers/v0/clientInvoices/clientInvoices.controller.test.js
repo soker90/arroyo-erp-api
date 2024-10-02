@@ -14,7 +14,6 @@ const {
   clientErrors,
   deliveryOrderErrors,
 } = require('../../../../errors');
-const exportOds = require('../../../services/clientInvoice/services/export');
 
 jest.mock('../../../services/clientInvoice/services/export');
 
@@ -54,7 +53,7 @@ const clientMock = {
 };
 
 describe('ClientInvoicesController', () => {
-  beforeAll(() => testDB.connect());
+  beforeAll(async () => await testDB.connect());
   afterAll(() => testDB.disconnect());
 
   describe('POST /client/invoices', () => {
@@ -1294,7 +1293,7 @@ describe('ClientInvoicesController', () => {
         beforeAll(done => {
           supertest(app)
             .patch(PATH(invoice._id, invoice.deliveryOrders[0]._id))
-            .send({date: 'sdf'})
+            .send({ date: 'sdf' })
             .set('Authorization', `Bearer ${token}`)
             .end((err, res) => {
               response = res;

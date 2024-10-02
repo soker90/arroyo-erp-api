@@ -17,18 +17,6 @@ const clientMock = {
   cif: '444U',
 };
 
-const client2Mock = {
-  name: 'Auuu',
-  city: 'Alcaza',
-  postalCode: '78349',
-  province: 'AB',
-  address: 'C/falsa, 999',
-  phone: '666667773',
-  email: 'eem@mail.com',
-  businessName: 'Auu JS',
-  cif: '444U',
-};
-
 describe('ClientController', () => {
   beforeAll(() => testDB.connect());
   afterAll(() => testDB.disconnect());

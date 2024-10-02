@@ -1,7 +1,6 @@
 const supertest = require('supertest');
 const {
   mongoose,
-  NoteModel,
   ReminderModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
