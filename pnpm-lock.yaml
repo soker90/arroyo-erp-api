@@ -67,8 +67,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       nock:
-        specifier: ^13.5.5
-        version: 13.5.5
+        specifier: ^13.5.6
+        version: 13.5.6
       nodemon:
         specifier: ^3.1.7
         version: 3.1.7
@@ -2381,8 +2381,8 @@ packages:
     resolution: {integrity: sha512-lDcBsjBSMlj3LXH2v/FW3txlh2pYTjmbOXPYJD93HI5EwuLzI11tdHSIpUMmfq/IOsldj4Ps8M8flhm+pCK4Ew==}
     engines: {node: '>=12.22.0'}
 
-  nock@13.5.5:
-    resolution: {integrity: sha512-XKYnqUrCwXC8DGG1xX4YH5yNIrlh9c065uaMZZHUoeUUINTOyt+x/G+ezYk0Ft6ExSREVIs+qBJDK503viTfFA==}
+  nock@13.5.6:
+    resolution: {integrity: sha512-o2zOYiCpzRqSzPj0Zt/dQ/DqZeYoaQ7TUonc/xUPjCGl9WeHpNbxgVvOquXYAaJzI0M9BXV3HTzG0p8IUAbBTQ==}
     engines: {node: '>= 10.13'}
 
   node-addon-api@5.1.0:
@@ -6462,7 +6462,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  nock@13.5.5:
+  nock@13.5.6:
     dependencies:
       debug: 4.3.7(supports-color@5.5.0)
       json-stringify-safe: 5.0.1
