@@ -4,6 +4,9 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH $PNPM_HOME:$PATH
 RUN corepack enable
 
+# FIX: Bad workaround (https://github.com/nodejs/corepack/issues/612)
+ENV COREPACK_INTEGRITY_KEYS=0
+
 RUN mkdir -p /home/node/app/ /var/log \
   && chown -R node:node /home/node/app
 
