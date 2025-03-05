@@ -1,3 +1,7 @@
+# [2.5.0] - 05/03/2025
+  - El número de factura ahora tiene 3 digitos, en el formato YY-000
+  - Las fechas se muestran en formato DD/MM/YYYY, si el dia o mes es menor que 10, se muestra con un 0 delante
+
 # [2.4.1] - 04/09/2024
   - Actualizado a node 20
   - Cambiado el gestor de paquetes a pnpm

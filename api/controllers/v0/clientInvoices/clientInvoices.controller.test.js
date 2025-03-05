@@ -1059,7 +1059,7 @@ describe('ClientInvoicesController', () => {
 
         test('Devuelve un número de factura', () => {
           const nextNum = num + 1;
-          const numInvoice = nextNum < 10 ? `0${nextNum}` : nextNum;
+          const numInvoice = nextNum.toString().padStart(3, '0');
           expect(response.body.nInvoice)
             .toBe(`20-${numInvoice}`);
         });

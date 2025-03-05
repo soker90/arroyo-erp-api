@@ -11,7 +11,7 @@ const invoiceConfirm = async ({ id }) => {
 
   let num = await generateNumberInvoice(invoiceData.date);
   const date = new Date(invoiceData.date).getYear() - 100;
-  if (num < 10) num = `0${num}`;
+  if (num < 100) num = num.toString().padStart(3, '0');
   const nInvoice = `${date}-${num}`;
 
   await ClientInvoiceModel.updateOne({ _id: id }, { nInvoice });

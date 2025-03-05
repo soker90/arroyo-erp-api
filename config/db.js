@@ -19,7 +19,6 @@ const hosts = hostProperty.reduce((s, h, i) => `${s}${i > 0 ? ',' : ''}${h}:${po
 
 const uri = process.env.MONGODB || `mongodb://${userPass}${hosts}/${dataBaseName}?authSource=admin`;
 const options = mongoOptions || {};
-options.useNewUrlParser = true;
 
 module.exports = () => {
   /* istanbul ignore next */

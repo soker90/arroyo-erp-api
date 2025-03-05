@@ -28,7 +28,7 @@ const isEmptyObject = obj => !Object.keys(obj).length;
 
 const isNumber = num => typeof num === 'number';
 
-const formatDate = date => new Date(date).toLocaleDateString('es-ES');
+const formatDate = date => new Date(date).toLocaleDateString('es-ES', { month: '2-digit', day: '2-digit', year: 'numeric' });
 
 const calcQuarter = month => parseInt((month - 1) / 3, 10) + 1;
 
