@@ -31,5 +31,15 @@ module.exports = ({ billingService }, { billingValidator }, { billingAdapter }) 
     middlewares: [
       authMiddleware,
     ],
+  }, {
+    method: 'post',
+    domain: 'billings',
+    path: '/recalc',
+    handler: billingController.recalc,
+    bindTo: billingController,
+    skipVersion: true,
+    middlewares: [
+      authMiddleware,
+    ],
   }];
 };

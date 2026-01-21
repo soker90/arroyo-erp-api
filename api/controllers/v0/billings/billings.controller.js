@@ -55,6 +55,18 @@ class BillingsController {
       .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
+
+  /**
+   * Recalculate billing totals for a given year
+   */
+  recalc(req, res) {
+    logService.logInfo('[facturación] - Recalcular la facturación de los proveedores');
+    Promise.resolve(req.query)
+      .tap(this.billingValidator.validateYear)
+      .then(this.billingService.recalc)
+      .then(data => res.send({ updated: data }))
+      .catch(this._handleError.bind(this, res));
+  }
 }
 
 module.exports = BillingsController;

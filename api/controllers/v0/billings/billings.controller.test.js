@@ -3,6 +3,7 @@ const {
   mongoose,
   ProviderModel,
   BillingModel,
+  InvoiceModel,
 } = require('arroyo-erp-models');
 const testDB = require('../../../../test/test-db')(mongoose);
 const requestLogin = require('../../../../test/request-login');
@@ -322,6 +323,155 @@ describe('BillingsController', () => {
             .toBeTruthy();
           expect(response.statusCode)
             .toBe(200);
+        });
+      });
+    });
+  });
+
+  describe('POST /billings/recalc?year=:year', () => {
+    const singlePath = '/billings/recalc';
+    const PATH = year => `/billings/recalc?year=${year}`;
+
+    describe('Usuario no autenticado', () => {
+      let response;
+
+      beforeAll(done => {
+        supertest(app)
+          .post(PATH(2021))
+          .end((err, res) => {
+            response = res;
+            done();
+          });
+      });
+
+      test('Debería dar un 401', () => {
+        expect(response.statusCode)
+          .toBe(401);
+      });
+    });
+
+    describe('Usuario autenticado', () => {
+      let token;
+
+      beforeAll(done => {
+        requestLogin()
+          .then(res => {
+            token = res;
+            done();
+          });
+      });
+
+      test('Se ha autenticado el usuario', () => {
+        expect(token)
+          .toBeTruthy();
+      });
+
+      describe('El año no es válido', () => {
+        let response;
+
+        beforeAll(done => {
+          supertest(app)
+            .post(singlePath)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 400', () => {
+          expect(response.status)
+            .toBe(400);
+        });
+
+        test('El mensaje de error es correcto', () => {
+          expect(response.body.message)
+            .toBe(new billingErrors.BillingYearMissing().message);
+        });
+      });
+
+      describe('La petición se procesa correctamente y recalcula los totales', () => {
+        let response;
+        let provider;
+        let invoice1;
+        let invoice2;
+
+        before(() => ProviderModel.create(providerMock)
+          .then(providerCreated => {
+            provider = providerCreated;
+          }));
+
+        before(() => InvoiceModel.create({
+          provider: provider._id,
+          dateInvoice: new Date('2021-02-15').getTime(),
+          total: 1500,
+          nOrder: 1,
+        })
+          .then(inv => {
+            invoice1 = inv;
+          }));
+
+        before(() => InvoiceModel.create({
+          provider: provider._id,
+          dateInvoice: new Date('2021-08-20').getTime(),
+          total: 2500.50,
+          nOrder: 2,
+        })
+          .then(inv => {
+            invoice2 = inv;
+          }));
+
+        before(() => BillingModel.create({
+          year: 2021,
+          provider: provider._id,
+          invoicesTrimester0: [
+            {
+              invoice: invoice1._id.toString(),
+              total: 1000, // Total incorrecto
+              date: new Date('2021-02-15').getTime(),
+            },
+          ],
+          invoicesTrimester2: [
+            {
+              invoice: invoice2._id.toString(),
+              total: 2000, // Total incorrecto
+              date: new Date('2021-08-20').getTime(),
+            },
+          ],
+          trimesters: [1000, 0, 2000, 0],
+          annual: 3000,
+        }));
+
+        beforeAll(done => {
+          supertest(app)
+            .post(PATH(2021))
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+              response = res;
+              done();
+            });
+        });
+
+        test('Debería dar un 200', () => {
+          expect(response.statusCode)
+            .toBe(200);
+        });
+
+        test('Debería devolver el número de billings actualizados', () => {
+          expect(response.body.updated)
+            .toBe(1);
+        });
+
+        test('Los totales deberían estar actualizados en la base de datos', done => {
+          BillingModel.findOne({ year: 2021, provider: provider._id })
+            .then(billing => {
+              expect(billing.invoicesTrimester0[0].total).toBe(1500);
+              expect(billing.invoicesTrimester2[0].total).toBe(2500.50);
+              expect(billing.trimesters[0]).toBe(1500);
+              expect(billing.trimesters[2]).toBe(2500.50);
+              expect(billing.annual).toBe(4000.50);
+              done();
+            });
         });
       });
     });

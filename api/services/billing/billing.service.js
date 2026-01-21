@@ -11,6 +11,7 @@ const logService = new LogService(TYPE);
 
 const exportOds = require('./services/export');
 const refresh = require('./services/refresh');
+const recalc = require('./services/recalc');
 
 /**
  * Create payment
@@ -86,4 +87,5 @@ module.exports = {
   billings,
   exportOds,
   refresh,
+  recalc,
 };
