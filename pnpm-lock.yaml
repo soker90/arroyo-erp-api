@@ -67,8 +67,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       nock:
-        specifier: ^14.0.8
-        version: 14.0.8
+        specifier: ^14.0.10
+        version: 14.0.10
       nodemon:
         specifier: ^3.1.9
         version: 3.1.9
@@ -379,8 +379,8 @@ packages:
   '@mongodb-js/saslprep@1.2.0':
     resolution: {integrity: sha512-+ywrb0AqkfaYuhHs6LxKWgqbh3I72EpEgESCw37o+9qPx9WTCkgDm2B+eMrwehGtHBWHFU4GXvnSCNiFhhausg==}
 
-  '@mswjs/interceptors@0.39.5':
-    resolution: {integrity: sha512-B9nHSJYtsv79uo7QdkZ/b/WoKm20IkVSmTc/WCKarmDtFwM0dRx2ouEniqwNkzCSLn3fydzKmnMzjtfdOWt3VQ==}
+  '@mswjs/interceptors@0.39.6':
+    resolution: {integrity: sha512-bndDP83naYYkfayr/qhBHMhk0YGwS1iv6vaEGcr0SQbO0IZtbOPqjKjds/WcG+bJA+1T5vCx6kprKOzn5Bg+Vw==}
     engines: {node: '>=18'}
 
   '@noble/hashes@1.8.0':
@@ -2119,8 +2119,8 @@ packages:
     resolution: {integrity: sha512-lDcBsjBSMlj3LXH2v/FW3txlh2pYTjmbOXPYJD93HI5EwuLzI11tdHSIpUMmfq/IOsldj4Ps8M8flhm+pCK4Ew==}
     engines: {node: '>=12.22.0'}
 
-  nock@14.0.8:
-    resolution: {integrity: sha512-5DCGrkwK1f8kxUvqvzLWb97XuDUY4/t5M3ZcogPfLGvC2wO8wjRQsIDSXj2L6e1J0Dv8xscf9wWSvGnS3OL29Q==}
+  nock@14.0.10:
+    resolution: {integrity: sha512-Q7HjkpyPeLa0ZVZC5qpxBt5EyLczFJ91MEewQiIi9taWuA0KB/MDJlUWtON+7dGouVdADTQsf9RA7TZk6D8VMw==}
     engines: {node: '>=18.20.0 <20 || >=20.12.1'}
 
   node-addon-api@5.1.0:
@@ -3300,7 +3300,7 @@ snapshots:
     dependencies:
       sparse-bitfield: 3.0.3
 
-  '@mswjs/interceptors@0.39.5':
+  '@mswjs/interceptors@0.39.6':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
       '@open-draft/logger': 0.3.0
@@ -5552,9 +5552,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  nock@14.0.8:
+  nock@14.0.10:
     dependencies:
-      '@mswjs/interceptors': 0.39.5
+      '@mswjs/interceptors': 0.39.6
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
 
