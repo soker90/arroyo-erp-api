@@ -64,7 +64,7 @@ class BillingsController {
     Promise.resolve(req.query)
       .tap(this.billingValidator.validateYear)
       .then(this.billingService.recalc)
-      .then(data => res.send({ updated: data }))
+      .then(data => res.send(data))
       .catch(this._handleError.bind(this, res));
   }
 }

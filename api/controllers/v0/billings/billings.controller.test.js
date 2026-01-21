@@ -462,6 +462,21 @@ describe('BillingsController', () => {
             .toBe(1);
         });
 
+        test('Debería devolver los detalles de los cambios', () => {
+          expect(response.body.changes).toBeDefined();
+          expect(Array.isArray(response.body.changes)).toBe(true);
+          expect(response.body.changes.length).toBe(1);
+
+          const change = response.body.changes[0];
+          expect(change.providerId).toBeDefined();
+          expect(change.providerName).toBeDefined();
+          expect(change.invoices).toBeDefined();
+          expect(Array.isArray(change.invoices)).toBe(true);
+          expect(change.invoices.length).toBe(2); // 2 facturas modificadas
+          expect(change.trimesters).toBeDefined();
+          expect(Array.isArray(change.trimesters)).toBe(true);
+        });
+
         test('Los totales deberían estar actualizados en la base de datos', done => {
           BillingModel.findOne({ year: 2021, provider: provider._id })
             .then(billing => {

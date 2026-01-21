@@ -1,3 +1,6 @@
+# [2.6.0] - 21/01/2026
+  - Añadido endpoint POST /billings/recalc para recalcular totales de facturación de proveedores
+
 # [2.5.0] - 05/03/2025
   - El número de factura ahora tiene 3 digitos, en el formato YY-000
   - Las fechas se muestran en formato DD/MM/YYYY, si el dia o mes es menor que 10, se muestra con un 0 delante

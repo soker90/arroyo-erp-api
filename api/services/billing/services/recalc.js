@@ -40,21 +40,28 @@ const calcNewBilling = billing => {
  * Busca las facturas reales por sus IDs y actualiza los totales en los billings
  * @param {Object} params
  * @param {number} params.year - Año para el cual recalcular
- * @return {Promise<number>} - Número de billings actualizados
+ * @return {Promise<{updated: number, changes: Array}>} - Número de billings actualizados y detalles de cambios
  */
 const recalc = async ({ year }) => {
   logService.logInfo(`[recalc] - Recalculando la facturación del año ${year}`);
 
-  // Obtener todos los billings del año
+  // Obtener todos los billings del año SIN popular provider (optimización)
   const billings = await BillingModel.find({ year });
 
   logService.logInfo(`[recalc] - Encontrados ${billings.length} billings para el año ${year}`);
 
   let updatedCount = 0;
+  const changes = [];
+  const providersToPopulate = new Set();
 
   // Procesar cada billing
   for (const billing of billings) {
     let hasChanges = false;
+    const providerChanges = {
+      providerId: billing.provider.toString(),
+      invoices: [],
+      trimesters: []
+    };
 
     // Recorrer cada trimestre
     for (let trimester = 0; trimester < 4; trimester++) {
@@ -82,6 +89,21 @@ const recalc = async ({ year }) => {
         if (realInvoice && invTrimester.total !== realInvoice.total) {
           logService.logInfo(`[recalc] - Actualizando factura ${invTrimester.invoice}: ${invTrimester.total} -> ${realInvoice.total}`);
           hasChanges = true;
+
+          // Guardar detalle del cambio
+          providerChanges.invoices.push({
+            invoiceId: invTrimester.invoice,
+            nInvoice: realInvoice.nInvoice,
+            trimester: trimester + 1,
+            oldTotal: invTrimester.total,
+            newTotal: realInvoice.total
+          });
+
+          // Marcar trimestre afectado
+          if (!providerChanges.trimesters.includes(trimester + 1)) {
+            providerChanges.trimesters.push(trimester + 1);
+          }
+
           return {
             invoice: invTrimester.invoice,
             total: realInvoice.total,
@@ -124,12 +146,41 @@ const recalc = async ({ year }) => {
       );
 
       updatedCount++;
+
+      // Marcar provider para popular después
+      providersToPopulate.add(billing.provider.toString());
+
+      // Ordenar trimestres afectados
+      providerChanges.trimesters.sort((a, b) => a - b);
+      changes.push(providerChanges);
     }
   }
 
-  logService.logInfo(`[recalc] - Se actualizó la facturación ${updatedCount} 3 provedores`);
+  // Solo popular los providers que tienen cambios
+  if (providersToPopulate.size > 0) {
+    const { ProviderModel } = require('arroyo-erp-models');
+    const providers = await ProviderModel.find({
+      _id: { $in: Array.from(providersToPopulate) }
+    }).select('name businessName');
 
-  return updatedCount;
+    const providerMap = new Map();
+    providers.forEach(provider => {
+      providerMap.set(provider._id.toString(), provider);
+    });
+
+    // Agregar nombres a los cambios
+    changes.forEach(change => {
+      const provider = providerMap.get(change.providerId);
+      change.providerName = provider ? (provider.name || provider.businessName) : 'Proveedor';
+    });
+  }
+
+  logService.logInfo(`[recalc] - Se actualizó la facturación de ${updatedCount} proveedores`);
+
+  return {
+    updated: updatedCount,
+    changes
+  };
 };
 
 module.exports = recalc;
