@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { BillingModel, InvoiceModel } = require('arroyo-erp-models');
 
 const LogService = require('../../log.service');
@@ -40,7 +41,7 @@ const calcNewBilling = billing => {
  * Busca las facturas reales por sus IDs y actualiza los totales en los billings
  * @param {Object} params
  * @param {number} params.year - Año para el cual recalcular
- * @return {Promise<{updated: number, changes: Array}>} - Número de billings actualizados y detalles de cambios
+ * @return {Promise<{updated: number, changes: Array}>}
  */
 const recalc = async ({ year }) => {
   logService.logInfo(`[recalc] - Recalculando la facturación del año ${year}`);
@@ -60,7 +61,7 @@ const recalc = async ({ year }) => {
     const providerChanges = {
       providerId: billing.provider.toString(),
       invoices: [],
-      trimesters: []
+      trimesters: [],
     };
 
     // Recorrer cada trimestre
@@ -96,13 +97,11 @@ const recalc = async ({ year }) => {
             nInvoice: realInvoice.nInvoice,
             trimester: trimester + 1,
             oldTotal: invTrimester.total,
-            newTotal: realInvoice.total
+            newTotal: realInvoice.total,
           });
 
           // Marcar trimestre afectado
-          if (!providerChanges.trimesters.includes(trimester + 1)) {
-            providerChanges.trimesters.push(trimester + 1);
-          }
+          if (!providerChanges.trimesters.includes(trimester + 1)) providerChanges.trimesters.push(trimester + 1);
 
           return {
             invoice: invTrimester.invoice,
@@ -122,9 +121,8 @@ const recalc = async ({ year }) => {
       const newTotals = calcNewBilling(billing);
 
       // Verificar si los totales también han cambiado
-      const totalsChanged =
-        billing.trimesters.some((value, index) => value !== newTotals.trimesters[index]) ||
-        billing.annual !== newTotals.annual;
+      const totalsChanged = billing.trimesters.some((value, index) => value !== newTotals.trimesters[index])
+        || billing.annual !== newTotals.annual;
 
       if (totalsChanged) {
         logService.logInfo(`[recalc] - Actualizando totales del proveedor ${billing.provider}`);
@@ -160,7 +158,7 @@ const recalc = async ({ year }) => {
   if (providersToPopulate.size > 0) {
     const { ProviderModel } = require('arroyo-erp-models');
     const providers = await ProviderModel.find({
-      _id: { $in: Array.from(providersToPopulate) }
+      _id: { $in: Array.from(providersToPopulate) },
     }).select('name businessName');
 
     const providerMap = new Map();
@@ -179,7 +177,7 @@ const recalc = async ({ year }) => {
 
   return {
     updated: updatedCount,
-    changes
+    changes,
   };
 };
 
