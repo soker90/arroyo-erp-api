@@ -11,13 +11,13 @@ const INVOICE_2_TEMPLATE = './templates/factura-2-hojas.ods';
 const INVOICE_3_TEMPLATE = './templates/factura-3-hojas.ods';
 const INVOICE_4_TEMPLATE = './templates/factura-4-hojas.ods';
 
-const UNITS_WITHOUT_DECIMALS = ['ud', 'uds'];
+const UNITS_WITHOUT_DECIMALS = ['ud', 'uds', 'lote', 'lotes'];
 
 const generateWeight = ({
   weight,
   unit,
 }) => (UNITS_WITHOUT_DECIMALS.includes(unit)
-  ? `${weight} ${unit}`
+  ? `${Math.trunc(weight)} ${unit}`
   : `${weight.toLocaleString('es-ES', {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,

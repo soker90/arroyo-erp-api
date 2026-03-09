@@ -1,3 +1,9 @@
+# [2.7.0] - 09/03/2026
+  - Mejorado endpoint /billings/recalc para validar sumas de trimestres y totales anuales
+  - Ahora detecta facturas faltantes o excesivas en cada trimestre
+  - Retorna información detallada de cambios incluyendo errores de sumas
+  - Corregida la exportación de facturas a Excel: las cantidades de productos en unidades (ud, uds) ahora se muestran sin decimales
+
 # [2.6.0] - 21/01/2026
   - Añadido endpoint POST /billings/recalc para recalcular totales de facturación de proveedores
 
