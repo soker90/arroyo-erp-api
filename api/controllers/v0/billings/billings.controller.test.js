@@ -475,6 +475,8 @@ describe('BillingsController', () => {
           expect(change.invoices.length).toBe(2); // 2 facturas modificadas
           expect(change.trimesters).toBeDefined();
           expect(Array.isArray(change.trimesters)).toBe(true);
+          expect(change.sumErrors).toBeDefined();
+          expect(Array.isArray(change.sumErrors)).toBe(true);
         });
 
         test('Los totales deberían estar actualizados en la base de datos', done => {

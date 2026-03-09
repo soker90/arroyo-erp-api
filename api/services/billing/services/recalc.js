@@ -62,72 +62,130 @@ const recalc = async ({ year }) => {
       providerId: billing.provider.toString(),
       invoices: [],
       trimesters: [],
+      sumErrors: [],
     };
 
-    // Recorrer cada trimestre
+    // PASO 1: Verificar que las facturas correctas estén en cada trimestre
+    // ...existing code...
+    const startYear = new Date(year, 0, 1).getTime();
+    const endYear = new Date(year, 11, 31, 23, 59, 59).getTime();
+    const allProviderInvoices = await InvoiceModel.find({
+      provider: billing.provider,
+      dateInvoice: { $gte: startYear, $lte: endYear },
+    });
+
+    // Crear un mapa de facturas reales por trimestre
+    const realInvoicesByTrimester = { 0: [], 1: [], 2: [], 3: [] };
+    allProviderInvoices.forEach(invoice => {
+      const invoiceDate = new Date(invoice.dateInvoice);
+      const month = invoiceDate.getMonth();
+      const trimester = Math.floor(month / 3);
+      realInvoicesByTrimester[trimester].push(invoice);
+    });
+
+    // Recorrer cada trimestre y verificar
     for (let trimester = 0; trimester < 4; trimester++) {
       const trimesterField = `invoicesTrimester${trimester}`;
-      const invoicesInTrimester = billing[trimesterField] || [];
+      const invoicesInBilling = billing[trimesterField] || [];
+      const realInvoicesInTrimester = realInvoicesByTrimester[trimester];
 
-      if (invoicesInTrimester.length === 0) continue;
+      // Crear sets para comparación
+      const billingInvoiceIds = new Set(invoicesInBilling.map(inv => inv.invoice.toString()));
+      const realInvoiceIds = new Set(realInvoicesInTrimester.map(inv => inv._id.toString()));
 
-      // Obtener los IDs de las facturas
-      const invoiceIds = invoicesInTrimester.map(inv => inv.invoice);
+      // Verificar si hay diferencias (facturas que sobran o faltan)
+      const missingInvoices = realInvoicesInTrimester.filter(inv => !billingInvoiceIds.has(inv._id.toString()));
+      const extraInvoices = invoicesInBilling.filter(inv => !realInvoiceIds.has(inv.invoice.toString()));
 
-      // Buscar las facturas reales en la base de datos
-      const realInvoices = await InvoiceModel.find({ _id: { $in: invoiceIds } });
+      // Si hay diferencias, reconstruir el trimestre completo
+      if (missingInvoices.length > 0 || extraInvoices.length > 0) {
+        hasChanges = true;
+        logService.logInfo(`[recalc] - T${trimester + 1} del proveedor ${billing.provider}: ${missingInvoices.length} facturas faltantes, ${extraInvoices.length} facturas sobrantes`);
 
-      // Crear un mapa de facturas por ID para acceso rápido
-      const invoiceMap = new Map();
-      realInvoices.forEach(inv => {
-        invoiceMap.set(inv._id.toString(), inv);
-      });
+        // Marcar trimestre afectado
+        if (!providerChanges.trimesters.includes(trimester + 1)) providerChanges.trimesters.push(trimester + 1);
 
-      // Actualizar los totales si difieren
-      const updatedInvoices = invoicesInTrimester.map(invTrimester => {
-        const realInvoice = invoiceMap.get(invTrimester.invoice);
+        // Reconstruir con las facturas correctas
+        billing[trimesterField] = realInvoicesInTrimester.map(invoice => ({
+          invoice: invoice._id.toString(),
+          total: invoice.total,
+          date: invoice.dateInvoice,
+        }));
+      } else {
+        // PASO 2: Si las facturas son las correctas, verificar totales individuales
+        const updatedInvoices = invoicesInBilling.map(invInBilling => {
+          const realInvoice = realInvoicesInTrimester.find(inv => inv._id.toString() === invInBilling.invoice.toString());
 
-        if (realInvoice && invTrimester.total !== realInvoice.total) {
-          logService.logInfo(`[recalc] - Actualizando factura ${invTrimester.invoice}: ${invTrimester.total} -> ${realInvoice.total}`);
-          hasChanges = true;
+          if (realInvoice && invInBilling.total !== realInvoice.total) {
+            logService.logInfo(`[recalc] - Actualizando factura ${invInBilling.invoice}: ${invInBilling.total} -> ${realInvoice.total}`);
+            hasChanges = true;
 
-          // Guardar detalle del cambio
-          providerChanges.invoices.push({
-            invoiceId: invTrimester.invoice,
-            nInvoice: realInvoice.nInvoice,
-            trimester: trimester + 1,
-            oldTotal: invTrimester.total,
-            newTotal: realInvoice.total,
-          });
+            // Guardar detalle del cambio
+            providerChanges.invoices.push({
+              invoiceId: invInBilling.invoice,
+              nInvoice: realInvoice.nInvoice,
+              trimester: trimester + 1,
+              oldTotal: invInBilling.total,
+              newTotal: realInvoice.total,
+            });
 
-          // Marcar trimestre afectado
-          if (!providerChanges.trimesters.includes(trimester + 1)) providerChanges.trimesters.push(trimester + 1);
+            // Marcar trimestre afectado
+            if (!providerChanges.trimesters.includes(trimester + 1)) providerChanges.trimesters.push(trimester + 1);
 
-          return {
-            invoice: invTrimester.invoice,
-            total: realInvoice.total,
-            date: invTrimester.date,
-          };
-        }
+            return {
+              invoice: invInBilling.invoice,
+              total: realInvoice.total,
+              date: invInBilling.date,
+            };
+          }
 
-        return invTrimester;
-      });
+          return invInBilling;
+        });
 
-      billing[trimesterField] = updatedInvoices;
+        billing[trimesterField] = updatedInvoices;
+      }
     }
 
-    // Si hubo cambios, recalcular los totales trimestrales y anuales
-    if (hasChanges) {
-      const newTotals = calcNewBilling(billing);
+    // PASO 3: Siempre recalcular los totales para verificar sumas trimestrales
+    const newTotals = calcNewBilling(billing);
 
-      // Verificar si los totales también han cambiado
-      const totalsChanged = billing.trimesters.some((value, index) => value !== newTotals.trimesters[index])
-        || billing.annual !== newTotals.annual;
+    // Verificar si los totales trimestrales o anuales difieren
+    const totalsChanged = billing.trimesters.some((value, index) => value !== newTotals.trimesters[index])
+      || billing.annual !== newTotals.annual;
 
+    // PASO 4: Si hubo cambios en facturas o en totales
+    if (hasChanges || totalsChanged) {
       if (totalsChanged) {
         logService.logInfo(`[recalc] - Actualizando totales del proveedor ${billing.provider}`);
         logService.logInfo(`[recalc] - Trimestres: ${billing.trimesters} -> ${newTotals.trimesters}`);
         logService.logInfo(`[recalc] - Anual: ${billing.annual} -> ${newTotals.annual}`);
+
+        // Marcar trimestres afectados por error de suma y guardar detalles
+        billing.trimesters.forEach((oldValue, index) => {
+          if (oldValue !== newTotals.trimesters[index]) {
+            const trimesterNum = index + 1;
+            if (!providerChanges.trimesters.includes(trimesterNum)) {
+              providerChanges.trimesters.push(trimesterNum);
+            }
+
+            // Agregar información del error de suma
+            providerChanges.sumErrors.push({
+              type: 'trimester',
+              trimester: trimesterNum,
+              oldTotal: oldValue,
+              newTotal: newTotals.trimesters[index],
+            });
+          }
+        });
+
+        // Verificar error en total anual
+        if (billing.annual !== newTotals.annual) {
+          providerChanges.sumErrors.push({
+            type: 'annual',
+            oldTotal: billing.annual,
+            newTotal: newTotals.annual,
+          });
+        }
       }
 
       // Actualizar el billing completo
