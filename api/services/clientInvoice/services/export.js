@@ -11,7 +11,7 @@ const INVOICE_2_TEMPLATE = './templates/factura-2-hojas.ods';
 const INVOICE_3_TEMPLATE = './templates/factura-3-hojas.ods';
 const INVOICE_4_TEMPLATE = './templates/factura-4-hojas.ods';
 
-const UNITS_WITHOUT_DECIMALS = ['ud', 'uds', 'lote', 'lotes'];
+const UNITS_WITHOUT_DECIMALS = ['ud', 'uds', 'lote', 'lotes', 'doc'];
 
 const generateWeight = ({
   weight,
