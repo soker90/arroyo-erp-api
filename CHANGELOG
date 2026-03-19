@@ -1,3 +1,6 @@
+# [2.7.1] - 19/03/2026
+  - Corregida la exportación de facturas a Excel: las cantidades de productos en docenas (doc) ahora se muestran sin decimales
+
 # [2.7.0] - 09/03/2026
   - Mejorado endpoint /billings/recalc para validar sumas de trimestres y totales anuales
   - Ahora detecta facturas faltantes o excesivas en cada trimestre
