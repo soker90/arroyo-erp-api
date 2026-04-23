@@ -2,14 +2,18 @@ const { ProductModel } = require('arroyo-erp-models');
 const wrongPrices = require('./wrongPrices');
 
 /**
- * Return all wrong prirces of products
- * @return {Promise<{data: any}>}
+ * Fix all products with wrong price or cost
+ * @return {Promise<void>}
  */
 const fixPrices = async () => {
-  // throw new Error('Not implemented');
   const wrongPricesProducts = await wrongPrices();
-  // eslint-disable-next-line max-len
-  const promises = wrongPricesProducts.map(product => ProductModel.updateOne({ _id: product.id }, { price: product.goodPrice }));
+  const promises = wrongPricesProducts.map(product => ProductModel.updateOne(
+    { _id: product.id },
+    {
+      ...(product.wrongPrice && { price: product.goodPrice }),
+      ...(product.wrongCost && { cost: product.goodCost }),
+    }
+  ));
 
   return Promise.all(promises);
 };

@@ -34,7 +34,7 @@
     "lodash.unionwith": "^4.6.0"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^5.1.0",
