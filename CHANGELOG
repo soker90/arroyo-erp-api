@@ -1,3 +1,8 @@
+# [2.7.2] - 23/04/2026
+  - Añadida la detección de errores de coste en el endpoint GET /products/wrong
+  - El endpoint PATCH /products/wrong ahora corrige tanto el precio como el costo de cada producto
+  - Corregido: al eliminar un precio se ordenaba por nOrder en vez de por fecha
+
 # [2.7.1] - 19/03/2026
   - Corregida la exportación de facturas a Excel: las cantidades de productos en docenas (doc) ahora se muestran sin decimales
 
